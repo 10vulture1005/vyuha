@@ -20,11 +20,14 @@ class FundamentalsProvider:
         self.quarters = ["03-31", "06-30", "09-30", "12-31"]
         
         fund_path = BASE_DIR / "data" / "raw" / "fundamentals.csv"
-        if fund_path.exists():
-            self.historical_data = pd.read_csv(fund_path, parse_dates=["filing_date"])
-            logger.info(f"Loaded Point-in-Time fundamental data from {fund_path}")
+        if fund_path.exists() and fund_path.stat().st_size > 0:
+            try:
+                self.historical_data = pd.read_csv(fund_path, parse_dates=["filing_date"])
+                logger.info(f"Loaded Point-in-Time fundamental data from {fund_path}")
+            except Exception as e:
+                logger.warning(f"Could not parse {fund_path}: {e}. Using fallback stylized metrics.")
         else:
-            logger.warning(f"Failed to load fundamentals from {fund_path}: File not found. Using fallback stylized metrics.")
+            logger.warning(f"Failed to load fundamentals from {fund_path}: File not found or empty. Using fallback stylized metrics.")
 
     def _generate_stylized_metrics(self, symbol: str, year: int, quarter: str) -> Dict[str, float]:
         """Generates deterministic mock fundamentals using a hash of the symbol and quarter."""
