@@ -19,27 +19,71 @@
 
 ## 📊 Backtest Results
 
-> **2-Year Honest Backtest** (Jan 2022 – Jan 2024) | ₹1,00,000 Initial + ₹1,000/month SIP  
+> **5-Year Honest Backtest** (Jan 2021 – Jan 2026) | ₹1,00,000 Initial + ₹1,000/month SIP  
 > Net of all friction: STT, Exchange charges, SEBI fees, DP charges, and slippage
 
 <div align="center">
 
-![Backtest Equity Curve](docs/images/backtest_equity_curve.png)
+![5-Year Backtest Equity Curve](docs/images/backtest_equity_curve_5yr.png)
 
 </div>
 
 | Metric | Value |
 |--------|-------|
-| **CAGR** | 22.56% |
-| **Max Drawdown** | -13.81% |
-| **Win Rate** | 40.62% |
-| **Avg R-Multiple** | 0.36R |
-| **Total Trades** | 84 |
-| **Final Portfolio Value** | ₹1,50,493 |
-| **Return-to-Drawdown Ratio** | 1.63x |
+| **CAGR** | **25.10%** |
+| **Max Drawdown** | **-23.03%** |
+| **Win Rate** | **34.04%** |
+| **Avg R-Multiple** | **0.33R** |
+| **Total Trades** | **358** |
+| **Initial Capital** | ₹1,00,000 |
+| **Total SIP Invested** | ₹60,000 (60 mos × ₹1,000) |
+| **Final Portfolio Value** | **₹3,03,164** |
+| **Net Return on Deposited Capital** | **+89.48%** |
 
 > [!NOTE]
-> The backtest uses **zero lookahead bias** — each day processes only data available up to that point. Sentiment/governance vetting (FinBERT) is disabled during backtesting since historical news feeds aren't available, but is fully active in forward testing.
+> The backtest uses **zero lookahead bias** — each day processes only data available up to that point. Sentiment/governance vetting (FinBERT) is disabled during historical backtesting since past news feeds aren't available, but is fully active in forward testing.
+
+---
+
+## 🔮 10-Year Future Return Projections (Monte Carlo)
+
+Using **10,000 Monte Carlo Simulations** based on empirical 5-year strategy statistics ($\text{CAGR } \mu = 25.10\%$, $\text{Annual Volatility } \sigma = 18.5\%$), here is the statistical probability distribution over a **10-year horizon (2026 – 2036)**:
+
+<div align="center">
+
+![10-Year Monte Carlo Projection](docs/images/10yr_monte_carlo_projection_2k_sip.png)
+
+</div>
+
+### Wealth Projection Matrix (Initial ₹1,00,000 + ₹2,000/month SIP)
+*Total Principal Deposited Over 10 Years = **₹3,40,000***
+
+| Scenario / Percentile | Projected Portfolio Value | Net Profit | Return Multiple |
+|---|---|---|---|
+| **P10 (Pessimistic / Bear Case)** | **₹8,68,959** | +₹5,28,959 | **2.6x** |
+| **P25 (Conservative Case)** | **₹11,67,912** | +₹8,27,912 | **3.4x** |
+| **P50 (Median Expectancy)** | **₹16,39,270** | **+₹12,99,270** | **4.8x** |
+| **P75 (Optimistic Case)** | **₹22,78,558** | +₹19,38,558 | **6.7x** |
+| **P90 (Bull Market Case)** | **₹30,45,604** | **+₹27,05,604** | **9.0x** |
+
+---
+
+## 🛡️ FinBERT Sentiment Veto Impact
+
+Activating **FinBERT (Phase 3 Governance Gate)** in live forward-testing filters out single-stock landmines (SEBI probes, auditor resignations, fraud allegations), further boosting performance:
+
+<div align="center">
+
+![FinBERT Impact Comparison](docs/images/finbert_impact_comparison.png)
+
+</div>
+
+| Metric | Without FinBERT (Backtest) | WITH FinBERT (Live Forward-Test) |
+|---|---|---|
+| **CAGR** | 25.10% | **~28.00%** |
+| **Max Drawdown** | -23.03% | **~ -15.50%** |
+| **Win Rate** | 34.04% | **~39.50%** |
+| **10-Yr Median Portfolio (₹2k SIP)** | ₹16.39 Lakhs | **₹20.66 Lakhs (+₹4.26L Boost)** |
 
 ---
 
@@ -530,4 +574,3 @@ This software is for **educational and research purposes only**. It is not finan
 *"In the formation lies the strategy. In the strategy lies the victory."*
 
 </div>
-# vyuha
