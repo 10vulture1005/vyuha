@@ -1,0 +1,124 @@
+name: VYUHA Forward Test (Daily Paper Trading)
+
+on:
+  schedule:
+    # Run at 16:30 IST (11:00 UTC) Monday-Friday after market close
+    - cron: '0 11 * * 1-5'
+  workflow_dispatch:  # Allow manual triggers for testing
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  forward-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache FinBERT model weights
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: finbert-model-prosusai-v1
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[agents]"
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install transformers yfinance
+
+      - name: Run Forward Test Paper Cycle
+        env:
+          DATABASE_URL: sqlite:///vyuha.db
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          LIVE_TRADING_ENABLED: 'false'
+          LOG_LEVEL: INFO
+        run: |
+          python scripts/run_forward_test.py --mode once
+
+      - name: Commit updated database state
+        run: |
+          git config user.name "vyuha-bot"
+          git config user.email "vyuha-bot@users.noreply.github.com"
+          git add vyuha.db
+          git diff --cached --quiet || git commit -m "📊 Forward test: $(date -u +'%Y-%m-%d')"
+          git push
+
+      - name: Upload logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forward-test-logs-${{ github.run_number }}
+          path: logs/
+          retention-days: 30
+
+  weekly-refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    # Only run on Sundays
+    if: github.event.schedule == '0 11 * * 0' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+
+      - name: Cache FinBERT model weights
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: finbert-model-prosusai-v1
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[agents]"
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install transformers yfinance
+
+      - name: Run Weekly Fundamental + Sentiment Refresh
+        env:
+          DATABASE_URL: sqlite:///vyuha.db
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          LIVE_TRADING_ENABLED: 'false'
+        run: |
+          python scripts/run_daily_pipeline.py --weekly
+
+      - name: Commit updated state
+        run: |
+          git config user.name "vyuha-bot"
+          git config user.email "vyuha-bot@users.noreply.github.com"
+          git add vyuha.db data/
+          git diff --cached --quiet || git commit -m "📋 Weekly refresh: $(date -u +'%Y-%m-%d')"
+          git push

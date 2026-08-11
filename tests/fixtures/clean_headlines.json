@@ -1,0 +1,50 @@
+[
+    {
+        "title": "Reliance Industries reports 12% YoY jump in Q3 consolidated EBITDA",
+        "published_date": "2026-07-20T14:00:00Z",
+        "source": "Economic Times",
+        "url": "https://example.com/reliance-q3"
+    },
+    {
+        "title": "TCS wins $500M digital transformation deal with European banking consortium",
+        "published_date": "2026-07-18T10:30:00Z",
+        "source": "Moneycontrol",
+        "url": "https://example.com/tcs-deal"
+    },
+    {
+        "title": "Infosys raises FY27 revenue guidance to 4.5-5.5% in constant currency",
+        "published_date": "2026-07-15T08:00:00Z",
+        "source": "NDTV Profit",
+        "url": "https://example.com/infosys-guidance"
+    },
+    {
+        "title": "HDFC Bank net profit rises 21% on strong retail loan book growth",
+        "published_date": "2026-07-12T12:00:00Z",
+        "source": "LiveMint",
+        "url": "https://example.com/hdfc-profit"
+    },
+    {
+        "title": "Bajaj Finance crosses 10 crore customer milestone; AUM at all-time high",
+        "published_date": "2026-07-10T09:00:00Z",
+        "source": "Business Standard",
+        "url": "https://example.com/bajaj-milestone"
+    },
+    {
+        "title": "Asian Paints launches premium decorative range targeting urban luxury segment",
+        "published_date": "2026-07-08T16:00:00Z",
+        "source": "Reuters India",
+        "url": "https://example.com/asianpaints-launch"
+    },
+    {
+        "title": "Nifty 50 closes at record high amid broad-based buying across sectors",
+        "published_date": "2026-07-05T11:00:00Z",
+        "source": "The Hindu BusinessLine",
+        "url": "https://example.com/nifty-record"
+    },
+    {
+        "title": "Maruti Suzuki July sales up 8% on strong demand for SUV models",
+        "published_date": "2026-07-03T14:30:00Z",
+        "source": "Financial Express",
+        "url": "https://example.com/maruti-sales"
+    }
+]
