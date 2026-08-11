@@ -1,0 +1,41 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# === Environment & Secrets ===
+.env
+*.db
+
+# === Data (downloaded/scraped — not committed) ===
+data/raw/ohlc/*.csv
+data/cache/scrape_cache/*
+data/snapshots/*.parquet
+
+# === Logs ===
+logs/*.log
+logs/*.log.*
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Virtual environments ===
+venv/
+.venv/
+env/
+
+# === Keep gitkeep files ===
+!.gitkeep

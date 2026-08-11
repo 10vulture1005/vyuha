@@ -1,0 +1,31 @@
+symbol,name,isin,sector,exchange
+RELIANCE,Reliance Industries Ltd,INE002A01018,Energy,NSE
+TCS,Tata Consultancy Services Ltd,INE467B01029,Information Technology,NSE
+HDFCBANK,HDFC Bank Ltd,INE040A01034,Financials,NSE
+INFY,Infosys Ltd,INE009A01021,Information Technology,NSE
+ICICIBANK,ICICI Bank Ltd,INE090A01021,Financials,NSE
+HINDUNILVR,Hindustan Unilever Ltd,INE030A01027,FMCG,NSE
+ITC,ITC Ltd,INE154A01025,FMCG,NSE
+SBIN,State Bank of India,INE062A01020,Financials,NSE
+BHARTIARTL,Bharti Airtel Ltd,INE397D01024,Telecommunications,NSE
+KOTAKBANK,Kotak Mahindra Bank Ltd,INE237A01028,Financials,NSE
+LT,Larsen & Toubro Ltd,INE018A01030,Industrials,NSE
+AXISBANK,Axis Bank Ltd,INE238A01034,Financials,NSE
+ASIANPAINT,Asian Paints Ltd,INE021A01026,Materials,NSE
+MARUTI,Maruti Suzuki India Ltd,INE585B01010,Automobiles,NSE
+TITAN,Titan Company Ltd,INE280A01028,Consumer Discretionary,NSE
+SUNPHARMA,Sun Pharmaceutical Industries Ltd,INE044A01036,Healthcare,NSE
+BAJFINANCE,Bajaj Finance Ltd,INE296A01024,Financials,NSE
+WIPRO,Wipro Ltd,INE075A01022,Information Technology,NSE
+HCLTECH,HCL Technologies Ltd,INE860A01027,Information Technology,NSE
+ULTRACEMCO,UltraTech Cement Ltd,INE481G01011,Materials,NSE
+NESTLEIND,Nestle India Ltd,INE239A01016,FMCG,NSE
+TATAMOTORS,Tata Motors Ltd,INE155A01022,Automobiles,NSE
+POWERGRID,Power Grid Corporation of India Ltd,INE752E01010,Utilities,NSE
+NTPC,NTPC Ltd,INE733E01010,Utilities,NSE
+TATASTEEL,Tata Steel Ltd,INE081A01012,Materials,NSE
+TECHM,Tech Mahindra Ltd,INE669C01036,Information Technology,NSE
+DRREDDY,Dr Reddys Laboratories Ltd,INE089A01023,Healthcare,NSE
+CIPLA,Cipla Ltd,INE059A01026,Healthcare,NSE
+COALINDIA,Coal India Ltd,INE522F01014,Energy,NSE
+ADANIENT,Adani Enterprises Ltd,INE423A01024,Industrials,NSE

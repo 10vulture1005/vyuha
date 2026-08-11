@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vyuha-engine"
+version = "0.1.0"
+description = "High-Conviction Equity Accumulation Engine — Multi-Agent, NSE/BSE"
+requires-python = ">=3.11"
+readme = "README.md"
+
+dependencies = [
+    # Configuration & Validation
+    "pydantic>=2.6.4",
+    "pydantic-settings>=2.2.0",
+    "pyyaml>=6.0.1",
+
+    # Database & ORM
+    "sqlalchemy>=2.0.29",
+    "alembic>=1.13.1",
+
+    # Data Processing (core)
+    "pandas>=2.2.1",
+    "numpy>=1.26.0",
+
+    # Logging
+    "loguru>=0.7.2",
+]
+
+[project.optional-dependencies]
+agents = [
+    # Installed when building Phase 2+ agent layers
+    "scrapling>=0.2.0",
+    "crewai>=0.30.0",
+    "pandas-ta>=0.3.14b0",
+    "scipy>=1.13.0",
+    "anthropic>=0.21.0",
+    "yfinance>=0.2.37",
+]
+api = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "requests>=2.31.0",
+]
+postgres = [
+    "psycopg2-binary>=2.9.9",
+    "asyncpg>=0.29.0",
+]
+backtest = [
+    "matplotlib>=3.8.3",
+    "seaborn>=0.13.0",
+    "jinja2>=3.1.3",
+]
+dev = [
+    "pytest>=8.1.1",
+    "pytest-asyncio>=0.23.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["config*", "db*", "agents*", "crew*", "core*", "api*", "notifications*", "backtest*", "scripts*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
