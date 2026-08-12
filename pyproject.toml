@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "vyuha-engine"
 version = "0.1.0"
 description = "High-Conviction Equity Accumulation Engine — Multi-Agent, NSE/BSE"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 readme = "README.md"
 
 dependencies = [
