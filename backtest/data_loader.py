@@ -28,8 +28,8 @@ class HistoricalDataLoader:
 
     def load_universe_data(self, symbols: List[str]) -> bool:
         """Loads OHLCV CSVs for each symbol, filters to date range, and builds union trading calendar."""
-        if "^CRSLDX" not in symbols:
-            symbols = list(symbols) + ["^CRSLDX"]
+        if "INDEX_NIFTY500" not in symbols:
+            symbols = list(symbols) + ["INDEX_NIFTY500"]
             
         logger.info(
             f"Loading historical data for {len(symbols)} symbols "

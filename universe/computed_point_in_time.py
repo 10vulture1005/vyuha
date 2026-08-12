@@ -56,7 +56,7 @@ class PointInTimeUniverse:
         for csv in self.ohlc_dir.glob("*.csv"):
             symbol = csv.stem
             df = self._get_df(symbol)
-            if df.empty or current_date not in df.index:
+            if df.empty or pd.Timestamp(current_date) not in df.index:
                 continue
                 
             # Get trailing 20d traded value

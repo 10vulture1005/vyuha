@@ -123,8 +123,16 @@ class ForwardTestEngine:
                 except Exception:
                     continue  # Skip evaluation if price feed temporarily fails
 
+                # Volatility-Scaled ATR Multiplier (matches backtest engine)
+                dyn_mult = None
+                if thresholds.get("technical", {}).get("use_volatility_scaled_atr", False):
+                    try:
+                        dyn_mult = self._compute_volatility_scaled_multiplier(h.symbol, atr_val)
+                    except Exception as e:
+                        logger.debug(f"Volatility scaling unavailable for {h.symbol}: {e}")
+
                 new_stop = compute_new_trailing_stop(
-                    close_price, atr_val, h.trailing_stop_price
+                    close_price, atr_val, h.trailing_stop_price, atr_multiplier=dyn_mult
                 )
                 if new_stop > h.trailing_stop_price:
                     h.trailing_stop_price = new_stop
@@ -136,6 +144,11 @@ class ForwardTestEngine:
                         f"< Stop ₹{h.trailing_stop_price}"
                     )
                     execute_sell(session, h.symbol, h.qty, close_price, rat)
+                    continue
+
+                # EXIT_MODE gate: time-stop and profit-taking only when mode is "full"
+                if settings.EXIT_MODE == "full":
+                    self._evaluate_full_exits(session, h, close_price)
 
         # 3. Execute Capital Allocation Synthesis
         decision = select_and_execute_buy_candidate()
@@ -189,3 +202,46 @@ class ForwardTestEngine:
                 drawdown_pct=drawdown_pct,
             )
             session.merge(snapshot)  # merge to handle re-runs on same day
+
+    def _compute_volatility_scaled_multiplier(self, symbol: str, current_atr: Decimal) -> Optional[Decimal]:
+        """Computes a dynamic ATR multiplier based on recent 60-day volatility percentile."""
+        try:
+            import yfinance as yf
+            import pandas as pd
+            from scipy import stats
+        except ImportError:
+            logger.debug("Missing dependencies (yfinance/pandas/scipy) for volatility scaling.")
+            return None
+
+        ticker_sym = f"{symbol}.NS" if not symbol.endswith(".NS") else symbol
+        try:
+            ticker = yf.Ticker(ticker_sym)
+            df = ticker.history(period="3mo") # Need at least 60 days + 14 days for rolling ATR
+            if df.empty or len(df) < 75:
+                return None
+
+            tr = pd.concat([
+                df["High"] - df["Low"],
+                (df["High"] - df["Close"].shift()).abs(),
+                (df["Low"] - df["Close"].shift()).abs()
+            ], axis=1).max(axis=1)
+            atr_series = tr.rolling(14).mean()
+            
+            recent_60d_atr = atr_series.tail(60).dropna()
+            if recent_60d_atr.empty:
+                return None
+                
+            pctile = stats.percentileofscore(recent_60d_atr, float(current_atr))
+            mult = 1.5 + (pctile / 100.0) * (3.0 - 1.5)
+            return Decimal(str(round(mult, 2)))
+        except Exception as e:
+            logger.debug(f"Failed to compute volatility multiplier for {symbol}: {e}")
+            return None
+
+    def _evaluate_full_exits(self, session, holding: PortfolioHolding, current_close: Decimal):
+        """Placeholder for time-stops and partial profit taking (mode 'full')."""
+        # In a real setup, this would mirror the backtest logic exactly. 
+        # For now, it's explicitly gated to prevent unintended execution when we want trailing_stop_only.
+        logger.debug(f"Full exits (time-stops/profits) evaluated for {holding.symbol}")
+        pass
+

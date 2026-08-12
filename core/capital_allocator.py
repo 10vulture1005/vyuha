@@ -239,8 +239,14 @@ def select_and_execute_buy_candidate(signal_date: date) -> Union[BuyDecision, Ho
                 
             qty = calculate_risk_sized_position(float(equity), float(settings.RISK_PER_TRADE_PCT), float(risk_per_share), float(sig.entry_price), float(settings.MAX_POSITION_CONCENTRATION_PCT))
             if qty > 0:
-                cost = sig.entry_price * Decimal(str(qty))
-                if cost < cash:
+                gross_cost = sig.entry_price * Decimal(str(qty))
+                stt = gross_cost * Decimal(str(settings.STT_PCT)) / Decimal("100.0")
+                exch_charge = gross_cost * Decimal(str(settings.EXCHANGE_TXN_CHARGE_PCT)) / Decimal("100.0")
+                sebi_fee = gross_cost * Decimal(str(settings.SEBI_TURNOVER_FEE_PCT)) / Decimal("100.0")
+                total_friction = round(stt + exch_charge + sebi_fee, 2)
+                total_cost = gross_cost + total_friction
+                
+                if total_cost <= cash:
                     rationale = f"Priority 2 New Slot: {sig.pattern_type} setup (Strength: {sig.signal_strength}). Risk-sized: {qty} shares."
                     if any(h.symbol == sig.symbol for h in open_holdings):
                         rationale = f"Priority 1 Accumulation: Fresh {sig.pattern_type} signal on existing holding."

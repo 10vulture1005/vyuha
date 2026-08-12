@@ -74,6 +74,7 @@ class EventDrivenBacktester:
         use_cross_sectional: bool = False,
         use_fcs_gate: bool = False,
         use_cash_regime: bool = False,
+        exit_mode: str = "full",
     ):
         self.loader = HistoricalDataLoader(start_date, end_date)
         self.symbols = symbols
@@ -83,6 +84,7 @@ class EventDrivenBacktester:
         self.use_cross_sectional = use_cross_sectional
         self.use_fcs_gate = use_fcs_gate
         self.use_cash_regime = use_cash_regime
+        self.exit_mode = exit_mode
         
         self.pit_universe = PointInTimeUniverse() if use_computed_universe else None
         self.fund_provider = FundamentalsProvider() if use_fcs_gate else None
@@ -111,8 +113,6 @@ class EventDrivenBacktester:
         Base.metadata.create_all(bind=self._engine)
         
         symbols_to_seed = self.symbols
-        if self.use_computed_universe and self.pit_universe:
-            symbols_to_seed = list(self.pit_universe.metadata.keys())
             
         with self._get_session() as session:
             for sym in symbols_to_seed:
@@ -169,8 +169,6 @@ class EventDrivenBacktester:
             RuntimeError: If historical data loading fails.
         """
         symbols_to_load = self.symbols
-        if self.use_computed_universe and self.pit_universe:
-            symbols_to_load = list(self.pit_universe.metadata.keys())
             
         if not self.loader.load_universe_data(symbols_to_load):
             raise RuntimeError("Data loading failed.")
@@ -256,64 +254,65 @@ class EventDrivenBacktester:
                         session.add(h)
 
                     # Phase 3.3: Time-in-Trade Stop
-                    time_stop_days = thresholds.get("technical", {}).get("time_stop_days", 12)
-                    # use len of df_slice since first_buy_date to count exact trading days
-                    buy_date = pd.Timestamp(h.first_buy_date)
-                    bars_since_buy = len(df_slice.loc[buy_date:])
-                    if bars_since_buy >= time_stop_days:
-                        # Check unrealized PnL in R-multiples
-                        r_mult = (current_close - h.avg_buy_price) / h.initial_risk if h.initial_risk > 0 else Decimal("0")
-                        if Decimal("-0.5") <= r_mult <= Decimal("0.5"):
-                            execute_sell(session, h.symbol, h.qty, fill_price_sell, f"Time-Stop Breached ({bars_since_buy} days stagnant at {r_mult:.2f}R)")
-                            continue
-
-                    # Profit Taking (Phase D & L)
-                    pt = thresholds.get("risk", {}).get("profit_taking", thresholds.get("technical", {}).get("profit_taking", {}))
-                    if pt and h.initial_risk > 0:
-                        if self.use_multi_tier:
-                            tiers = pt.get("tiers", [])
-                            hit_list = h.tiers_hit if h.tiers_hit is not None else []
-                            for tier_idx, tier in enumerate(tiers):
-                                if tier_idx in hit_list:
-                                    continue
-                                r_mult = Decimal(str(tier.get("r_multiple", 1.0)))
-                                target_price = h.avg_buy_price + (r_mult * h.initial_risk)
+                    if self.exit_mode == "full":
+                        time_stop_days = thresholds.get("risk", {}).get("time_stop_days", 12)
+                        # use len of df_slice since first_buy_date to count exact trading days
+                        buy_date = pd.Timestamp(h.first_buy_date)
+                        bars_since_buy = len(df_slice.loc[buy_date:])
+                        if bars_since_buy >= time_stop_days:
+                            # Check unrealized PnL in R-multiples
+                            r_mult = (current_close - h.avg_buy_price) / h.initial_risk if h.initial_risk > 0 else Decimal("0")
+                            if Decimal("-0.5") <= r_mult <= Decimal("0.5"):
+                                execute_sell(session, h.symbol, h.qty, fill_price_sell, f"Time-Stop Breached ({bars_since_buy} days stagnant at {r_mult:.2f}R)")
+                                continue
+    
+                        # Profit Taking (Phase D & L)
+                        pt = thresholds.get("risk", {}).get("profit_taking", thresholds.get("technical", {}).get("profit_taking", {}))
+                        if pt and h.initial_risk > 0:
+                            if self.use_multi_tier:
+                                tiers = pt.get("tiers", [])
+                                hit_list = h.tiers_hit if h.tiers_hit is not None else []
+                                for tier_idx, tier in enumerate(tiers):
+                                    if tier_idx in hit_list:
+                                        continue
+                                    r_mult = Decimal(str(tier.get("r_multiple", 1.0)))
+                                    target_price = h.avg_buy_price + (r_mult * h.initial_risk)
+                                    if current_close >= target_price:
+                                        sell_pct = Decimal(str(tier.get("sell_pct", 33.0))) / Decimal("100")
+                                        # Phase L: qty to sell is based on original qty
+                                        qty_to_sell = int(h.initial_qty * sell_pct)
+                                        if qty_to_sell > h.qty:
+                                            qty_to_sell = h.qty
+                                            
+                                        if qty_to_sell > 0:
+                                            execute_partial_sell(
+                                                session, h.symbol, qty_to_sell, fill_price_sell,
+                                                f"Partial Profit Taking {r_mult}R Tier {tier_idx} Hit"
+                                            )
+                                            # Update JSON array by copying list because SQLAlchemy JSON changes need re-assignment
+                                            new_hit_list = list(hit_list)
+                                            new_hit_list.append(tier_idx)
+                                            h.tiers_hit = new_hit_list
+                                            if pt.get("trail_to_breakeven_on_first_target", False):
+                                                h.trailing_stop_price = max(h.trailing_stop_price, h.avg_buy_price)
+                                            session.add(h)
+                                            break # only process one tier per day
+                            else:
+                                k = Decimal(str(pt.get("k_multiple", 2)))
+                                target_price = h.avg_buy_price + (k * h.initial_risk)
                                 if current_close >= target_price:
-                                    sell_pct = Decimal(str(tier.get("sell_pct", 33.0))) / Decimal("100")
-                                    # Phase L: qty to sell is based on original qty
-                                    qty_to_sell = int(h.initial_qty * sell_pct)
-                                    if qty_to_sell > h.qty:
-                                        qty_to_sell = h.qty
-                                        
+                                    p_pct = Decimal(str(pt.get("p_percent", 50.0))) / Decimal("100")
+                                    qty_to_sell = int(h.qty * p_pct)
                                     if qty_to_sell > 0:
                                         execute_partial_sell(
                                             session, h.symbol, qty_to_sell, fill_price_sell,
-                                            f"Partial Profit Taking {r_mult}R Tier {tier_idx} Hit"
+                                            f"Partial Profit Taking {k}R Target Hit"
                                         )
-                                        # Update JSON array by copying list because SQLAlchemy JSON changes need re-assignment
-                                        new_hit_list = list(hit_list)
-                                        new_hit_list.append(tier_idx)
-                                        h.tiers_hit = new_hit_list
-                                        if pt.get("trail_to_breakeven_on_first_target", False):
-                                            h.trailing_stop_price = max(h.trailing_stop_price, h.avg_buy_price)
+                                        trail_frac = Decimal(str(pt.get("trail_to_breakeven_fraction", 1.0)))
+                                        breakeven_stop = h.avg_buy_price * trail_frac
+                                        h.trailing_stop_price = max(h.trailing_stop_price, breakeven_stop)
                                         session.add(h)
-                                        break # only process one tier per day
-                        else:
-                            k = Decimal(str(pt.get("k_multiple", 2)))
-                            target_price = h.avg_buy_price + (k * h.initial_risk)
-                            if current_close >= target_price:
-                                p_pct = Decimal(str(pt.get("p_percent", 50.0))) / Decimal("100")
-                                qty_to_sell = int(h.qty * p_pct)
-                                if qty_to_sell > 0:
-                                    execute_partial_sell(
-                                        session, h.symbol, qty_to_sell, fill_price_sell,
-                                        f"Partial Profit Taking {k}R Target Hit"
-                                    )
-                                    trail_frac = Decimal(str(pt.get("trail_to_breakeven_fraction", 1.0)))
-                                    breakeven_stop = h.avg_buy_price * trail_frac
-                                    h.trailing_stop_price = max(h.trailing_stop_price, breakeven_stop)
-                                    session.add(h)
-                                    continue # Skip stop breach check this day if we took profit
+                                        continue # Skip stop breach check this day if we took profit
 
                     if is_stop_breached(current_close, h.trailing_stop_price):
                         rat = (
@@ -325,7 +324,7 @@ class EventDrivenBacktester:
                 # Phase 3.4: Cash Regime (Market Filter)
                 skip_signal_generation = False
                 if self.use_cash_regime:
-                    nifty_df = self.loader.ohlc_matrix.get("^CRSLDX") # Using Nifty 500 proxy for Nifty 50 due to our index proxy
+                    nifty_df = self.loader.ohlc_matrix.get("INDEX_NIFTY500") # Using Nifty 500 proxy for Nifty 50 due to our index proxy
                     if nifty_df is not None:
                         idx_slice = nifty_df.loc[:current_date]
                         if len(idx_slice) > 252:
@@ -349,7 +348,7 @@ class EventDrivenBacktester:
                 else:
                   current_symbols = self.symbols
                   if self.use_computed_universe and self.pit_universe:
-                      current_symbols = self.pit_universe.get_midcap_universe(current_date.date(), top_n=50)
+                      current_symbols = self.pit_universe.get_midcap_universe(current_date.date(), top_n=150)
 
                   # Phase 3.1: FCS Gate
                   fcs_scores = {}
@@ -494,8 +493,8 @@ class EventDrivenBacktester:
 
         # ── Compute Final Metrics ──
         if result.daily_equity_curve:
-            # 1. CAGR
-            start_eq = result.daily_equity_curve[0]["total_value"]
+            # 1. CAGR (use true initial capital, not day-1 equity which includes SIP credit)
+            start_eq = settings.INITIAL_CAPITAL
             end_eq = result.daily_equity_curve[-1]["total_value"]
             years = len(result.daily_equity_curve) / 252.0
             if years > 0 and start_eq > 0:

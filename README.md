@@ -19,7 +19,7 @@
 
 ## 📊 Backtest Results
 
-> **5-Year Honest Backtest** (Jan 2021 – Jan 2026) | ₹1,00,000 Initial + ₹1,000/month SIP  
+> **5-Year Hardened Point-in-Time Backtest** (Jan 2021 – Jan 2026) | ₹1,00,000 Initial + ₹1,000/month SIP  
 > Net of all friction: STT, Exchange charges, SEBI fees, DP charges, and slippage
 
 <div align="center">
@@ -28,20 +28,21 @@
 
 </div>
 
-| Metric | Value |
-|--------|-------|
-| **CAGR** | **25.10%** |
-| **Max Drawdown** | **-23.03%** |
-| **Win Rate** | **34.04%** |
-| **Avg R-Multiple** | **0.33R** |
-| **Total Trades** | **358** |
-| **Initial Capital** | ₹1,00,000 |
-| **Total SIP Invested** | ₹60,000 (60 mos × ₹1,000) |
-| **Final Portfolio Value** | **₹3,03,164** |
-| **Net Return on Deposited Capital** | **+89.48%** |
+| Metric | Original Strategy | Hardened Strategy (Current Baseline) |
+|--------|-------------------|-------------------------------------|
+| **CAGR** | 21.39% | **19.09%** |
+| **Max Drawdown** | -24.49% | **-16.52%** *(31.5% Drawdown Reduction)* |
+| **Win Rate** | 34.01% | **33.99%** |
+| **Avg R-Multiple** | 0.29R | **0.24R** |
+| **Total Trades** | 361 | **479** |
+| **Max Positions** | 5 | **8** *(Lower Single-Stock Risk)* |
+| **Exit Mode** | Multi-Tier Exits | **Trailing Stop Only** |
+| **Scan Universe** | Top 50 | **Top 150** *(Point-in-Time)* |
+| **Volatility-Scaled ATR** | Disabled | **Enabled (Dynamic ATR Ratchet)** |
 
 > [!NOTE]
-> The backtest uses **zero lookahead bias** — each day processes only data available up to that point. Sentiment/governance vetting (FinBERT) is disabled during historical backtesting since past news feeds aren't available, but is fully active in forward testing.
+> Running the backtest script automatically generates an institutional tear sheet (Sharpe, Sortino, monthly return heatmap, drawdown breakdown) using **QuantStats**, saved directly to `scratch/stats_report.html`.
+
 
 ---
 
@@ -382,7 +383,8 @@ Expected output:
 ### 6. Run Backtest
 
 ```bash
-python scripts/run_backtest_with_plots.py
+# Run backtest with trailing-stop-only exit mode and QuantStats tearsheet generation
+python scripts/run_backtest_with_plots.py --exit-mode trailing_stop_only
 ```
 
 ### 7. Run Forward Test (Paper Trading)

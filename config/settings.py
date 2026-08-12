@@ -62,7 +62,7 @@ class Settings(BaseSettings):
         description="Monthly capital credit in INR",
     )
     MAX_POSITIONS: int = Field(
-        default=5, ge=1,
+        default=8, ge=1,
         description="Maximum concurrent portfolio holdings",
     )
     RISK_PER_TRADE_PCT: float = Field(
@@ -99,6 +99,9 @@ class Settings(BaseSettings):
     # ─── Operational ─────────────────────────────────────────────────────────
     LIVE_TRADING_ENABLED: bool = Field(
         default=False, description="Safety switch: False = Paper/Advisory mode"
+    )
+    EXIT_MODE: str = Field(
+        default="full", description="Exit strategy: 'full' or 'trailing_stop_only'"
     )
     LOG_LEVEL: str = Field(
         default="INFO", description="Loguru logging level"
