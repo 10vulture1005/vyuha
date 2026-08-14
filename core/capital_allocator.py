@@ -213,10 +213,17 @@ def compute_account_equity(session: Session, cash: Decimal, open_holdings: List[
     mtm = sum([h.avg_buy_price * Decimal(str(h.qty)) for h in open_holdings])
     return cash + mtm
 
-def select_and_execute_buy_candidate(signal_date: date) -> Union[BuyDecision, HoldCash]:
+def select_and_execute_buy_candidate(signal_date: date = None, circuit_breaker_active: bool = False) -> Union[BuyDecision, HoldCash]:
     """Evaluates today's technical signals against cash and priority rules."""
+    if signal_date is None:
+        signal_date = date.today()
+        
     with get_session() as session:
         cash = get_current_cash(session)
+        
+        if circuit_breaker_active:
+            return HoldCash(cash_balance=float(cash), rationale="Monthly Circuit Breaker Active. MTD Drawdown exceeded limit.")
+            
         open_holdings = session.query(PortfolioHolding).filter(PortfolioHolding.status == HoldingStatus.OPEN.value).all()
         equity = compute_account_equity(session, cash, open_holdings)
         

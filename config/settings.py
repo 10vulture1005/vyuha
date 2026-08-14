@@ -77,6 +77,10 @@ class Settings(BaseSettings):
         default=0.25, ge=0.05, le=1.0,
         description="Maximum percentage of equity in a single position",
     )
+    MAX_MONTHLY_DRAWDOWN_PCT: float = Field(
+        default=5.0, ge=1.0, le=20.0,
+        description="Max allowed MTD portfolio drawdown percentage before halting buys",
+    )
 
     # ─── Transaction Friction ────────────────────────────────────────────────
     DP_CHARGE_PER_SELL: float = Field(

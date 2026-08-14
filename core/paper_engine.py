@@ -11,7 +11,7 @@ Safety Guard:
 """
 from datetime import datetime, date, timezone
 from decimal import Decimal
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from loguru import logger
 
 from db.session import get_session

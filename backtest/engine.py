@@ -199,6 +199,8 @@ class EventDrivenBacktester:
         )
 
         current_month = -1
+        month_start_equity = Decimal(str(settings.INITIAL_CAPITAL))
+        circuit_breaker_active = False
         logger.info("Starting chronological event loop replay...")
 
         for current_date in self.loader.trading_calendar:
@@ -206,6 +208,17 @@ class EventDrivenBacktester:
             if current_date.month != current_month:
                 current_month = current_date.month
                 credit_monthly_sip_execution(settings.MONTHLY_SIP_AMOUNT)
+                if result.daily_equity_curve:
+                    month_start_equity = Decimal(str(result.daily_equity_curve[-1]["total_value"]))
+                circuit_breaker_active = False # Reset circuit breaker at month start
+                
+            # Compute current MTD drawdown
+            if result.daily_equity_curve:
+                current_equity = Decimal(str(result.daily_equity_curve[-1]["total_value"]))
+                if month_start_equity > 0:
+                    mtd_drawdown = ((current_equity - month_start_equity) / month_start_equity) * 100
+                    if mtd_drawdown <= -Decimal(str(settings.MAX_MONTHLY_DRAWDOWN_PCT)):
+                        circuit_breaker_active = True
 
             with self._get_session() as session:
                 # ── Step 2: Risk & Exit Review on Open Holdings ──
@@ -441,7 +454,7 @@ class EventDrivenBacktester:
             # ── Step 4: Capital Allocation Synthesis ──
             # Pass simulation date to the allocator so it queries signals for
             # the current backtest day (not the real system date)
-            select_and_execute_buy_candidate(signal_date=current_date.date())
+            select_and_execute_buy_candidate(signal_date=current_date.date(), circuit_breaker_active=circuit_breaker_active)
 
             # ── Step 5: Daily Mark-to-Market Valuation ──
             with self._get_session() as session:

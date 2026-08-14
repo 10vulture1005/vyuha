@@ -57,7 +57,7 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["config*", "db*", "agents*", "crew*", "core*", "api*", "notifications*", "backtest*", "scripts*"]
+include = ["config*", "db*", "agents*", "crew*", "core*", "api*", "notifications*", "backtest*", "scripts*", "universe*", "data*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
