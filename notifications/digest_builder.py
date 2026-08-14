@@ -12,7 +12,7 @@ def escape_markdown_v2(text: str) -> str:
 
 def get_portfolio_snapshot(session) -> tuple[List[dict], Decimal]:
     """Queries current open holdings and latest ledger cash balance."""
-    holdings = session.query(PortfolioHolding).filter(PortfolioHolding.status == HoldingStatus.OPEN).all()
+    holdings = session.query(PortfolioHolding).filter(PortfolioHolding.status == HoldingStatus.OPEN.value).all()
     h_list = [
         {"symbol": h.symbol, "qty": h.qty, "avg_price": float(h.avg_buy_price), "stop": float(h.trailing_stop_price)}
         for h in holdings
