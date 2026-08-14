@@ -1,5 +1,5 @@
 # crew/crew_definition.py
-from crewai import Agent, Crew, Process
+from crewai import Agent, Crew, Process, LLM
 from config.settings import settings
 from agents.tools.ledger_tools import (
     run_capital_allocator,
@@ -10,8 +10,6 @@ from agents.tools.ledger_tools import (
 )
 from crew.tasks import get_tasks
 
-from langchain_openai import ChatOpenAI
-
 def create_crew(is_weekly: bool = False) -> Crew:
     """Creates the CrewAI orchestration pipeline.
     
@@ -21,10 +19,10 @@ def create_crew(is_weekly: bool = False) -> Crew:
     
     groq_key = settings.GROQ_API_KEY.get_secret_value() if settings.GROQ_API_KEY else ""
     
-    groq_llm = ChatOpenAI(
-        openai_api_base="https://api.groq.com/openai/v1",
-        openai_api_key=groq_key,
-        model_name="llama-3.3-70b-versatile",
+    # Use CrewAI's native LLM wrapper (powered by LiteLLM)
+    groq_llm = LLM(
+        model="groq/llama-3.3-70b-versatile",
+        api_key=groq_key,
     )
     
     # 1. Fundamental Analyst

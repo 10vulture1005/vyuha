@@ -1,5 +1,5 @@
 # agents/tools/ledger_tools.py
-from langchain.tools import tool
+from crewai.tools import tool
 from core.capital_allocator import select_and_execute_buy_candidate
 from agents.risk_exit_agent import RiskExitAgent
 from agents.technical_agent import TechnicalAgent
