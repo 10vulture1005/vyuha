@@ -1,4 +1,11 @@
-# crew/crew_definition.py
+import litellm
+litellm.drop_params = True  # Drops unsupported parameters like cache_breakpoint before sending to Groq
+
+# Optional: Monkey-patch CrewAI's cache_breakpoint directly to prevent the injection
+import crewai.llm as _crewai_llm
+if hasattr(_crewai_llm, "cache"):
+    _crewai_llm.cache.mark_cache_breakpoint = lambda msg: msg
+
 from crewai import Agent, Crew, Process, LLM
 from config.settings import settings
 from agents.tools.ledger_tools import (
