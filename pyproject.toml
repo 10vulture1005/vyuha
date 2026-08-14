@@ -38,6 +38,7 @@ agents = [
     "yfinance>=0.2.37",
     "langchain",
     "langchain-openai",
+    "litellm",
 ]
 api = [
     "fastapi>=0.110.0",
