@@ -100,3 +100,37 @@ def detect_mean_reversion(df: pd.DataFrame) -> dict:
         }
         
     return None
+
+def determine_market_regime(nifty50: pd.DataFrame, nifty500: pd.DataFrame) -> str:
+    """
+    Returns 'RED' if both Nifty 50 and Nifty 500 are below their 200 DMA,
+    otherwise 'GREEN'.
+    """
+    if len(nifty50) < 200 or len(nifty500) < 200:
+        return "GREEN" # Not enough data to block
+        
+    n50_close = nifty50["Close"].iloc[-1]
+    n50_sma200 = nifty50["Close"].rolling(200).mean().iloc[-1]
+    
+    n500_close = nifty500["Close"].iloc[-1]
+    n500_sma200 = nifty500["Close"].rolling(200).mean().iloc[-1]
+    
+    if n50_close < n50_sma200 and n500_close < n500_sma200:
+        return "RED"
+        
+    return "GREEN"
+
+def is_vix_extreme(indiavix: pd.DataFrame) -> bool:
+    """
+    Returns True if current VIX close is > 80th percentile of the trailing 252 days.
+    """
+    if len(indiavix) < 252:
+        return False
+        
+    # Look at the last 252 days (~1 trading year)
+    recent_vix = indiavix["Close"].tail(252)
+    current_vix = recent_vix.iloc[-1]
+    percentile_80 = recent_vix.quantile(0.80)
+    
+    return bool(current_vix > percentile_80)
+

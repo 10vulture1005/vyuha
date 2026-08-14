@@ -13,11 +13,12 @@ Invokes the Phase 2 Fundamental Agent to:
 import sys
 from loguru import logger
 
-from agents.fundamental_agent import generate_watchlist_execution
+from agents.fundamental_agent import FundamentalAgent
 
 if __name__ == "__main__":
     try:
-        active_list = generate_watchlist_execution()
+        agent = FundamentalAgent()
+        active_list = agent.generate_watchlist_execution()
         logger.info(
             f"Weekly fundamental refresh successful. "
             f"{len(active_list)} ACTIVE symbols. Top 5: {active_list[:5]}"
