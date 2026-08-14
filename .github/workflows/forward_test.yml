@@ -8,6 +8,9 @@ on:
     - cron: '0 11 * * 0'
   workflow_dispatch:  # Allow manual triggers for testing
 
+permissions:
+  contents: write
+
 env:
   PYTHON_VERSION: '3.12'
   PYTHONPATH: '.'
