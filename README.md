@@ -20,7 +20,22 @@
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-*Live forward-test metrics will be dynamically injected here after the first pipeline run.*
+> **Last Updated:** `2026-08-15` | **Total Value:** `₹100,000.00` | **Cash:** `₹100,000.00`
+
+<div align="center">
+
+| Metric | Value | Graphic |
+|---|---|---|
+| **Net PnL** | 🟢 ₹0.00 (+0.00%) | - |
+| **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
+| **Max Drawdown** | 0.00% | ░░░░░░░░░░░░░░░ |
+| **Portfolio Heat** | 0.00% / 6.00% | ░░░░░░░░░░░░░░░ |
+
+</div>
+
+### 💼 Current Open Positions (0 / 8)
+
+*Holding 100% Cash.*
 <!-- LIVE_STATS_END -->
 
 ---
