@@ -58,7 +58,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           LIVE_TRADING_ENABLED: 'false'
-          EXIT_MODE: 'trailing_stop_only'
+          EXIT_MODE: 'full'
           LOG_LEVEL: INFO
         run: |
           python -c "from db.models import Base; from db.session import sync_engine; Base.metadata.create_all(sync_engine)"
@@ -66,10 +66,11 @@ jobs:
 
       - name: Commit updated database state
         run: |
-          git config user.name "vyuha-bot"
-          git config user.email "vyuha-bot@users.noreply.github.com"
+          git config user.name "10vulture1005"
+          git config user.email "vaidiksaxena14@gmail.com"
           git add -f vyuha.db
           git diff --cached --quiet || git commit -m "📊 Forward test: $(date -u +'%Y-%m-%d')"
+          git pull --rebase origin main
           git push
 
       - name: Upload logs as artifact
@@ -122,15 +123,16 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           LIVE_TRADING_ENABLED: 'false'
-          EXIT_MODE: 'trailing_stop_only'
+          EXIT_MODE: 'full'
         run: |
           python -c "from db.models import Base; from db.session import sync_engine; Base.metadata.create_all(sync_engine)"
           python scripts/run_daily_pipeline.py --weekly
 
       - name: Commit updated state
         run: |
-          git config user.name "vyuha-bot"
-          git config user.email "vyuha-bot@users.noreply.github.com"
+          git config user.name "10vulture1005"
+          git config user.email "vaidiksaxena14@gmail.com"
           git add -f vyuha.db data/
           git diff --cached --quiet || git commit -m "📋 Weekly refresh: $(date -u +'%Y-%m-%d')"
+          git pull --rebase origin main
           git push
