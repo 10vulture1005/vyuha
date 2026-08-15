@@ -21,8 +21,10 @@ def _patched_completion(*args, **kwargs):
     if "tools" in kwargs and kwargs["tools"]:
         for tool in kwargs["tools"]:
             if "function" in tool and "parameters" in tool["function"]:
-                if "properties" not in tool["function"]["parameters"]:
-                    tool["function"]["parameters"]["properties"] = {}
+                if "properties" not in tool["function"]["parameters"] or not tool["function"]["parameters"]["properties"]:
+                    tool["function"]["parameters"]["properties"] = {"__dummy_property__": {"type": "string", "description": "Ignore this property"}}
+                if "required" not in tool["function"]["parameters"]:
+                    tool["function"]["parameters"]["required"] = []
     
     retries = 3
     for attempt in range(retries):
@@ -43,8 +45,10 @@ async def _patched_acompletion(*args, **kwargs):
     if "tools" in kwargs and kwargs["tools"]:
         for tool in kwargs["tools"]:
             if "function" in tool and "parameters" in tool["function"]:
-                if "properties" not in tool["function"]["parameters"]:
-                    tool["function"]["parameters"]["properties"] = {}
+                if "properties" not in tool["function"]["parameters"] or not tool["function"]["parameters"]["properties"]:
+                    tool["function"]["parameters"]["properties"] = {"__dummy_property__": {"type": "string", "description": "Ignore this property"}}
+                if "required" not in tool["function"]["parameters"]:
+                    tool["function"]["parameters"]["required"] = []
                 
     retries = 3
     for attempt in range(retries):
