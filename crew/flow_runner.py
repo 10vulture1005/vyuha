@@ -13,6 +13,12 @@ def _patched_completion(*args, **kwargs):
         for msg in kwargs["messages"]:
             if "cache_breakpoint" in msg:
                 del msg["cache_breakpoint"]
+    if "tools" in kwargs and kwargs["tools"]:
+        for tool in kwargs["tools"]:
+            if "function" in tool and "parameters" in tool["function"]:
+                params = tool["function"]["parameters"]
+                if "required" in params and "properties" not in params:
+                    params["properties"] = {}
     return _original_completion(*args, **kwargs)
 
 async def _patched_acompletion(*args, **kwargs):
@@ -20,6 +26,12 @@ async def _patched_acompletion(*args, **kwargs):
         for msg in kwargs["messages"]:
             if "cache_breakpoint" in msg:
                 del msg["cache_breakpoint"]
+    if "tools" in kwargs and kwargs["tools"]:
+        for tool in kwargs["tools"]:
+            if "function" in tool and "parameters" in tool["function"]:
+                params = tool["function"]["parameters"]
+                if "required" in params and "properties" not in params:
+                    params["properties"] = {}
     return await _original_acompletion(*args, **kwargs)
 
 litellm.completion = _patched_completion
