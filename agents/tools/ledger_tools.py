@@ -7,8 +7,8 @@ from agents.fundamental_agent import FundamentalAgent
 from agents.sentiment_agent import run_sentiment_pass_execution
 
 @tool("Run Capital Allocator")
-def run_capital_allocator(dummy: str = "") -> str:
-    """Evaluates today's technical signals against cash and priority rules to buy or hold cash."""
+def run_capital_allocator(dummy: str = "", action: str = "", symbol: str = "", qty: int = 0, price: float = 0.0, rationale: str = "", **kwargs) -> str:
+    """Evaluates today's technical signals against cash and priority rules to buy or hold cash. DO NOT PASS ANY PARAMETERS TO THIS TOOL, it runs autonomously."""
     decision = select_and_execute_buy_candidate()
     return decision.model_dump_json()
 
