@@ -8,31 +8,41 @@ import litellm
 _original_completion = litellm.completion
 _original_acompletion = litellm.acompletion
 
+import time
+import asyncio
+from litellm.exceptions import RateLimitError
+
 def _patched_completion(*args, **kwargs):
     if "messages" in kwargs:
         for msg in kwargs["messages"]:
             if "cache_breakpoint" in msg:
                 del msg["cache_breakpoint"]
-    if "tools" in kwargs and kwargs["tools"]:
-        for tool in kwargs["tools"]:
-            if "function" in tool and "parameters" in tool["function"]:
-                params = tool["function"]["parameters"]
-                if "required" in params and "properties" not in params:
-                    params["properties"] = {}
-    return _original_completion(*args, **kwargs)
+    
+    retries = 3
+    for attempt in range(retries):
+        try:
+            return _original_completion(*args, **kwargs)
+        except RateLimitError as e:
+            if attempt == retries - 1:
+                raise
+            logger.warning(f"Groq RateLimitError hit (attempt {attempt + 1}/{retries}). Sleeping for 15 seconds... Error: {str(e)}")
+            time.sleep(15)
 
 async def _patched_acompletion(*args, **kwargs):
     if "messages" in kwargs:
         for msg in kwargs["messages"]:
             if "cache_breakpoint" in msg:
                 del msg["cache_breakpoint"]
-    if "tools" in kwargs and kwargs["tools"]:
-        for tool in kwargs["tools"]:
-            if "function" in tool and "parameters" in tool["function"]:
-                params = tool["function"]["parameters"]
-                if "required" in params and "properties" not in params:
-                    params["properties"] = {}
-    return await _original_acompletion(*args, **kwargs)
+                
+    retries = 3
+    for attempt in range(retries):
+        try:
+            return await _original_acompletion(*args, **kwargs)
+        except RateLimitError as e:
+            if attempt == retries - 1:
+                raise
+            logger.warning(f"Groq RateLimitError hit (attempt {attempt + 1}/{retries}). Sleeping for 15 seconds... Error: {str(e)}")
+            await asyncio.sleep(15)
 
 litellm.completion = _patched_completion
 litellm.acompletion = _patched_acompletion
