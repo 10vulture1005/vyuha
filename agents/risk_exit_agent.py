@@ -35,7 +35,26 @@ class RiskExitAgent:
                     
                 # Trailing stop ratcheting
                 t = thresholds.get("technical", {})
-                atr_mult = Decimal(str(t.get("atr_multiplier", 2.5)))
+                
+                dyn_mult = None
+                if t.get("use_volatility_scaled_atr", False):
+                    try:
+                        from scipy import stats
+                        tr = pd.concat([
+                            df["High"] - df["Low"],
+                            (df["High"] - df["Close"].shift()).abs(),
+                            (df["Low"] - df["Close"].shift()).abs()
+                        ], axis=1).max(axis=1)
+                        atr_series = tr.rolling(14).mean()
+                        recent_60d_atr = atr_series.tail(60).dropna()
+                        if not recent_60d_atr.empty:
+                            pctile = stats.percentileofscore(recent_60d_atr, float(current_atr))
+                            mult = 1.5 + (pctile / 100.0) * (3.0 - 1.5)
+                            dyn_mult = Decimal(str(round(mult, 2)))
+                    except Exception as e:
+                        logger.debug(f"Failed to compute volatility multiplier for {h.symbol}: {e}")
+                
+                atr_mult = dyn_mult if dyn_mult else Decimal(str(t.get("atr_multiplier", 2.5)))
                 new_stop = compute_new_trailing_stop(current_close, current_atr, h.trailing_stop_price, atr_mult)
                 if new_stop > h.trailing_stop_price:
                     h.trailing_stop_price = new_stop

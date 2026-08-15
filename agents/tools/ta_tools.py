@@ -4,6 +4,8 @@ from typing import Optional, Any
 from pydantic import BaseModel
 import pandas as pd
 import numpy as np
+from loguru import logger
+import yfinance as yf
 
 from config import thresholds
 
@@ -35,9 +37,27 @@ def get_atr(df: pd.DataFrame, period: int = 14) -> float:
     atr = true_range.rolling(period).mean()
     return float(atr.iloc[-1])
 
+_ohlc_cache = {}
+
 def load_ohlc_df(symbol: str) -> pd.DataFrame:
-    # Just a stub for import, backtest engine loads its own directly
-    return pd.DataFrame()
+    """Fetches 1 year of daily historical data using yfinance, with in-memory caching."""
+    if symbol in _ohlc_cache:
+        return _ohlc_cache[symbol]
+        
+    ticker_sym = f"{symbol}.NS" if not symbol.endswith(".NS") else symbol
+    try:
+        ticker = yf.Ticker(ticker_sym)
+        df = ticker.history(period="1y")
+        if df.empty or len(df) < 5:
+            logger.warning(f"No price history returned for {ticker_sym}")
+            return pd.DataFrame()
+            
+        # Ensure we don't have timezone issues, use timezone naive if necessary, but standard yfinance is fine.
+        _ohlc_cache[symbol] = df
+        return df
+    except Exception as e:
+        logger.error(f"Failed to fetch live price for {symbol} via yfinance: {e}")
+        return pd.DataFrame()
 
 def detect_w_bottom(df: pd.DataFrame) -> Optional[TechnicalSignalResult]:
     """Identifies W-Bottom exhaustion setups using local extrema symmetry and volume confirmation."""

@@ -17,6 +17,14 @@
 
 ---
 
+## 🔴 Live Forward Test Performance
+
+<!-- LIVE_STATS_START -->
+*Live forward-test metrics will be dynamically injected here after the first pipeline run.*
+<!-- LIVE_STATS_END -->
+
+---
+
 ## 📊 Backtest Results
 
 > **5-Year Hardened Point-in-Time Backtest** (Jan 2021 – Jan 2026) | ₹1,00,000 Initial + ₹1,000/month SIP  

@@ -62,13 +62,14 @@ jobs:
           LOG_LEVEL: INFO
         run: |
           python -c "from db.models import Base; from db.session import sync_engine; Base.metadata.create_all(sync_engine)"
-          python scripts/run_forward_test.py --mode once
+          python scripts/run_daily_pipeline.py
+          python scripts/update_readme_stats.py
 
       - name: Commit updated database state
         run: |
           git config user.name "10vulture1005"
           git config user.email "vaidiksaxena14@gmail.com"
-          git add -f vyuha.db
+          git add -f vyuha.db README.md
           git diff --cached --quiet || git commit -m "📊 Forward test: $(date -u +'%Y-%m-%d')"
           git pull --rebase origin main
           git push
