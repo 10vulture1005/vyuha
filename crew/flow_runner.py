@@ -17,6 +17,12 @@ def _patched_completion(*args, **kwargs):
         for msg in kwargs["messages"]:
             if "cache_breakpoint" in msg:
                 del msg["cache_breakpoint"]
+                
+    if "tools" in kwargs and kwargs["tools"]:
+        for tool in kwargs["tools"]:
+            if "function" in tool and "parameters" in tool["function"]:
+                if "properties" not in tool["function"]["parameters"]:
+                    tool["function"]["parameters"]["properties"] = {}
     
     retries = 3
     for attempt in range(retries):
@@ -33,6 +39,12 @@ async def _patched_acompletion(*args, **kwargs):
         for msg in kwargs["messages"]:
             if "cache_breakpoint" in msg:
                 del msg["cache_breakpoint"]
+                
+    if "tools" in kwargs and kwargs["tools"]:
+        for tool in kwargs["tools"]:
+            if "function" in tool and "parameters" in tool["function"]:
+                if "properties" not in tool["function"]["parameters"]:
+                    tool["function"]["parameters"]["properties"] = {}
                 
     retries = 3
     for attempt in range(retries):
