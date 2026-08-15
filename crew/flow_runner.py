@@ -22,8 +22,9 @@ def _patched_completion(*args, **kwargs):
         for tool in kwargs["tools"]:
             if "function" in tool and "parameters" in tool["function"]:
                 params = tool["function"]["parameters"]
-                if "properties" not in params or not params["properties"]:
-                    params["properties"] = {"__dummy_property__": {"type": "string", "description": "Ignore this property"}}
+                # Ensure properties exists (Groq rejects missing properties)
+                if "properties" not in params:
+                    params["properties"] = {}
                 # Groq requires `required` to list every key in `properties`
                 params["required"] = list(params["properties"].keys())
     
@@ -47,8 +48,9 @@ async def _patched_acompletion(*args, **kwargs):
         for tool in kwargs["tools"]:
             if "function" in tool and "parameters" in tool["function"]:
                 params = tool["function"]["parameters"]
-                if "properties" not in params or not params["properties"]:
-                    params["properties"] = {"__dummy_property__": {"type": "string", "description": "Ignore this property"}}
+                # Ensure properties exists (Groq rejects missing properties)
+                if "properties" not in params:
+                    params["properties"] = {}
                 # Groq requires `required` to list every key in `properties`
                 params["required"] = list(params["properties"].keys())
                 
