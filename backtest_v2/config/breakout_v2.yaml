@@ -1,0 +1,53 @@
+universe:
+  index: "NIFTY_500"
+  pit_data_required: true
+  warmup_days: 450
+  sector_taxonomy: "NSE_SNAPSHOT"
+
+signals:
+  percentile_window: 252
+  compression_window: 120
+  weights:
+    T: 0.30
+    M: 0.25
+    C: 0.20
+    B: 0.25
+  s_tech_threshold: 0.75
+
+filters:
+  regime_filter: true
+  liquidity_min_turnover_inr: 10000000
+  min_turnover_multiplier: 20
+
+portfolio_risk:
+  aggregate_open_risk_cap: 0.025
+  max_positions_per_sector: 2
+  max_total_positions: 5
+
+sizing:
+  mode: "risk_capped_by_sip"
+  risk_per_trade: 0.005
+
+entry:
+  order_type: "market_at_open"
+  gap_cap_pct: 0.01
+  re_entry_cooldown_days: 10
+
+exits:
+  fail_safe_atr_mult: 2.0
+  chandelier_atr_mult: 3.0
+  breakeven_floor_r: 1.0
+  exit_trigger: "intraday_low"
+  optional_modules:
+    pyramiding: false
+    regime_tighten: false
+    signal_decay: false
+
+costs:
+  stcg_tax_rate: 0.20
+  include_stt_gst_stamp: true
+
+data:
+  ohlc_dir: "data/raw/ohlc"
+  constituents_dir: "data/raw/constituents"
+  sector_mapping_file: "config/sector_mapping.csv"

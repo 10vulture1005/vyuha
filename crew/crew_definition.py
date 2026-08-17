@@ -28,7 +28,7 @@ def create_crew(is_weekly: bool = False) -> Crew:
     
     # Use CrewAI's native LLM wrapper (powered by LiteLLM)
     groq_llm = LLM(
-        model="groq/llama-3.3-70b-versatile",
+        model="groq/openai/gpt-oss-20b",
         api_key=groq_key,
     )
     

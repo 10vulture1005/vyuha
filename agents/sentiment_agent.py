@@ -64,7 +64,7 @@ def run_sentiment_pass_execution() -> List[str]:
     with get_session() as session:
         # Strict funnel: only scan active watchlist candidates from Phase 2
         active_items = (
-            session.query(Watchlist.symbol, Universe.name)
+            session.query(Watchlist.symbol, Universe.company_name)
             .join(Universe, Watchlist.symbol == Universe.symbol)
             .filter(Watchlist.status == WatchlistStatus.ACTIVE.value)
             .all()
