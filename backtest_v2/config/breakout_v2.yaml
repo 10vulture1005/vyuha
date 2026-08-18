@@ -8,8 +8,8 @@ signals:
   percentile_window: 252
   compression_window: 120
   weights:
-    T: 0.30
-    M: 0.25
+    T: 0.25
+    M: 0.30
     C: 0.20
     B: 0.25
   s_tech_threshold: 0.75
@@ -20,27 +20,31 @@ filters:
   min_turnover_multiplier: 20
 
 portfolio_risk:
-  aggregate_open_risk_cap: 0.025
+  aggregate_open_risk_cap: 0.05
   max_positions_per_sector: 2
-  max_total_positions: 5
+  max_total_positions: 7
+  drawdown_halt_pct: 0.08
 
 sizing:
   mode: "risk_capped_by_sip"
-  risk_per_trade: 0.005
+  risk_per_trade: 0.01
 
 entry:
   order_type: "market_at_open"
-  gap_cap_pct: 0.01
-  re_entry_cooldown_days: 10
+  gap_cap_pct: 0.02
+  re_entry_cooldown_days: 5
 
 exits:
   fail_safe_atr_mult: 2.0
   chandelier_atr_mult: 3.0
   breakeven_floor_r: 1.0
   exit_trigger: "intraday_low"
+  partial_exit_r: 3.0
+  partial_exit_pct: 0.50
+  adaptive_trailing: true
   optional_modules:
     pyramiding: false
-    regime_tighten: false
+    regime_tighten: true
     signal_decay: false
 
 costs:

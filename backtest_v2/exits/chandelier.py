@@ -22,6 +22,10 @@ class PositionState:
     # For breakeven floor
     breakeven_triggered: bool = False
     
+    # For partial profit-taking
+    partial_exit_triggered: bool = False
+    original_shares: int = 0  # Set to shares at entry, before any partial exits
+    
     # For pyramiding
     pyramid_entries: list = field(default_factory=list)  # List of (price, shares, stop_at_entry)
     
@@ -34,12 +38,19 @@ class PositionState:
 
 class ChandelierExit:
     """
-    Ratcheted Chandelier Exit with breakeven floor.
+    Ratcheted Chandelier Exit with breakeven floor, adaptive trailing, and partial exits.
     
     SL_0 = max(L_t - 0.2*ATR, P_entry - 2.0*ATR)
-    TS_t = max(TS_{t-1}, HighestClose_t - 3*ATR)  [monotonic]
+    TS_t = max(TS_{t-1}, HighestClose_t - mult*ATR)  [monotonic]
     If unrealized >= 1R: ActiveStop = max(TS_t, P_entry)
-    Exit when price breaches ActiveStop.
+    
+    Adaptive trailing: multiplier tightens as unrealized R grows:
+        < 1R  -> 3.0 ATR (full room)
+        1R-3R -> 2.5 ATR
+        3R-5R -> 2.0 ATR
+        > 5R  -> 1.5 ATR (tight trailing)
+    
+    Partial exit: sell partial_exit_pct of shares at partial_exit_r R-multiple.
     """
     
     def __init__(self, config=None):
@@ -49,6 +60,9 @@ class ChandelierExit:
         self.buffer_mult = 0.2  # Fixed per spec
         self.breakeven_floor_r = self.config.exits.breakeven_floor_r
         self.exit_trigger = self.config.exits.exit_trigger  # "intraday_low" or "close_only"
+        self.adaptive_trailing = self.config.exits.adaptive_trailing
+        self.partial_exit_r = self.config.exits.partial_exit_r
+        self.partial_exit_pct = self.config.exits.partial_exit_pct
     
     def compute_sl_0(self, signal_low: float, entry_price: float, atr: float) -> float:
         """
@@ -81,11 +95,37 @@ class ChandelierExit:
             entry_date=entry_date,
             atr_at_entry=atr,
             signal_low=signal_low,
-            shares=shares
+            shares=shares,
+            original_shares=shares
         )
         
         logger.debug(f"Initialized {symbol}: entry={entry_price:.2f}, SL_0={sl_0:.2f}, ATR={atr:.2f}")
         return state
+    
+    def get_adaptive_multiplier(self, state: PositionState, current_close: float) -> float:
+        """
+        Get ATR multiplier that tightens as unrealized profit grows.
+        
+        This protects large winners from giving back excessive gains
+        while still giving new entries room to develop.
+        """
+        if not self.adaptive_trailing:
+            return self.chandelier_mult
+        
+        risk_per_share = state.entry_price - state.initial_stop
+        if risk_per_share <= 0:
+            return self.chandelier_mult
+        
+        unrealized_r = (current_close - state.entry_price) / risk_per_share
+        
+        if unrealized_r >= 5.0:
+            return 1.5
+        elif unrealized_r >= 3.0:
+            return 2.0
+        elif unrealized_r >= 1.0:
+            return 2.5
+        else:
+            return self.chandelier_mult  # 3.0
     
     def update_trailing_stop(
         self,
@@ -106,12 +146,13 @@ class ChandelierExit:
         if current_close > state.highest_close:
             state.highest_close = current_close
         
-        # Determine ATR multiplier (regime tightening)
+        # Determine ATR multiplier
         if regime_tightened:
-            mult = self.config.exits.optional_modules.regime_tighten_mult if hasattr(
-                self.config.exits.optional_modules, 'regime_tighten_mult') else 2.0
+            # Regime tightening overrides to 2.0
+            mult = 2.0
         else:
-            mult = self.chandelier_mult
+            # Use adaptive multiplier (tightens with profit)
+            mult = self.get_adaptive_multiplier(state, current_close)
         
         # Chandelier stop: HighestClose - mult * ATR
         chandelier_stop = state.highest_close - mult * current_atr
@@ -121,7 +162,7 @@ class ChandelierExit:
         stop_moved = new_stop > state.current_stop
         
         if stop_moved:
-            logger.debug(f"{state.symbol}: Stop ratcheted {state.current_stop:.2f} -> {new_stop:.2f}")
+            logger.debug(f"{state.symbol}: Stop ratcheted {state.current_stop:.2f} -> {new_stop:.2f} (mult={mult:.1f})")
         
         state.current_stop = new_stop
         return new_stop, stop_moved
@@ -151,6 +192,38 @@ class ChandelierExit:
         """Get the active stop price (with breakeven floor)."""
         return self.check_breakeven_floor(state, current_close)
     
+    def check_partial_exit(
+        self,
+        state: PositionState,
+        current_close: float
+    ) -> Tuple[bool, int]:
+        """
+        Check if position qualifies for partial profit-taking.
+        
+        Returns:
+            (should_partial_exit, shares_to_sell)
+        """
+        if state.partial_exit_triggered:
+            return False, 0
+        
+        if state.shares <= 1:
+            return False, 0
+        
+        risk_per_share = state.entry_price - state.initial_stop
+        if risk_per_share <= 0:
+            return False, 0
+        
+        unrealized_r = (current_close - state.entry_price) / risk_per_share
+        
+        if unrealized_r >= self.partial_exit_r:
+            shares_to_sell = max(1, int(state.shares * self.partial_exit_pct))
+            # Don't sell all shares — leave at least 1
+            shares_to_sell = min(shares_to_sell, state.shares - 1)
+            if shares_to_sell > 0:
+                return True, shares_to_sell
+        
+        return False, 0
+    
     def check_exit(
         self,
         state: PositionState,
@@ -161,10 +234,13 @@ class ChandelierExit:
         """
         Check if position should be exited.
         
+        Uses get_active_stop() which includes breakeven floor logic.
+        
         Returns:
             (should_exit, reason)
         """
-        active_stop = state.current_stop
+        # FIX: Use active stop (includes breakeven floor), not raw current_stop
+        active_stop = self.get_active_stop(state, current_close)
         
         if self.exit_trigger == "intraday_low":
             # Exit if intraday low breaches stop
@@ -209,7 +285,9 @@ class ChandelierExit:
             'realized_r': state.realized_r,
             'reason': reason,
             'highest_close': state.highest_close,
-            'breakeven_triggered': state.breakeven_triggered
+            'breakeven_triggered': state.breakeven_triggered,
+            'partial_exit_triggered': state.partial_exit_triggered,
+            'original_shares': state.original_shares
         }
 
 

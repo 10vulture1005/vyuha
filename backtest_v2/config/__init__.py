@@ -29,6 +29,7 @@ class PortfolioRiskConfig(BaseModel):
     aggregate_open_risk_cap: float = 0.025
     max_positions_per_sector: int = 2
     max_total_positions: int = 5
+    drawdown_halt_pct: float = 0.08
 
 
 class SizingConfig(BaseModel):
@@ -53,6 +54,9 @@ class ExitsConfig(BaseModel):
     chandelier_atr_mult: float = 3.0
     breakeven_floor_r: float = 1.0
     exit_trigger: Literal["intraday_low", "close_only"] = "intraday_low"
+    partial_exit_r: float = 3.0
+    partial_exit_pct: float = 0.50
+    adaptive_trailing: bool = True
     optional_modules: OptionalModulesConfig = Field(default_factory=OptionalModulesConfig)
 
 

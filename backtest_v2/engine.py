@@ -9,6 +9,7 @@ from backtest_v2.signals.composite import CompositeScorer
 from backtest_v2.execution.entry import EntryManager
 from backtest_v2.execution.sizing import PositionSizer
 from backtest_v2.exits.chandelier import ChandelierExit, PositionState
+from backtest_v2.exits.optional.regime_tighten import RegimeTightening
 from backtest_v2.risk.portfolio import PortfolioRiskManager
 from backtest_v2.costs.tax_and_fees import TransactionCostModel
 from backtest_v2.models import V2PortfolioHolding, V2TradeLog, V2DailyMetrics
@@ -18,6 +19,13 @@ class BacktestEngineV2:
     """
     Main orchestration engine for VYUHA Breakout v2.
     Coordinates signals, execution, exits, and portfolio risk.
+    
+    v2.2 optimizations:
+    - Adaptive trailing stop (tightens with profit)
+    - Partial profit-taking at configurable R-multiple
+    - Regime-aware stop tightening
+    - Drawdown circuit breaker
+    - Equity updated before entries for accurate sizing
     """
     
     def __init__(self, config: Optional[BreakoutV2Config] = None):
@@ -31,16 +39,21 @@ class BacktestEngineV2:
         self.risk_manager = PortfolioRiskManager(self.config)
         self.cost_model = TransactionCostModel(self.config)
         self.position_sizer = PositionSizer(self.config)
+        self.regime_tightening = RegimeTightening(self.config)
         
         # State
         self.current_date: Optional[date] = None
         self.equity = float(settings.INITIAL_CAPITAL)
         self.cash = self.equity
+        self.peak_equity = self.equity  # For drawdown circuit breaker
         
         # Tracking
         self.active_positions: Dict[str, PositionState] = {}
         self.trade_log: List[dict] = []
         self.daily_metrics: List[dict] = []
+        
+        # Nifty data for regime checks (set externally or loaded)
+        self.nifty_df: Optional[pd.DataFrame] = None
         
     def generate_signals(self, ohlc_data: Dict[str, pd.DataFrame]) -> Dict[str, dict]:
         """Generate entry signals for the current date."""
@@ -76,10 +89,85 @@ class BacktestEngineV2:
                 }
                 
         return signals
+    
+    def _check_drawdown_breaker(self) -> bool:
+        """
+        Drawdown circuit breaker: halt new entries when peak-to-trough
+        drawdown exceeds threshold.
         
-    def process_exits(self, current_date_data: Dict[str, dict]):
+        Returns:
+            True if entries should be halted.
+        """
+        self.peak_equity = max(self.peak_equity, self.equity)
+        if self.peak_equity <= 0:
+            return False
+        
+        current_dd = (self.peak_equity - self.equity) / self.peak_equity
+        
+        if current_dd > self.config.portfolio_risk.drawdown_halt_pct:
+            logger.warning(
+                f"Drawdown circuit breaker ACTIVE: {current_dd:.2%} > "
+                f"{self.config.portfolio_risk.drawdown_halt_pct:.2%} — skipping new entries"
+            )
+            return True
+        return False
+    
+    def _is_regime_bearish(self, current_dt: pd.Timestamp) -> bool:
+        """Check if market regime is bearish (Nifty < SMA200)."""
+        return self.regime_tightening.check_regime_flip(self.nifty_df, current_dt)
+    
+    def process_partial_exits(self, current_date_data: Dict[str, dict]):
+        """Check all active positions for partial profit-taking."""
+        for symbol, state in list(self.active_positions.items()):
+            if symbol not in current_date_data:
+                continue
+            
+            bar = current_date_data[symbol]
+            current_close = bar['Close']
+            
+            should_partial, shares_to_sell = self.exit_engine.check_partial_exit(
+                state, current_close
+            )
+            
+            if should_partial and shares_to_sell > 0:
+                exit_price = current_close  # Partial exits at close
+                
+                # Calculate costs
+                notional = exit_price * shares_to_sell
+                costs = self.cost_model.calculate_sell_costs(notional)
+                net_value = notional - costs.total
+                
+                self.cash += net_value
+                
+                # Update position
+                state.shares -= shares_to_sell
+                state.partial_exit_triggered = True
+                
+                # Update risk manager shares
+                self.risk_manager.update_shares(symbol, state.shares)
+                
+                # Log partial exit
+                realized_r = self.exit_engine.calculate_r_multiple(state, exit_price)
+                self.trade_log.append({
+                    'symbol': symbol,
+                    'action': 'PARTIAL_SELL',
+                    'date': self.current_date.isoformat(),
+                    'price': exit_price,
+                    'shares': shares_to_sell,
+                    'remaining_shares': state.shares,
+                    'realized_r': realized_r,
+                    'reason': f'Partial profit-take at {realized_r:.1f}R'
+                })
+                
+                logger.info(
+                    f"Partial exit {symbol}: sold {shares_to_sell} @ {exit_price:.2f} "
+                    f"({realized_r:.1f}R), {state.shares} remaining"
+                )
+        
+    def process_exits(self, current_date_data: Dict[str, dict], current_dt: pd.Timestamp):
         """Check all active positions for exit conditions."""
         exited = []
+        regime_bearish = self._is_regime_bearish(current_dt)
         
         for symbol, state in list(self.active_positions.items()):
             if symbol not in current_date_data:
@@ -87,16 +175,15 @@ class BacktestEngineV2:
                 
             bar = current_date_data[symbol]
             
-            # Update trailing stop based on yesterday's close/atr? Or today's?
-            # Normally we check exit first, then update stop for tomorrow
-            
+            # Check exit FIRST (uses active stop with breakeven floor)
             should_exit, reason = self.exit_engine.check_exit(
                 state, bar['High'], bar['Low'], bar['Close']
             )
             
             if should_exit:
                 # Execute exit
-                exit_price = state.current_stop if self.config.exits.exit_trigger == "intraday_low" else bar['Close']
+                active_stop = self.exit_engine.get_active_stop(state, bar['Close'])
+                exit_price = active_stop if self.config.exits.exit_trigger == "intraday_low" else bar['Close']
                 
                 # Account for gap-down through the stop
                 if bar['Open'] < exit_price:
@@ -114,15 +201,17 @@ class BacktestEngineV2:
                 )
                 self.trade_log.append(exit_record)
                 
-                # Start cooldown
+                # Start cooldown (only for stop-loss exits, not risk-cap exits)
                 self.entry_manager.record_stop_out(symbol, self.current_date.isoformat())
                 
                 self.risk_manager.remove_position(symbol)
                 exited.append(symbol)
             else:
-                # Update stop for tomorrow
+                # Update trailing stop for tomorrow, with regime awareness
                 self.exit_engine.update_trailing_stop(
-                    state, bar['Close'], bar['High'], bar['Low'], bar.get('ATR', state.atr_at_entry)
+                    state, bar['Close'], bar['High'], bar['Low'],
+                    bar.get('ATR', state.atr_at_entry),
+                    regime_tightened=regime_bearish
                 )
                 
         for symbol in exited:
@@ -212,6 +301,13 @@ class BacktestEngineV2:
         
         logger.info(f"Starting backtest from {all_dates.min().date()} to {all_dates.max().date()}")
         
+        # Try to extract Nifty data for regime checks
+        for key in ['INDEX_NIFTY50', 'INDEX_NIFTY500', 'NIFTY50', 'NIFTY_50']:
+            if key in ohlc_data:
+                self.nifty_df = ohlc_data[key]
+                logger.info(f"Using {key} for regime filter")
+                break
+        
         # Pre-compute signals for speed (normally we would do this day by day in live trading)
         # But for backtesting, vectorizing the signal generation is much faster
         signals_cache = {}
@@ -274,32 +370,43 @@ class BacktestEngineV2:
                                 'atr': row['atr']
                             }
             
-            # 1. Process Exits (using today's prices)
-            self.process_exits(current_date_data)
+            # 1. Process Exits (using today's prices, with regime awareness)
+            self.process_exits(current_date_data, current_dt)
             
-            # 2. Process Entries (using today's signals, executing at tomorrow's open logic)
-            # In a true vectorized backtester, entry execution happens tomorrow. 
-            # Our `process_entries` handles it by expecting `next_open`.
-            # To simulate correctly, we need the NEXT day's open.
-            # So let's look ahead 1 day for `next_open`.
-            next_idx = all_dates.get_loc(current_dt) + 1
-            if next_idx < len(all_dates) and daily_signals:
-                next_dt = all_dates[next_idx]
-                next_date_data = {}
-                for symbol in daily_signals.keys():
-                    if symbol in signals_cache and next_dt in signals_cache[symbol].index:
-                        next_date_data[symbol] = {
-                            'Open': signals_cache[symbol].loc[next_dt, 'open'],
-                            'High': signals_cache[symbol].loc[next_dt, 'high'],
-                            'Low': signals_cache[symbol].loc[next_dt, 'low'],
-                            'Close': signals_cache[symbol].loc[next_dt, 'close']
-                        }
-                self.process_entries(daily_signals, next_date_data)
+            # 1.5 Process Partial Exits (profit-taking at configured R-multiple)
+            self.process_partial_exits(current_date_data)
             
-            # 3. Update Cooldowns
+            # 2. Update equity BEFORE entries for accurate sizing
+            active_equity = sum(
+                pos.shares * current_date_data[sym]['Close'] 
+                for sym, pos in self.active_positions.items() 
+                if sym in current_date_data
+            )
+            self.equity = self.cash + active_equity
+            
+            # 2.5 Check drawdown circuit breaker
+            entries_halted = self._check_drawdown_breaker()
+            
+            # 3. Process Entries (using today's signals, executing at tomorrow's open logic)
+            if not entries_halted:
+                next_idx = all_dates.get_loc(current_dt) + 1
+                if next_idx < len(all_dates) and daily_signals:
+                    next_dt = all_dates[next_idx]
+                    next_date_data = {}
+                    for symbol in daily_signals.keys():
+                        if symbol in signals_cache and next_dt in signals_cache[symbol].index:
+                            next_date_data[symbol] = {
+                                'Open': signals_cache[symbol].loc[next_dt, 'open'],
+                                'High': signals_cache[symbol].loc[next_dt, 'high'],
+                                'Low': signals_cache[symbol].loc[next_dt, 'low'],
+                                'Close': signals_cache[symbol].loc[next_dt, 'close']
+                            }
+                    self.process_entries(daily_signals, next_date_data)
+            
+            # 4. Update Cooldowns
             self.entry_manager.reduce_cooldowns()
             
-            # 4. Record Daily Metrics
+            # 5. Final equity snapshot (after any entries)
             active_equity = sum(
                 pos.shares * current_date_data[sym]['Close'] 
                 for sym, pos in self.active_positions.items() 
@@ -308,12 +415,16 @@ class BacktestEngineV2:
             total_equity = self.cash + active_equity
             self.equity = total_equity
             
+            # Update peak for circuit breaker
+            self.peak_equity = max(self.peak_equity, total_equity)
+            
             self.daily_metrics.append({
                 'date': self.current_date,
                 'equity': total_equity,
                 'cash': self.cash,
                 'invested': active_equity,
-                'open_positions': len(self.active_positions)
+                'open_positions': len(self.active_positions),
+                'drawdown_pct': (self.peak_equity - total_equity) / self.peak_equity if self.peak_equity > 0 else 0
             })
             
         logger.info(f"Backtest completed. Final equity: {total_equity:.2f}")

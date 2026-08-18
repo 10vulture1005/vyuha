@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from datetime import date
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 def calculate_cagr(start_equity: float, end_equity: float, years: float) -> float:
     """Calculate Compound Annual Growth Rate."""

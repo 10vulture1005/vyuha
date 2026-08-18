@@ -11,7 +11,7 @@ class CompositeScorer:
     """
     Computes composite score S_raw and re-percentiles to S_tech.
     
-    S_raw = 0.30*T + 0.25*M + 0.20*C + 0.25*B
+    S_raw = 0.25*T + 0.30*M + 0.20*C + 0.25*B
     S_tech = P_252(S_raw)  <- Re-percentile the composite
     """
     
