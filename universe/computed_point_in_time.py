@@ -56,7 +56,12 @@ class PointInTimeUniverse:
         for csv in self.ohlc_dir.glob("*.csv"):
             symbol = csv.stem
             df = self._get_df(symbol)
-            if df.empty or pd.Timestamp(current_date) not in df.index:
+            if df.empty:
+                continue
+                
+            # Ensure the stock traded recently relative to current_date (within 21 days to handle weekends/holidays/delays)
+            slice_df = df.loc[:current_date]
+            if slice_df.empty or (pd.Timestamp(current_date) - slice_df.index[-1]).days > 21:
                 continue
                 
             # Get trailing 20d traded value

@@ -44,7 +44,15 @@ def load_ohlc_df(symbol: str) -> pd.DataFrame:
     if symbol in _ohlc_cache:
         return _ohlc_cache[symbol]
         
-    ticker_sym = f"{symbol}.NS" if not symbol.endswith(".NS") else symbol
+    ticker_mapping = {
+        "INDEX_NIFTY50": "^NSEI",
+        "INDEX_NIFTY500": "^CRSLDX",
+        "INDEX_INDIAVIX": "^INDIAVIX"
+    }
+    
+    ticker_sym = ticker_mapping.get(symbol)
+    if not ticker_sym:
+        ticker_sym = f"{symbol}.NS" if not symbol.endswith(".NS") else symbol
     try:
         ticker = yf.Ticker(ticker_sym)
         df = ticker.history(period="1y")

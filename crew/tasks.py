@@ -50,7 +50,7 @@ def get_tasks(
             "Execute 'Run Capital Allocator' tool to make the final daily allocation decision based on today's technical signals and cash balance. "
             "Write a clear, concise rationale for the final decision (BUY, SELL, or HOLD_CASH)."
         ),
-        expected_output="A final JSON decision object containing action, symbol, qty, price, and rationale.",
+        expected_output="The EXACT JSON decision object returned by the 'Run Capital Allocator' tool, containing action, symbol, qty, price, and rationale. DO NOT anonymize, modify, or change the symbol to 'XYZ'. Return the true stock symbol exactly as provided by the tool.",
         agent=portfolio_manager,
         context=[t_tech, t_risk]
     )

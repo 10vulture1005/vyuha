@@ -34,6 +34,8 @@ def main():
             
         logger.info(f"Final Decision Rationale: {result}")
         import json
+        if hasattr(result, "raw"):
+            result = result.raw
         try:
             parsed_result = json.loads(result) if isinstance(result, str) else result
         except json.JSONDecodeError:
