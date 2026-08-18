@@ -20,22 +20,24 @@
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-08-17` | **Total Value:** `₹100,000.00` | **Cash:** `₹100,000.00`
+> **Last Updated:** `2026-08-18` | **Total Value:** `₹99,987.87` | **Cash:** `₹92,333.67`
 
 <div align="center">
 
 | Metric | Value | Graphic |
 |---|---|---|
-| **Net PnL** | 🟢 ₹0.00 (+0.00%) | - |
+| **Net PnL** | 🔴 ₹-12.13 (-0.01%) | - |
 | **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
-| **Max Drawdown** | 0.00% | ░░░░░░░░░░░░░░░ |
-| **Portfolio Heat** | 0.00% / 6.00% | ░░░░░░░░░░░░░░░ |
+| **Max Drawdown** | -0.01% | ░░░░░░░░░░░░░░░ |
+| **Portfolio Heat** | 0.96% / 6.00% | ██░░░░░░░░░░░░░ |
 
 </div>
 
-### 💼 Current Open Positions (0 / 8)
+### 💼 Current Open Positions (1 / 8)
 
-*Holding 100% Cash.*
+| Symbol | Qty | Avg Buy | Trailing Stop | Risk/Share | Pattern |
+|---|---|---|---|---|---|
+| **SCHNEIDER** | 6 | ₹1,276.40 | ₹1,117.01 | ₹159.39 | `W_BOTTOM` |
 <!-- LIVE_STATS_END -->
 
 ---
