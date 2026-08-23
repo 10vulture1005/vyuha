@@ -71,7 +71,7 @@ jobs:
           git config user.email "vaidiksaxena14@gmail.com"
           git add -f vyuha.db README.md
           git diff --cached --quiet || git commit -m "📊 Forward test: $(date -u +'%Y-%m-%d')"
-          git pull --rebase origin main
+          git pull --rebase -X theirs origin main
           git push
 
       - name: Upload logs as artifact
@@ -85,6 +85,8 @@ jobs:
   weekly-refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # Run only after the forward test has committed its DB update
+    needs: forward-test
     # Only run on Sundays
     if: github.event.schedule == '0 11 * * 0' || github.event_name == 'workflow_dispatch'
 
@@ -135,5 +137,5 @@ jobs:
           git config user.email "vaidiksaxena14@gmail.com"
           git add -f vyuha.db data/
           git diff --cached --quiet || git commit -m "📋 Weekly refresh: $(date -u +'%Y-%m-%d')"
-          git pull --rebase origin main
+          git pull --rebase -X theirs origin main
           git push
