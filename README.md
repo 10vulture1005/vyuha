@@ -20,16 +20,16 @@
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-08-23` | **Total Value:** `₹99,121.88` | **Cash:** `₹45,456.18`
+> **Last Updated:** `2026-08-23` | **Total Value:** `₹99,112.07` | **Cash:** `₹35,969.37`
 
 <div align="center">
 
 | Metric | Value | Graphic |
 |---|---|---|
-| **Net PnL** | 🔴 ₹-878.12 (-0.88%) | - |
+| **Net PnL** | 🔴 ₹-887.93 (-0.89%) | - |
 | **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
-| **Max Drawdown** | -0.88% | █░░░░░░░░░░░░░░ |
-| **Portfolio Heat** | 5.67% / 6.00% | ██████████████░ |
+| **Max Drawdown** | -0.89% | █░░░░░░░░░░░░░░ |
+| **Portfolio Heat** | 6.48% / 6.00% | ███████████████ |
 
 </div>
 
@@ -38,7 +38,7 @@
 | Symbol | Qty | Avg Buy | Trailing Stop | Risk/Share | Pattern |
 |---|---|---|---|---|---|
 | **SCHNEIDER** | 19 | ₹1,268.07 | ₹1,117.01 | ₹159.39 | `W_BOTTOM` |
-| **PREMIERENE** | 29 | ₹1,048.07 | ₹990.41 | ₹89.42 | `W_BOTTOM` |
+| **PREMIERENE** | 38 | ₹1,049.24 | ₹990.41 | ₹89.42 | `W_BOTTOM` |
 <!-- LIVE_STATS_END -->
 
 ---
