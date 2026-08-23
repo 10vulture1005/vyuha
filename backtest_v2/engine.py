@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from typing import Dict, List, Optional
 from datetime import date
 from loguru import logger
@@ -10,6 +11,7 @@ from backtest_v2.execution.entry import EntryManager
 from backtest_v2.execution.sizing import PositionSizer
 from backtest_v2.exits.chandelier import ChandelierExit, PositionState
 from backtest_v2.exits.optional.regime_tighten import RegimeTightening
+from backtest_v2.exits.optional.pyramiding import PyramidingManager
 from backtest_v2.risk.portfolio import PortfolioRiskManager
 from backtest_v2.costs.tax_and_fees import TransactionCostModel
 from backtest_v2.models import V2PortfolioHolding, V2TradeLog, V2DailyMetrics
@@ -20,11 +22,13 @@ class BacktestEngineV2:
     Main orchestration engine for VYUHA Breakout v2.
     Coordinates signals, execution, exits, and portfolio risk.
     
-    v2.2 optimizations:
+    v2.3 optimizations:
+    - All spec filters now enforced (regime, breakout trigger, liquidity)
     - Adaptive trailing stop (tightens with profit)
     - Partial profit-taking at configurable R-multiple
     - Regime-aware stop tightening
     - Drawdown circuit breaker
+    - Pyramiding: add to winners at +2 ATR
     - Equity updated before entries for accurate sizing
     """
     
@@ -40,6 +44,7 @@ class BacktestEngineV2:
         self.cost_model = TransactionCostModel(self.config)
         self.position_sizer = PositionSizer(self.config)
         self.regime_tightening = RegimeTightening(self.config)
+        self.pyramiding_manager = PyramidingManager(self.config)
         
         # State
         self.current_date: Optional[date] = None
@@ -217,6 +222,86 @@ class BacktestEngineV2:
         for symbol in exited:
             del self.active_positions[symbol]
             
+    def process_pyramiding(self, current_date_data: Dict[str, dict]):
+        """Check active positions for pyramid add-on eligibility."""
+        if not self.pyramiding_manager.enabled:
+            return
+
+        # Calculate current portfolio heat
+        total_risk = self.risk_manager.get_total_risk()
+        portfolio_heat_pct = total_risk / self.equity if self.equity > 0 else 0
+        max_heat_pct = self.config.portfolio_risk.aggregate_open_risk_cap
+
+        for symbol, state in list(self.active_positions.items()):
+            if symbol not in current_date_data:
+                continue
+
+            bar = current_date_data[symbol]
+            current_close = bar['Close']
+            current_atr = bar.get('ATR', state.atr_at_entry)
+
+            # Check if this symbol has an S_tech signal today
+            symbol_cache = signals_cache.get(symbol) if hasattr(self, '_signals_cache_ref') else None
+            current_s_tech = 0.0
+            if symbol_cache is not None and self.current_date in symbol_cache.index:
+                current_s_tech = symbol_cache.loc[self.current_date, 's_tech']
+                if pd.isna(current_s_tech):
+                    current_s_tech = 0.0
+
+            if not self.pyramiding_manager.check_pyramid_conditions(
+                state, current_close, current_atr, current_s_tech,
+                portfolio_heat_pct, max_heat_pct
+            ):
+                continue
+
+            # Calculate add-on size
+            active_stop = self.exit_engine.get_active_stop(state, current_close)
+            add_on_shares = self.pyramiding_manager.calculate_pyramid_size(
+                self.equity, current_close, active_stop,
+                self.config.sizing.risk_per_trade, self.cash
+            )
+
+            if add_on_shares <= 0:
+                continue
+
+            # Check aggregate risk with add-on
+            add_on_risk = add_on_shares * (current_close - active_stop)
+            if self.risk_manager.would_breach_aggregate_risk(self.equity, add_on_risk):
+                continue
+
+            # Execute pyramid add-on
+            notional = add_on_shares * current_close
+            costs = self.cost_model.calculate_buy_costs(notional)
+            total_cost = notional + costs.total
+
+            if total_cost > self.cash:
+                add_on_shares = int(self.cash / (current_close * 1.01))
+                if add_on_shares <= 0:
+                    continue
+                notional = add_on_shares * current_close
+                total_cost = notional + self.cost_model.calculate_buy_costs(notional).total
+
+            self.cash -= total_cost
+            self.pyramiding_manager.add_pyramid_entry(
+                state, current_close, add_on_shares, active_stop,
+                self.current_date.isoformat(), current_atr
+            )
+            self.risk_manager.update_shares(symbol, state.shares)
+
+            self.trade_log.append({
+                'symbol': symbol,
+                'action': 'PYRAMID_BUY',
+                'date': self.current_date.isoformat(),
+                'price': current_close,
+                'shares': add_on_shares,
+                'reason': f'Pyramid add-on at {current_close:.2f}'
+            })
+
+            logger.info(
+                f"Pyramid {symbol}: +{add_on_shares} @ {current_close:.2f}, "
+                f"total shares now {state.shares}"
+            )
+
     def process_entries(self, signals: Dict[str, dict], current_date_data: Dict[str, dict]):
         """Process new signals and attempt entry."""
         # Sort signals by S_tech descending
@@ -321,16 +406,25 @@ class BacktestEngineV2:
             S_raw, S_tech = self.composite_scorer.compute_all(percentiles)
             atr = self.raw_scorer.compute_atr(df)
             
+            # Pre-compute breakout trigger data (H_20 excluding current bar)
+            h_20 = df['High'].shift(1).rolling(20).max()
+            # Pre-compute liquidity data
+            vol_sma20 = df['Volume'].rolling(20).mean()
+            
             signals_cache[symbol] = pd.DataFrame({
                 's_tech': S_tech,
                 'close': df['Close'],
                 'low': df['Low'],
                 'atr': atr,
                 'open': df['Open'],
-                'high': df['High']
+                'high': df['High'],
+                'h_20': h_20,
+                'vol_sma20': vol_sma20,
+                'volume': df['Volume']
             })
             
         logger.info(f"Signals computed for {len(signals_cache)} symbols. Starting daily loop.")
+        self._signals_cache_ref = signals_cache  # Reference for pyramiding S_tech lookups
         
         current_month = None
         
@@ -362,6 +456,26 @@ class BacktestEngineV2:
                     }
                     
                     if row['s_tech'] > self.config.signals.s_tech_threshold:
+                        # Regime filter: Nifty Close > SMA200
+                        if self.config.filters.regime_filter and self.nifty_df is not None:
+                            nifty_slice = self.nifty_df.loc[:current_dt]
+                            if len(nifty_slice) >= 200:
+                                nifty_close = nifty_slice['Close'].iloc[-1]
+                                nifty_sma200 = nifty_slice['Close'].rolling(200).mean().iloc[-1]
+                                if nifty_close <= nifty_sma200:
+                                    continue
+
+                        # Breakout trigger: Close > H_20 (20-day high excluding current bar)
+                        if pd.notna(row.get('h_20')) and row['close'] <= row['h_20']:
+                            continue
+
+                        # Liquidity filter: SMA20(Volume) * Close >= min_turnover
+                        if pd.notna(row.get('vol_sma20')) and pd.notna(row['close']):
+                            turnover = row['vol_sma20'] * row['close']
+                            if turnover < self.config.filters.liquidity_min_turnover_inr:
+                                continue
+
+                        # Cooldown check
                         if not self.entry_manager.is_in_cooldown(symbol):
                             daily_signals[symbol] = {
                                 's_tech': row['s_tech'],

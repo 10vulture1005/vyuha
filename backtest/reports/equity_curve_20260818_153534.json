@@ -1,0 +1,5975 @@
+{
+  "metrics": {
+    "start_date": "2020-01-01",
+    "end_date": "2023-12-31",
+    "years": 3.99,
+    "total_sip_contributed_inr": 48000.0,
+    "final_portfolio_value_inr": 181456.8,
+    "cagr_pct": 39.53,
+    "sharpe_ratio": 0.68,
+    "sortino_ratio": 0.82,
+    "max_drawdown_pct": -15.38,
+    "total_trades_executed": 469,
+    "total_sells": 0,
+    "win_rate_pct": 0.0,
+    "total_dp_charges_inr": 0,
+    "nifty50_cagr": 15.6,
+    "nifty500_cagr": 18.44,
+    "alpha_nifty50": 23.93,
+    "alpha_nifty500": 21.1
+  },
+  "curve": [
+    {
+      "date": "2020-01-01",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-02",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-03",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-06",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-07",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-08",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-09",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-10",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-13",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-14",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-15",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-16",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-17",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-20",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-21",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-22",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-23",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-24",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-27",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-28",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-29",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-30",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-01-31",
+      "total_value": 101000.0,
+      "cash_balance": 101000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-03",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-04",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-05",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-06",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-07",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-10",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-11",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-12",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-13",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-14",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-17",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-18",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-19",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-20",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-24",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-25",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-26",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-27",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-02-28",
+      "total_value": 102000.0,
+      "cash_balance": 102000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-02",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-03",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-04",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-05",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-06",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-09",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-11",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-12",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-13",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-16",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-17",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-18",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-19",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-20",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-23",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-24",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-25",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-26",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-27",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-30",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-03-31",
+      "total_value": 103000.0,
+      "cash_balance": 103000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-01",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-03",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-07",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-08",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-09",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-13",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-15",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-16",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-17",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-20",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-21",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-22",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-23",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-24",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-27",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-28",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-29",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-04-30",
+      "total_value": 104000.0,
+      "cash_balance": 104000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-04",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-05",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-06",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-07",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-08",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-11",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-12",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-13",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-14",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-15",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-18",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-19",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-20",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-21",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-22",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-26",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-27",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-28",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-05-29",
+      "total_value": 105000.0,
+      "cash_balance": 105000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-01",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-02",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-03",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-04",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-05",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-08",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-09",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-10",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-11",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-12",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-15",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-16",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-17",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-18",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-19",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-22",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-23",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-24",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-25",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-26",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-29",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-06-30",
+      "total_value": 106000.0,
+      "cash_balance": 106000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-01",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-02",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-03",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-06",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-07",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-08",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-09",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-10",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-13",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-14",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-15",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-16",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-17",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-20",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-21",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-22",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-23",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-24",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-27",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-28",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-29",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-30",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-07-31",
+      "total_value": 107000.0,
+      "cash_balance": 107000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-03",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-04",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-05",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-06",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-07",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-10",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-11",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-12",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-13",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-14",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-17",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-18",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-19",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-20",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-21",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-24",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-25",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-26",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-27",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-28",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-08-31",
+      "total_value": 108000.0,
+      "cash_balance": 108000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-01",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-02",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-03",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-04",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-07",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-08",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-09",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-10",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-11",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-14",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-15",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-16",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-17",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-18",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-21",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-22",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-23",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-24",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-25",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-28",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-29",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-09-30",
+      "total_value": 109000.0,
+      "cash_balance": 109000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-01",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-05",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-06",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-07",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-08",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-09",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-12",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-13",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-14",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-15",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-16",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-19",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-20",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-21",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-22",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-23",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-26",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-27",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-28",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-29",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-10-30",
+      "total_value": 110000.0,
+      "cash_balance": 110000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-02",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-03",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-04",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-05",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-06",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-09",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-10",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-11",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-12",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-13",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-14",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-17",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-18",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-19",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-20",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-23",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-24",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-25",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-26",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-11-27",
+      "total_value": 111000.0,
+      "cash_balance": 111000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-01",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-02",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-03",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-04",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-07",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-08",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-09",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-10",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-11",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-14",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-15",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-16",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-17",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-18",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-21",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-22",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-23",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-24",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-28",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-29",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-30",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2020-12-31",
+      "total_value": 112000.0,
+      "cash_balance": 112000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2021-01-01",
+      "total_value": 113000.0,
+      "cash_balance": 113000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2021-01-04",
+      "total_value": 113000.0,
+      "cash_balance": 113000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2021-01-05",
+      "total_value": 113000.0,
+      "cash_balance": 113000.0,
+      "invested_value": 0.0
+    },
+    {
+      "date": "2021-01-06",
+      "total_value": 112919.82884765624,
+      "cash_balance": 93912.135,
+      "invested_value": 19007.69384765625
+    },
+    {
+      "date": "2021-01-07",
+      "total_value": 112827.0896328125,
+      "cash_balance": 74010.6785,
+      "invested_value": 38816.4111328125
+    },
+    {
+      "date": "2021-01-08",
+      "total_value": 113245.3496125,
+      "cash_balance": 57388.4043,
+      "invested_value": 55856.9453125
+    },
+    {
+      "date": "2021-01-11",
+      "total_value": 112106.06513896486,
+      "cash_balance": 32468.9402,
+      "invested_value": 79637.12493896484
+    },
+    {
+      "date": "2021-01-12",
+      "total_value": 114554.46628925782,
+      "cash_balance": 17391.0648,
+      "invested_value": 97163.40148925781
+    },
+    {
+      "date": "2021-01-13",
+      "total_value": 113648.38962910157,
+      "cash_balance": 17391.0648,
+      "invested_value": 96257.32482910156
+    },
+    {
+      "date": "2021-01-14",
+      "total_value": 114730.71201679687,
+      "cash_balance": 17391.0648,
+      "invested_value": 97339.64721679688
+    },
+    {
+      "date": "2021-01-15",
+      "total_value": 113581.36509296874,
+      "cash_balance": 17391.0648,
+      "invested_value": 96190.30029296875
+    },
+    {
+      "date": "2021-01-18",
+      "total_value": 115830.42083476562,
+      "cash_balance": 4795.2702,
+      "invested_value": 111035.15063476562
+    },
+    {
+      "date": "2021-01-19",
+      "total_value": 117646.54705546873,
+      "cash_balance": 4795.2702,
+      "invested_value": 112851.27685546874
+    },
+    {
+      "date": "2021-01-20",
+      "total_value": 119790.06536601562,
+      "cash_balance": 4795.2702,
+      "invested_value": 114994.79516601562
+    },
+    {
+      "date": "2021-01-21",
+      "total_value": 122291.7789890625,
+      "cash_balance": 4795.2702,
+      "invested_value": 117496.5087890625
+    },
+    {
+      "date": "2021-01-22",
+      "total_value": 119504.64739726562,
+      "cash_balance": 4795.2702,
+      "invested_value": 114709.37719726562
+    },
+    {
+      "date": "2021-01-25",
+      "total_value": 112606.8603765625,
+      "cash_balance": 94209.6094,
+      "invested_value": 18397.2509765625
+    },
+    {
+      "date": "2021-01-27",
+      "total_value": 112089.02266308594,
+      "cash_balance": 66758.243,
+      "invested_value": 45330.77966308594
+    },
+    {
+      "date": "2021-01-28",
+      "total_value": 111534.5778040039,
+      "cash_balance": 45560.3087,
+      "invested_value": 65974.2691040039
+    },
+    {
+      "date": "2021-01-29",
+      "total_value": 110861.32176445313,
+      "cash_balance": 20481.2307,
+      "invested_value": 90380.09106445312
+    },
+    {
+      "date": "2021-02-01",
+      "total_value": 115185.90855644531,
+      "cash_balance": 21481.2307,
+      "invested_value": 93704.67785644531
+    },
+    {
+      "date": "2021-02-02",
+      "total_value": 117463.00460546876,
+      "cash_balance": 20791.134,
+      "invested_value": 96671.87060546875
+    },
+    {
+      "date": "2021-02-03",
+      "total_value": 117752.34221660157,
+      "cash_balance": 26624.6502,
+      "invested_value": 91127.69201660156
+    },
+    {
+      "date": "2021-02-04",
+      "total_value": 117466.02511708984,
+      "cash_balance": 29541.0076,
+      "invested_value": 87925.01751708984
+    },
+    {
+      "date": "2021-02-05",
+      "total_value": 117461.95946347657,
+      "cash_balance": 31006.5194,
+      "invested_value": 86455.44006347656
+    },
+    {
+      "date": "2021-02-08",
+      "total_value": 118667.9377321289,
+      "cash_balance": 31736.9323,
+      "invested_value": 86931.0054321289
+    },
+    {
+      "date": "2021-02-09",
+      "total_value": 118862.14098564454,
+      "cash_balance": 32470.1607,
+      "invested_value": 86391.98028564453
+    },
+    {
+      "date": "2021-02-10",
+      "total_value": 119642.73174492188,
+      "cash_balance": 32470.1607,
+      "invested_value": 87172.57104492188
+    },
+    {
+      "date": "2021-02-11",
+      "total_value": 123202.0782415039,
+      "cash_balance": 32470.1607,
+      "invested_value": 90731.91754150389
+    },
+    {
+      "date": "2021-02-12",
+      "total_value": 122589.24132744141,
+      "cash_balance": 32470.1607,
+      "invested_value": 90119.08062744142
+    },
+    {
+      "date": "2021-02-15",
+      "total_value": 122211.36907402345,
+      "cash_balance": 32470.1607,
+      "invested_value": 89741.20837402345
+    },
+    {
+      "date": "2021-02-16",
+      "total_value": 123316.17626201172,
+      "cash_balance": 8258.0877,
+      "invested_value": 115058.08856201172
+    },
+    {
+      "date": "2021-02-17",
+      "total_value": 124060.10283671874,
+      "cash_balance": 8258.0877,
+      "invested_value": 115802.01513671874
+    },
+    {
+      "date": "2021-02-18",
+      "total_value": 123242.04888164063,
+      "cash_balance": 8258.0877,
+      "invested_value": 114983.96118164062
+    },
+    {
+      "date": "2021-02-19",
+      "total_value": 123899.16161357421,
+      "cash_balance": 8258.0877,
+      "invested_value": 115641.0739135742
+    },
+    {
+      "date": "2021-02-22",
+      "total_value": 119530.42760869142,
+      "cash_balance": 2822.6712,
+      "invested_value": 116707.7564086914
+    },
+    {
+      "date": "2021-02-23",
+      "total_value": 120400.04827519532,
+      "cash_balance": 2822.6712,
+      "invested_value": 117577.37707519533
+    },
+    {
+      "date": "2021-02-24",
+      "total_value": 121775.44359990234,
+      "cash_balance": 2822.6712,
+      "invested_value": 118952.77239990233
+    },
+    {
+      "date": "2021-02-25",
+      "total_value": 125574.44151865234,
+      "cash_balance": 28311.4074,
+      "invested_value": 97263.03411865234
+    },
+    {
+      "date": "2021-02-26",
+      "total_value": 122474.54794140624,
+      "cash_balance": 732.7955,
+      "invested_value": 121741.75244140625
+    },
+    {
+      "date": "2021-03-01",
+      "total_value": 124611.3356611328,
+      "cash_balance": 1732.7955,
+      "invested_value": 122878.54016113281
+    },
+    {
+      "date": "2021-03-02",
+      "total_value": 126836.6158125,
+      "cash_balance": 1732.7955,
+      "invested_value": 125103.8203125
+    },
+    {
+      "date": "2021-03-03",
+      "total_value": 130128.42049970703,
+      "cash_balance": 13802.2283,
+      "invested_value": 116326.19219970703
+    },
+    {
+      "date": "2021-03-04",
+      "total_value": 129372.50797246094,
+      "cash_balance": 12347.2537,
+      "invested_value": 117025.25427246094
+    },
+    {
+      "date": "2021-03-05",
+      "total_value": 127966.87161621093,
+      "cash_balance": 18210.2775,
+      "invested_value": 109756.59411621094
+    },
+    {
+      "date": "2021-03-08",
+      "total_value": 128105.38761689453,
+      "cash_balance": 21150.3878,
+      "invested_value": 106954.99981689453
+    },
+    {
+      "date": "2021-03-09",
+      "total_value": 129515.03621289063,
+      "cash_balance": 23105.118,
+      "invested_value": 106409.91821289062
+    },
+    {
+      "date": "2021-03-10",
+      "total_value": 130284.18871611328,
+      "cash_balance": 24071.8847,
+      "invested_value": 106212.30401611328
+    },
+    {
+      "date": "2021-03-12",
+      "total_value": 129927.6649734375,
+      "cash_balance": 24071.8847,
+      "invested_value": 105855.7802734375
+    },
+    {
+      "date": "2021-03-15",
+      "total_value": 130140.62139433593,
+      "cash_balance": 24071.8847,
+      "invested_value": 106068.73669433594
+    },
+    {
+      "date": "2021-03-16",
+      "total_value": 131505.09422890624,
+      "cash_balance": 13302.0371,
+      "invested_value": 118203.05712890625
+    },
+    {
+      "date": "2021-03-17",
+      "total_value": 131582.27636152343,
+      "cash_balance": 13980.7008,
+      "invested_value": 117601.57556152344
+    },
+    {
+      "date": "2021-03-18",
+      "total_value": 128458.688465625,
+      "cash_balance": 3265.1787,
+      "invested_value": 125193.509765625
+    },
+    {
+      "date": "2021-03-19",
+      "total_value": 129046.24095585938,
+      "cash_balance": 3265.1787,
+      "invested_value": 125781.06225585938
+    },
+    {
+      "date": "2021-03-22",
+      "total_value": 132173.094715625,
+      "cash_balance": 3265.1787,
+      "invested_value": 128907.916015625
+    },
+    {
+      "date": "2021-03-23",
+      "total_value": 132621.7011609375,
+      "cash_balance": 3265.1787,
+      "invested_value": 129356.5224609375
+    },
+    {
+      "date": "2021-03-24",
+      "total_value": 131591.65794804686,
+      "cash_balance": 3265.1787,
+      "invested_value": 128326.47924804688
+    },
+    {
+      "date": "2021-03-25",
+      "total_value": 129355.52122929688,
+      "cash_balance": 3265.1787,
+      "invested_value": 126090.34252929688
+    },
+    {
+      "date": "2021-03-26",
+      "total_value": 129462.5078015625,
+      "cash_balance": 3265.1787,
+      "invested_value": 126197.3291015625
+    },
+    {
+      "date": "2021-03-30",
+      "total_value": 133395.22826054686,
+      "cash_balance": 3265.1787,
+      "invested_value": 130130.04956054688
+    },
+    {
+      "date": "2021-03-31",
+      "total_value": 133747.22996953124,
+      "cash_balance": 3265.1787,
+      "invested_value": 130482.05126953125
+    },
+    {
+      "date": "2021-04-01",
+      "total_value": 134610.46336796874,
+      "cash_balance": 4265.1787,
+      "invested_value": 130345.28466796875
+    },
+    {
+      "date": "2021-04-05",
+      "total_value": 137218.60887734374,
+      "cash_balance": 45869.0996,
+      "invested_value": 91349.50927734375
+    },
+    {
+      "date": "2021-04-06",
+      "total_value": 137676.0232234375,
+      "cash_balance": 79565.6492,
+      "invested_value": 58110.3740234375
+    },
+    {
+      "date": "2021-04-07",
+      "total_value": 137926.74551757812,
+      "cash_balance": 71036.9025,
+      "invested_value": 66889.84301757812
+    },
+    {
+      "date": "2021-04-08",
+      "total_value": 138320.74823359374,
+      "cash_balance": 79579.7038,
+      "invested_value": 58741.04443359375
+    },
+    {
+      "date": "2021-04-09",
+      "total_value": 137960.6164024414,
+      "cash_balance": 48565.6139,
+      "invested_value": 89395.0025024414
+    },
+    {
+      "date": "2021-04-12",
+      "total_value": 135117.509171875,
+      "cash_balance": 71308.683,
+      "invested_value": 63808.826171875
+    },
+    {
+      "date": "2021-04-13",
+      "total_value": 134381.720290625,
+      "cash_balance": 55109.0699,
+      "invested_value": 79272.650390625
+    },
+    {
+      "date": "2021-04-15",
+      "total_value": 134058.0384855469,
+      "cash_balance": 78943.7858,
+      "invested_value": 55114.252685546875
+    },
+    {
+      "date": "2021-04-16",
+      "total_value": 133678.0367765625,
+      "cash_balance": 78943.7858,
+      "invested_value": 54734.2509765625
+    },
+    {
+      "date": "2021-04-19",
+      "total_value": 132819.3996703125,
+      "cash_balance": 84033.5901,
+      "invested_value": 48785.8095703125
+    },
+    {
+      "date": "2021-04-20",
+      "total_value": 132501.30762929688,
+      "cash_balance": 84033.5901,
+      "invested_value": 48467.717529296875
+    },
+    {
+      "date": "2021-04-22",
+      "total_value": 132174.66338867188,
+      "cash_balance": 68049.5025,
+      "invested_value": 64125.160888671875
+    },
+    {
+      "date": "2021-04-23",
+      "total_value": 131713.69421113282,
+      "cash_balance": 55982.5603,
+      "invested_value": 75731.13391113281
+    },
+    {
+      "date": "2021-04-26",
+      "total_value": 132021.23656123047,
+      "cash_balance": 32281.2813,
+      "invested_value": 99739.95526123047
+    },
+    {
+      "date": "2021-04-27",
+      "total_value": 133545.04002802735,
+      "cash_balance": 32281.2813,
+      "invested_value": 101263.75872802734
+    },
+    {
+      "date": "2021-04-28",
+      "total_value": 134581.76244013672,
+      "cash_balance": 32281.2813,
+      "invested_value": 102300.48114013672
+    },
+    {
+      "date": "2021-04-29",
+      "total_value": 134782.62370722656,
+      "cash_balance": 32281.2813,
+      "invested_value": 102501.34240722656
+    },
+    {
+      "date": "2021-04-30",
+      "total_value": 132471.4422515625,
+      "cash_balance": 16924.7069,
+      "invested_value": 115546.7353515625
+    },
+    {
+      "date": "2021-05-03",
+      "total_value": 132511.12066640623,
+      "cash_balance": 37194.9151,
+      "invested_value": 95316.20556640625
+    },
+    {
+      "date": "2021-05-04",
+      "total_value": 131307.09564140625,
+      "cash_balance": 23982.0932,
+      "invested_value": 107325.00244140625
+    },
+    {
+      "date": "2021-05-05",
+      "total_value": 132234.18218925782,
+      "cash_balance": 23982.0932,
+      "invested_value": 108252.08898925781
+    },
+    {
+      "date": "2021-05-06",
+      "total_value": 133045.26135185547,
+      "cash_balance": 23982.0932,
+      "invested_value": 109063.16815185547
+    },
+    {
+      "date": "2021-05-07",
+      "total_value": 133119.41906669922,
+      "cash_balance": 23982.0932,
+      "invested_value": 109137.32586669922
+    },
+    {
+      "date": "2021-05-10",
+      "total_value": 133051.7441399414,
+      "cash_balance": 23982.0932,
+      "invested_value": 109069.6509399414
+    },
+    {
+      "date": "2021-05-11",
+      "total_value": 132812.54180839844,
+      "cash_balance": 23982.0932,
+      "invested_value": 108830.44860839844
+    },
+    {
+      "date": "2021-05-12",
+      "total_value": 131615.04193046875,
+      "cash_balance": 23982.0932,
+      "invested_value": 107632.94873046875
+    },
+    {
+      "date": "2021-05-14",
+      "total_value": 131624.03616875,
+      "cash_balance": 70929.4307,
+      "invested_value": 60694.60546875
+    },
+    {
+      "date": "2021-05-17",
+      "total_value": 132677.63649023438,
+      "cash_balance": 39080.7715,
+      "invested_value": 93596.86499023438
+    },
+    {
+      "date": "2021-05-18",
+      "total_value": 133762.52351416016,
+      "cash_balance": 39080.7715,
+      "invested_value": 94681.75201416016
+    },
+    {
+      "date": "2021-05-19",
+      "total_value": 133754.50306738282,
+      "cash_balance": 39080.7715,
+      "invested_value": 94673.73156738281
+    },
+    {
+      "date": "2021-05-20",
+      "total_value": 133093.0532993164,
+      "cash_balance": 39080.7715,
+      "invested_value": 94012.2817993164
+    },
+    {
+      "date": "2021-05-21",
+      "total_value": 134234.21296728516,
+      "cash_balance": 39080.7715,
+      "invested_value": 95153.44146728516
+    },
+    {
+      "date": "2021-05-24",
+      "total_value": 133900.3904678711,
+      "cash_balance": 27797.3959,
+      "invested_value": 106102.9945678711
+    },
+    {
+      "date": "2021-05-25",
+      "total_value": 133667.11233066407,
+      "cash_balance": 27797.3959,
+      "invested_value": 105869.71643066406
+    },
+    {
+      "date": "2021-05-26",
+      "total_value": 134274.77247197265,
+      "cash_balance": 12086.9687,
+      "invested_value": 122187.80377197266
+    },
+    {
+      "date": "2021-05-27",
+      "total_value": 134741.07984501953,
+      "cash_balance": 12086.9687,
+      "invested_value": 122654.11114501953
+    },
+    {
+      "date": "2021-05-28",
+      "total_value": 137301.33497197265,
+      "cash_balance": 12086.9687,
+      "invested_value": 125214.36627197266
+    },
+    {
+      "date": "2021-05-31",
+      "total_value": 139639.04554326172,
+      "cash_balance": 12086.9687,
+      "invested_value": 127552.07684326172
+    },
+    {
+      "date": "2021-06-01",
+      "total_value": 140416.55414921875,
+      "cash_balance": 13086.9687,
+      "invested_value": 127329.58544921875
+    },
+    {
+      "date": "2021-06-02",
+      "total_value": 140626.52307441406,
+      "cash_balance": 22944.3418,
+      "invested_value": 117682.18127441406
+    },
+    {
+      "date": "2021-06-03",
+      "total_value": 141214.0700111328,
+      "cash_balance": 36843.2486,
+      "invested_value": 104370.82141113281
+    },
+    {
+      "date": "2021-06-04",
+      "total_value": 140719.6148109375,
+      "cash_balance": 36843.2486,
+      "invested_value": 103876.3662109375
+    },
+    {
+      "date": "2021-06-07",
+      "total_value": 141470.2213578125,
+      "cash_balance": 24471.1696,
+      "invested_value": 116999.0517578125
+    },
+    {
+      "date": "2021-06-08",
+      "total_value": 141947.18221621093,
+      "cash_balance": 10764.2756,
+      "invested_value": 131182.90661621094
+    },
+    {
+      "date": "2021-06-09",
+      "total_value": 141779.68600039062,
+      "cash_balance": 10764.2756,
+      "invested_value": 131015.41040039062
+    },
+    {
+      "date": "2021-06-10",
+      "total_value": 142460.7464251953,
+      "cash_balance": 10764.2756,
+      "invested_value": 131696.4708251953
+    },
+    {
+      "date": "2021-06-11",
+      "total_value": 144101.07435546874,
+      "cash_balance": 11858.6725,
+      "invested_value": 132242.40185546875
+    },
+    {
+      "date": "2021-06-14",
+      "total_value": 144476.2027779297,
+      "cash_balance": 12856.5154,
+      "invested_value": 131619.6873779297
+    },
+    {
+      "date": "2021-06-15",
+      "total_value": 144489.90535361329,
+      "cash_balance": 12856.5154,
+      "invested_value": 131633.38995361328
+    },
+    {
+      "date": "2021-06-16",
+      "total_value": 144889.6134834961,
+      "cash_balance": 12856.5154,
+      "invested_value": 132033.0980834961
+    },
+    {
+      "date": "2021-06-17",
+      "total_value": 146227.81734091797,
+      "cash_balance": 12856.5154,
+      "invested_value": 133371.30194091797
+    },
+    {
+      "date": "2021-06-18",
+      "total_value": 145990.79854208985,
+      "cash_balance": 12856.5154,
+      "invested_value": 133134.28314208984
+    },
+    {
+      "date": "2021-06-21",
+      "total_value": 145362.56300742188,
+      "cash_balance": 12856.5154,
+      "invested_value": 132506.04760742188
+    },
+    {
+      "date": "2021-06-22",
+      "total_value": 146323.1448555664,
+      "cash_balance": 12856.5154,
+      "invested_value": 133466.6294555664
+    },
+    {
+      "date": "2021-06-23",
+      "total_value": 145087.01765830079,
+      "cash_balance": 12856.5154,
+      "invested_value": 132230.50225830078
+    },
+    {
+      "date": "2021-06-24",
+      "total_value": 149396.85983847655,
+      "cash_balance": 119.7479,
+      "invested_value": 149277.11193847656
+    },
+    {
+      "date": "2021-06-25",
+      "total_value": 149587.73314453126,
+      "cash_balance": 1637.6975,
+      "invested_value": 147950.03564453125
+    },
+    {
+      "date": "2021-06-28",
+      "total_value": 148182.77403808595,
+      "cash_balance": 1637.6975,
+      "invested_value": 146545.07653808594
+    },
+    {
+      "date": "2021-06-29",
+      "total_value": 148099.3370263672,
+      "cash_balance": 1637.6975,
+      "invested_value": 146461.6395263672
+    },
+    {
+      "date": "2021-06-30",
+      "total_value": 148630.0754296875,
+      "cash_balance": 1637.6975,
+      "invested_value": 146992.3779296875
+    },
+    {
+      "date": "2021-07-01",
+      "total_value": 148941.61778808595,
+      "cash_balance": 2637.6975,
+      "invested_value": 146303.92028808594
+    },
+    {
+      "date": "2021-07-02",
+      "total_value": 148595.11961914063,
+      "cash_balance": 2637.6975,
+      "invested_value": 145957.42211914062
+    },
+    {
+      "date": "2021-07-05",
+      "total_value": 148838.82750488282,
+      "cash_balance": 2637.6975,
+      "invested_value": 146201.1300048828
+    },
+    {
+      "date": "2021-07-06",
+      "total_value": 147008.77953125,
+      "cash_balance": 2637.6975,
+      "invested_value": 144371.08203125
+    },
+    {
+      "date": "2021-07-07",
+      "total_value": 147473.99193359376,
+      "cash_balance": 2637.6975,
+      "invested_value": 144836.29443359375
+    },
+    {
+      "date": "2021-07-08",
+      "total_value": 146756.00536132813,
+      "cash_balance": 2637.6975,
+      "invested_value": 144118.30786132812
+    },
+    {
+      "date": "2021-07-09",
+      "total_value": 144714.2762951172,
+      "cash_balance": 63346.0313,
+      "invested_value": 81368.24499511719
+    },
+    {
+      "date": "2021-07-12",
+      "total_value": 143974.9170038086,
+      "cash_balance": 40269.1656,
+      "invested_value": 103705.7514038086
+    },
+    {
+      "date": "2021-07-13",
+      "total_value": 144120.88579375,
+      "cash_balance": 12794.7647,
+      "invested_value": 131326.12109375
+    },
+    {
+      "date": "2021-07-14",
+      "total_value": 145041.907278125,
+      "cash_balance": 12794.7647,
+      "invested_value": 132247.142578125
+    },
+    {
+      "date": "2021-07-15",
+      "total_value": 145972.99858671875,
+      "cash_balance": 12794.7647,
+      "invested_value": 133178.23388671875
+    },
+    {
+      "date": "2021-07-16",
+      "total_value": 145359.83672148437,
+      "cash_balance": 12794.7647,
+      "invested_value": 132565.07202148438
+    },
+    {
+      "date": "2021-07-19",
+      "total_value": 142554.96460839844,
+      "cash_balance": 38688.516,
+      "invested_value": 103866.44860839844
+    },
+    {
+      "date": "2021-07-20",
+      "total_value": 142242.4794772461,
+      "cash_balance": 4172.5728,
+      "invested_value": 138069.9066772461
+    },
+    {
+      "date": "2021-07-22",
+      "total_value": 143558.91618378906,
+      "cash_balance": 4172.5728,
+      "invested_value": 139386.34338378906
+    },
+    {
+      "date": "2021-07-23",
+      "total_value": 143247.13810761718,
+      "cash_balance": 4172.5728,
+      "invested_value": 139074.5653076172
+    },
+    {
+      "date": "2021-07-26",
+      "total_value": 142736.70678515625,
+      "cash_balance": 75567.302,
+      "invested_value": 67169.40478515625
+    },
+    {
+      "date": "2021-07-27",
+      "total_value": 142480.87841601562,
+      "cash_balance": 50205.6145,
+      "invested_value": 92275.26391601562
+    },
+    {
+      "date": "2021-07-28",
+      "total_value": 142135.06294648437,
+      "cash_balance": 19202.9753,
+      "invested_value": 122932.08764648438
+    },
+    {
+      "date": "2021-07-29",
+      "total_value": 142523.48374589844,
+      "cash_balance": 21998.3242,
+      "invested_value": 120525.15954589844
+    },
+    {
+      "date": "2021-07-30",
+      "total_value": 141939.0941394531,
+      "cash_balance": 2298.2062,
+      "invested_value": 139640.88793945312
+    },
+    {
+      "date": "2021-08-02",
+      "total_value": 144298.49892460936,
+      "cash_balance": 3298.2062,
+      "invested_value": 141000.29272460938
+    },
+    {
+      "date": "2021-08-03",
+      "total_value": 146056.9747546875,
+      "cash_balance": 3298.2062,
+      "invested_value": 142758.7685546875
+    },
+    {
+      "date": "2021-08-04",
+      "total_value": 147392.99037968752,
+      "cash_balance": 3298.2062,
+      "invested_value": 144094.7841796875
+    },
+    {
+      "date": "2021-08-05",
+      "total_value": 148299.58120000002,
+      "cash_balance": 3298.2062,
+      "invested_value": 145001.375
+    },
+    {
+      "date": "2021-08-06",
+      "total_value": 147832.637840625,
+      "cash_balance": 3298.2062,
+      "invested_value": 144534.431640625
+    },
+    {
+      "date": "2021-08-09",
+      "total_value": 148328.6126941406,
+      "cash_balance": 3298.2062,
+      "invested_value": 145030.40649414062
+    },
+    {
+      "date": "2021-08-10",
+      "total_value": 148877.34133183595,
+      "cash_balance": 3298.2062,
+      "invested_value": 145579.13513183594
+    },
+    {
+      "date": "2021-08-11",
+      "total_value": 149027.77040898436,
+      "cash_balance": 3298.2062,
+      "invested_value": 145729.56420898438
+    },
+    {
+      "date": "2021-08-12",
+      "total_value": 149479.36696660158,
+      "cash_balance": 3298.2062,
+      "invested_value": 146181.16076660156
+    },
+    {
+      "date": "2021-08-13",
+      "total_value": 152071.39268945312,
+      "cash_balance": 39748.7235,
+      "invested_value": 112322.66918945312
+    },
+    {
+      "date": "2021-08-16",
+      "total_value": 152262.6160024414,
+      "cash_balance": 61810.176,
+      "invested_value": 90452.4400024414
+    },
+    {
+      "date": "2021-08-17",
+      "total_value": 152668.9856361328,
+      "cash_balance": 69097.5861,
+      "invested_value": 83571.39953613281
+    },
+    {
+      "date": "2021-08-18",
+      "total_value": 152323.968734375,
+      "cash_balance": 57229.3535,
+      "invested_value": 95094.615234375
+    },
+    {
+      "date": "2021-08-20",
+      "total_value": 151802.44749414062,
+      "cash_balance": 57229.3535,
+      "invested_value": 94573.09399414062
+    },
+    {
+      "date": "2021-08-23",
+      "total_value": 152339.4462734375,
+      "cash_balance": 57229.3535,
+      "invested_value": 95110.0927734375
+    },
+    {
+      "date": "2021-08-24",
+      "total_value": 153040.97354296874,
+      "cash_balance": 42187.0795,
+      "invested_value": 110853.89404296875
+    },
+    {
+      "date": "2021-08-25",
+      "total_value": 153613.7417314453,
+      "cash_balance": 42187.0795,
+      "invested_value": 111426.66223144531
+    },
+    {
+      "date": "2021-08-26",
+      "total_value": 153905.3578091797,
+      "cash_balance": 46127.3384,
+      "invested_value": 107778.01940917969
+    },
+    {
+      "date": "2021-08-27",
+      "total_value": 153414.7933560547,
+      "cash_balance": 46127.3384,
+      "invested_value": 107287.45495605469
+    },
+    {
+      "date": "2021-08-30",
+      "total_value": 154290.76747714845,
+      "cash_balance": 46127.3384,
+      "invested_value": 108163.42907714844
+    },
+    {
+      "date": "2021-08-31",
+      "total_value": 154599.3169446289,
+      "cash_balance": 43112.8037,
+      "invested_value": 111486.5132446289
+    },
+    {
+      "date": "2021-09-01",
+      "total_value": 154928.76631445313,
+      "cash_balance": 15539.769,
+      "invested_value": 139388.99731445312
+    },
+    {
+      "date": "2021-09-02",
+      "total_value": 156173.9492875,
+      "cash_balance": 17750.0196,
+      "invested_value": 138423.9296875
+    },
+    {
+      "date": "2021-09-03",
+      "total_value": 158316.18924296874,
+      "cash_balance": 41796.8577,
+      "invested_value": 116519.33154296875
+    },
+    {
+      "date": "2021-09-06",
+      "total_value": 159826.46711191407,
+      "cash_balance": 53820.0749,
+      "invested_value": 106006.39221191406
+    },
+    {
+      "date": "2021-09-07",
+      "total_value": 158739.98695546875,
+      "cash_balance": 59316.5851,
+      "invested_value": 99423.40185546875
+    },
+    {
+      "date": "2021-09-08",
+      "total_value": 158156.97890820313,
+      "cash_balance": 63316.4855,
+      "invested_value": 94840.49340820312
+    },
+    {
+      "date": "2021-09-09",
+      "total_value": 158058.14685966796,
+      "cash_balance": 64397.9582,
+      "invested_value": 93660.18865966797
+    },
+    {
+      "date": "2021-09-13",
+      "total_value": 157771.77562587892,
+      "cash_balance": 65453.0241,
+      "invested_value": 92318.7515258789
+    },
+    {
+      "date": "2021-09-14",
+      "total_value": 157557.96605556642,
+      "cash_balance": 65453.0241,
+      "invested_value": 92104.9419555664
+    },
+    {
+      "date": "2021-09-15",
+      "total_value": 158781.61727949217,
+      "cash_balance": 37161.5383,
+      "invested_value": 121620.07897949219
+    },
+    {
+      "date": "2021-09-16",
+      "total_value": 158829.47162714845,
+      "cash_balance": 20317.8863,
+      "invested_value": 138511.58532714844
+    },
+    {
+      "date": "2021-09-17",
+      "total_value": 158320.65248867188,
+      "cash_balance": 6954.4291,
+      "invested_value": 151366.22338867188
+    },
+    {
+      "date": "2021-09-20",
+      "total_value": 157289.74489589845,
+      "cash_balance": 6954.4291,
+      "invested_value": 150335.31579589844
+    },
+    {
+      "date": "2021-09-21",
+      "total_value": 158705.735740625,
+      "cash_balance": 6954.4291,
+      "invested_value": 151751.306640625
+    },
+    {
+      "date": "2021-09-22",
+      "total_value": 157744.14289921874,
+      "cash_balance": 66594.8387,
+      "invested_value": 91149.30419921875
+    },
+    {
+      "date": "2021-09-23",
+      "total_value": 158765.1790291992,
+      "cash_balance": 38659.6266,
+      "invested_value": 120105.55242919922
+    },
+    {
+      "date": "2021-09-24",
+      "total_value": 160282.9115618164,
+      "cash_balance": 21963.9657,
+      "invested_value": 138318.9458618164
+    },
+    {
+      "date": "2021-09-27",
+      "total_value": 158400.2488703125,
+      "cash_balance": 2140.0643,
+      "invested_value": 156260.1845703125
+    },
+    {
+      "date": "2021-09-28",
+      "total_value": 156128.53060859375,
+      "cash_balance": 2140.0643,
+      "invested_value": 153988.46630859375
+    },
+    {
+      "date": "2021-09-29",
+      "total_value": 155695.5111383789,
+      "cash_balance": 2140.0643,
+      "invested_value": 153555.4468383789
+    },
+    {
+      "date": "2021-09-30",
+      "total_value": 154380.06635322265,
+      "cash_balance": 54265.9618,
+      "invested_value": 100114.10455322266
+    },
+    {
+      "date": "2021-10-01",
+      "total_value": 154620.81682294921,
+      "cash_balance": 61710.3308,
+      "invested_value": 92910.48602294922
+    },
+    {
+      "date": "2021-10-04",
+      "total_value": 155047.67088789062,
+      "cash_balance": 61710.3308,
+      "invested_value": 93337.34008789062
+    },
+    {
+      "date": "2021-10-05",
+      "total_value": 155721.18266767578,
+      "cash_balance": 61710.3308,
+      "invested_value": 94010.85186767578
+    },
+    {
+      "date": "2021-10-06",
+      "total_value": 155855.7359498047,
+      "cash_balance": 41237.3474,
+      "invested_value": 114618.38854980469
+    },
+    {
+      "date": "2021-10-07",
+      "total_value": 156050.70897226562,
+      "cash_balance": 41237.3474,
+      "invested_value": 114813.36157226562
+    },
+    {
+      "date": "2021-10-08",
+      "total_value": 156415.27685996096,
+      "cash_balance": 24086.0929,
+      "invested_value": 132329.18395996094
+    },
+    {
+      "date": "2021-10-11",
+      "total_value": 156033.2413375,
+      "cash_balance": 24086.0929,
+      "invested_value": 131947.1484375
+    },
+    {
+      "date": "2021-10-12",
+      "total_value": 155569.99463339843,
+      "cash_balance": 24086.0929,
+      "invested_value": 131483.90173339844
+    },
+    {
+      "date": "2021-10-13",
+      "total_value": 156595.65356894533,
+      "cash_balance": 24086.0929,
+      "invested_value": 132509.5606689453
+    },
+    {
+      "date": "2021-10-14",
+      "total_value": 158670.6246449219,
+      "cash_balance": 1921.3036,
+      "invested_value": 156749.32104492188
+    },
+    {
+      "date": "2021-10-18",
+      "total_value": 159976.7291371094,
+      "cash_balance": 1921.3036,
+      "invested_value": 158055.42553710938
+    },
+    {
+      "date": "2021-10-19",
+      "total_value": 161296.82402753906,
+      "cash_balance": 22457.4533,
+      "invested_value": 138839.37072753906
+    },
+    {
+      "date": "2021-10-20",
+      "total_value": 159999.36384267578,
+      "cash_balance": 16710.0276,
+      "invested_value": 143289.33624267578
+    },
+    {
+      "date": "2021-10-21",
+      "total_value": 159089.7669895508,
+      "cash_balance": 1179.3702,
+      "invested_value": 157910.39678955078
+    },
+    {
+      "date": "2021-10-22",
+      "total_value": 158715.20145253907,
+      "cash_balance": 37589.9401,
+      "invested_value": 121125.26135253906
+    },
+    {
+      "date": "2021-10-25",
+      "total_value": 158932.08884921874,
+      "cash_balance": 18636.1909,
+      "invested_value": 140295.89794921875
+    },
+    {
+      "date": "2021-10-26",
+      "total_value": 159358.42710605467,
+      "cash_balance": 18636.1909,
+      "invested_value": 140722.2362060547
+    },
+    {
+      "date": "2021-10-27",
+      "total_value": 158704.08543125,
+      "cash_balance": 18636.1909,
+      "invested_value": 140067.89453125
+    },
+    {
+      "date": "2021-10-28",
+      "total_value": 154570.14523017578,
+      "cash_balance": 59093.3793,
+      "invested_value": 95476.76593017578
+    },
+    {
+      "date": "2021-10-29",
+      "total_value": 152952.55408740236,
+      "cash_balance": 71259.477,
+      "invested_value": 81693.07708740234
+    },
+    {
+      "date": "2021-11-01",
+      "total_value": 154366.37289580077,
+      "cash_balance": 38810.5347,
+      "invested_value": 115555.83819580078
+    },
+    {
+      "date": "2021-11-02",
+      "total_value": 153382.10684355468,
+      "cash_balance": 38810.5347,
+      "invested_value": 114571.57214355469
+    },
+    {
+      "date": "2021-11-03",
+      "total_value": 152102.36917265624,
+      "cash_balance": 38810.5347,
+      "invested_value": 113291.83447265625
+    },
+    {
+      "date": "2021-11-04",
+      "total_value": 152681.4737258789,
+      "cash_balance": 38810.5347,
+      "invested_value": 113870.9390258789
+    },
+    {
+      "date": "2021-11-08",
+      "total_value": 152741.17563310548,
+      "cash_balance": 6967.9567,
+      "invested_value": 145773.21893310547
+    },
+    {
+      "date": "2021-11-09",
+      "total_value": 153041.24698320313,
+      "cash_balance": 6967.9567,
+      "invested_value": 146073.29028320312
+    },
+    {
+      "date": "2021-11-10",
+      "total_value": 153654.82461992188,
+      "cash_balance": 6967.9567,
+      "invested_value": 146686.86791992188
+    },
+    {
+      "date": "2021-11-11",
+      "total_value": 153443.4702977539,
+      "cash_balance": 22498.2051,
+      "invested_value": 130945.2651977539
+    },
+    {
+      "date": "2021-11-12",
+      "total_value": 155026.52632802734,
+      "cash_balance": 22498.2051,
+      "invested_value": 132528.32122802734
+    },
+    {
+      "date": "2021-11-15",
+      "total_value": 154526.9892796875,
+      "cash_balance": 22498.2051,
+      "invested_value": 132028.7841796875
+    },
+    {
+      "date": "2021-11-16",
+      "total_value": 152026.2174901367,
+      "cash_balance": 22498.2051,
+      "invested_value": 129528.01239013672
+    },
+    {
+      "date": "2021-11-17",
+      "total_value": 149589.0092381836,
+      "cash_balance": 22498.2051,
+      "invested_value": 127090.8041381836
+    },
+    {
+      "date": "2021-11-18",
+      "total_value": 150128.11659902343,
+      "cash_balance": 22498.2051,
+      "invested_value": 127629.91149902344
+    },
+    {
+      "date": "2021-11-22",
+      "total_value": 144574.06548261718,
+      "cash_balance": 109244.7658,
+      "invested_value": 35329.29968261719
+    },
+    {
+      "date": "2021-11-23",
+      "total_value": 144904.37566328124,
+      "cash_balance": 109244.7658,
+      "invested_value": 35659.60986328125
+    },
+    {
+      "date": "2021-11-24",
+      "total_value": 144389.4757609375,
+      "cash_balance": 109244.7658,
+      "invested_value": 35144.7099609375
+    },
+    {
+      "date": "2021-11-25",
+      "total_value": 146505.1213908203,
+      "cash_balance": 109244.7658,
+      "invested_value": 37260.35559082031
+    },
+    {
+      "date": "2021-11-26",
+      "total_value": 145304.19048261718,
+      "cash_balance": 109244.7658,
+      "invested_value": 36059.42468261719
+    },
+    {
+      "date": "2021-11-29",
+      "total_value": 145736.13518476562,
+      "cash_balance": 109244.7658,
+      "invested_value": 36491.369384765625
+    },
+    {
+      "date": "2021-11-30",
+      "total_value": 145196.57793378906,
+      "cash_balance": 109244.7658,
+      "invested_value": 35951.81213378906
+    },
+    {
+      "date": "2021-12-01",
+      "total_value": 147117.2706828125,
+      "cash_balance": 110244.7658,
+      "invested_value": 36872.5048828125
+    },
+    {
+      "date": "2021-12-02",
+      "total_value": 147305.55840742186,
+      "cash_balance": 94342.8858,
+      "invested_value": 52962.672607421875
+    },
+    {
+      "date": "2021-12-03",
+      "total_value": 146090.36761757813,
+      "cash_balance": 76801.5246,
+      "invested_value": 69288.84301757812
+    },
+    {
+      "date": "2021-12-06",
+      "total_value": 144488.49939462892,
+      "cash_balance": 40491.8299,
+      "invested_value": 103996.6694946289
+    },
+    {
+      "date": "2021-12-07",
+      "total_value": 146302.6084234375,
+      "cash_balance": 19896.4219,
+      "invested_value": 126406.1865234375
+    },
+    {
+      "date": "2021-12-08",
+      "total_value": 148728.84012167968,
+      "cash_balance": 2406.1879,
+      "invested_value": 146322.6522216797
+    },
+    {
+      "date": "2021-12-09",
+      "total_value": 149294.0454439453,
+      "cash_balance": 2406.1879,
+      "invested_value": 146887.8575439453
+    },
+    {
+      "date": "2021-12-10",
+      "total_value": 149690.40628378905,
+      "cash_balance": 2406.1879,
+      "invested_value": 147284.21838378906
+    },
+    {
+      "date": "2021-12-13",
+      "total_value": 148034.61026328124,
+      "cash_balance": 2406.1879,
+      "invested_value": 145628.42236328125
+    },
+    {
+      "date": "2021-12-14",
+      "total_value": 147710.57486289061,
+      "cash_balance": 2406.1879,
+      "invested_value": 145304.38696289062
+    },
+    {
+      "date": "2021-12-15",
+      "total_value": 146791.4083589844,
+      "cash_balance": 2406.1879,
+      "invested_value": 144385.22045898438
+    },
+    {
+      "date": "2021-12-16",
+      "total_value": 146647.27456992186,
+      "cash_balance": 2406.1879,
+      "invested_value": 144241.08666992188
+    },
+    {
+      "date": "2021-12-17",
+      "total_value": 143933.78384726561,
+      "cash_balance": 2406.1879,
+      "invested_value": 141527.59594726562
+    },
+    {
+      "date": "2021-12-20",
+      "total_value": 139740.073940625,
+      "cash_balance": 89573.9548,
+      "invested_value": 50166.119140625
+    },
+    {
+      "date": "2021-12-21",
+      "total_value": 140356.70260273438,
+      "cash_balance": 89573.9548,
+      "invested_value": 50782.747802734375
+    },
+    {
+      "date": "2021-12-22",
+      "total_value": 140537.11666523438,
+      "cash_balance": 89573.9548,
+      "invested_value": 50963.161865234375
+    },
+    {
+      "date": "2021-12-23",
+      "total_value": 140649.40230976563,
+      "cash_balance": 89573.9548,
+      "invested_value": 51075.447509765625
+    },
+    {
+      "date": "2021-12-24",
+      "total_value": 140558.56637226563,
+      "cash_balance": 89573.9548,
+      "invested_value": 50984.611572265625
+    },
+    {
+      "date": "2021-12-27",
+      "total_value": 140957.76876484376,
+      "cash_balance": 89573.9548,
+      "invested_value": 51383.81396484375
+    },
+    {
+      "date": "2021-12-28",
+      "total_value": 141246.55489765626,
+      "cash_balance": 89573.9548,
+      "invested_value": 51672.60009765625
+    },
+    {
+      "date": "2021-12-29",
+      "total_value": 140986.68484492187,
+      "cash_balance": 74300.8638,
+      "invested_value": 66685.82104492188
+    },
+    {
+      "date": "2021-12-30",
+      "total_value": 140999.20960625,
+      "cash_balance": 54999.8932,
+      "invested_value": 85999.31640625
+    },
+    {
+      "date": "2021-12-31",
+      "total_value": 141585.91932304687,
+      "cash_balance": 54999.8932,
+      "invested_value": 86586.02612304688
+    },
+    {
+      "date": "2022-01-03",
+      "total_value": 144384.79041796876,
+      "cash_balance": 42665.162,
+      "invested_value": 101719.62841796875
+    },
+    {
+      "date": "2022-01-04",
+      "total_value": 145847.68083476563,
+      "cash_balance": 61195.7802,
+      "invested_value": 84651.90063476562
+    },
+    {
+      "date": "2022-01-05",
+      "total_value": 146153.08490585937,
+      "cash_balance": 56009.9289,
+      "invested_value": 90143.15600585938
+    },
+    {
+      "date": "2022-01-06",
+      "total_value": 144528.55489941407,
+      "cash_balance": 44939.108,
+      "invested_value": 99589.44689941406
+    },
+    {
+      "date": "2022-01-07",
+      "total_value": 145243.89634492187,
+      "cash_balance": 33640.4503,
+      "invested_value": 111603.44604492188
+    },
+    {
+      "date": "2022-01-10",
+      "total_value": 145869.06734960937,
+      "cash_balance": 35080.509,
+      "invested_value": 110788.55834960938
+    },
+    {
+      "date": "2022-01-11",
+      "total_value": 146670.54555791017,
+      "cash_balance": 35796.4537,
+      "invested_value": 110874.09185791016
+    },
+    {
+      "date": "2022-01-12",
+      "total_value": 147571.06539433595,
+      "cash_balance": 35796.4537,
+      "invested_value": 111774.61169433594
+    },
+    {
+      "date": "2022-01-13",
+      "total_value": 148436.49581425783,
+      "cash_balance": 35796.4537,
+      "invested_value": 112640.04211425781
+    },
+    {
+      "date": "2022-01-14",
+      "total_value": 149573.86928837892,
+      "cash_balance": 35796.4537,
+      "invested_value": 113777.4155883789
+    },
+    {
+      "date": "2022-01-17",
+      "total_value": 150496.1795911133,
+      "cash_balance": 35796.4537,
+      "invested_value": 114699.72589111328
+    },
+    {
+      "date": "2022-01-18",
+      "total_value": 149394.08968632814,
+      "cash_balance": 35796.4537,
+      "invested_value": 113597.63598632812
+    },
+    {
+      "date": "2022-01-19",
+      "total_value": 148178.68422978517,
+      "cash_balance": 35796.4537,
+      "invested_value": 112382.23052978516
+    },
+    {
+      "date": "2022-01-20",
+      "total_value": 145599.0894671875,
+      "cash_balance": 84273.2506,
+      "invested_value": 61325.8388671875
+    },
+    {
+      "date": "2022-01-21",
+      "total_value": 145578.65903066407,
+      "cash_balance": 48082.3176,
+      "invested_value": 97496.34143066406
+    },
+    {
+      "date": "2022-01-24",
+      "total_value": 142592.24889296875,
+      "cash_balance": 74104.8861,
+      "invested_value": 68487.36279296875
+    },
+    {
+      "date": "2022-01-25",
+      "total_value": 141987.26236328125,
+      "cash_balance": 83943.34,
+      "invested_value": 58043.92236328125
+    },
+    {
+      "date": "2022-01-27",
+      "total_value": 141023.98702871095,
+      "cash_balance": 48893.8226,
+      "invested_value": 92130.16442871094
+    },
+    {
+      "date": "2022-01-28",
+      "total_value": 140808.5837796875,
+      "cash_balance": 16170.7996,
+      "invested_value": 124637.7841796875
+    },
+    {
+      "date": "2022-01-31",
+      "total_value": 143774.90177285156,
+      "cash_balance": 16170.7996,
+      "invested_value": 127604.10217285156
+    },
+    {
+      "date": "2022-02-01",
+      "total_value": 145092.0615463867,
+      "cash_balance": 738.0765,
+      "invested_value": 144353.98504638672
+    },
+    {
+      "date": "2022-02-02",
+      "total_value": 145643.7826767578,
+      "cash_balance": 738.0765,
+      "invested_value": 144905.7061767578
+    },
+    {
+      "date": "2022-02-03",
+      "total_value": 143394.65511328125,
+      "cash_balance": 738.0765,
+      "invested_value": 142656.57861328125
+    },
+    {
+      "date": "2022-02-04",
+      "total_value": 142519.9668198242,
+      "cash_balance": 738.0765,
+      "invested_value": 141781.89031982422
+    },
+    {
+      "date": "2022-02-07",
+      "total_value": 141079.15059667968,
+      "cash_balance": 738.0765,
+      "invested_value": 140341.0740966797
+    },
+    {
+      "date": "2022-02-08",
+      "total_value": 142781.6078720703,
+      "cash_balance": 738.0765,
+      "invested_value": 142043.5313720703
+    },
+    {
+      "date": "2022-02-09",
+      "total_value": 144457.93373876953,
+      "cash_balance": 738.0765,
+      "invested_value": 143719.85723876953
+    },
+    {
+      "date": "2022-02-10",
+      "total_value": 145040.32973486328,
+      "cash_balance": 738.0765,
+      "invested_value": 144302.25323486328
+    },
+    {
+      "date": "2022-02-11",
+      "total_value": 143627.4432602539,
+      "cash_balance": 738.0765,
+      "invested_value": 142889.3667602539
+    },
+    {
+      "date": "2022-02-14",
+      "total_value": 140552.9880826172,
+      "cash_balance": 15886.1259,
+      "invested_value": 124666.86218261719
+    },
+    {
+      "date": "2022-02-15",
+      "total_value": 144765.1588589844,
+      "cash_balance": 15886.1259,
+      "invested_value": 128879.03295898438
+    },
+    {
+      "date": "2022-02-16",
+      "total_value": 144472.45634433595,
+      "cash_balance": 15886.1259,
+      "invested_value": 128586.33044433594
+    },
+    {
+      "date": "2022-02-17",
+      "total_value": 145511.92607089845,
+      "cash_balance": 15886.1259,
+      "invested_value": 129625.80017089844
+    },
+    {
+      "date": "2022-02-18",
+      "total_value": 144414.26298496095,
+      "cash_balance": 15886.1259,
+      "invested_value": 128528.13708496094
+    },
+    {
+      "date": "2022-02-21",
+      "total_value": 143907.97026035158,
+      "cash_balance": 15886.1259,
+      "invested_value": 128021.84436035156
+    },
+    {
+      "date": "2022-02-22",
+      "total_value": 143549.0261685547,
+      "cash_balance": 15886.1259,
+      "invested_value": 127662.90026855469
+    },
+    {
+      "date": "2022-02-23",
+      "total_value": 143124.256759375,
+      "cash_balance": 15886.1259,
+      "invested_value": 127238.130859375
+    },
+    {
+      "date": "2022-02-24",
+      "total_value": 136545.8726609375,
+      "cash_balance": 70390.1002,
+      "invested_value": 66155.7724609375
+    },
+    {
+      "date": "2022-02-25",
+      "total_value": 137285.3514207031,
+      "cash_balance": 70390.1002,
+      "invested_value": 66895.25122070312
+    },
+    {
+      "date": "2022-02-28",
+      "total_value": 138821.24253398436,
+      "cash_balance": 70390.1002,
+      "invested_value": 68431.14233398438
+    },
+    {
+      "date": "2022-03-02",
+      "total_value": 140099.76549570312,
+      "cash_balance": 57210.6549,
+      "invested_value": 82889.11059570312
+    },
+    {
+      "date": "2022-03-03",
+      "total_value": 139929.49418554688,
+      "cash_balance": 26321.8665,
+      "invested_value": 113607.62768554688
+    },
+    {
+      "date": "2022-03-04",
+      "total_value": 138687.1065734375,
+      "cash_balance": 5032.7013,
+      "invested_value": 133654.4052734375
+    },
+    {
+      "date": "2022-03-07",
+      "total_value": 136482.34509882814,
+      "cash_balance": 5032.7013,
+      "invested_value": 131449.64379882812
+    },
+    {
+      "date": "2022-03-08",
+      "total_value": 137678.4582580078,
+      "cash_balance": 5032.7013,
+      "invested_value": 132645.7569580078
+    },
+    {
+      "date": "2022-03-09",
+      "total_value": 142234.902471875,
+      "cash_balance": 5032.7013,
+      "invested_value": 137202.201171875
+    },
+    {
+      "date": "2022-03-10",
+      "total_value": 143910.7113097656,
+      "cash_balance": 5032.7013,
+      "invested_value": 138878.01000976562
+    },
+    {
+      "date": "2022-03-11",
+      "total_value": 144023.17786250002,
+      "cash_balance": 5032.7013,
+      "invested_value": 138990.4765625
+    },
+    {
+      "date": "2022-03-14",
+      "total_value": 147441.58955820312,
+      "cash_balance": 23360.3774,
+      "invested_value": 124081.21215820312
+    },
+    {
+      "date": "2022-03-15",
+      "total_value": 145032.71586972655,
+      "cash_balance": 11912.2719,
+      "invested_value": 133120.44396972656
+    },
+    {
+      "date": "2022-03-16",
+      "total_value": 147481.1179328125,
+      "cash_balance": 26788.0818,
+      "invested_value": 120693.0361328125
+    },
+    {
+      "date": "2022-03-17",
+      "total_value": 149769.58907148437,
+      "cash_balance": 58977.8608,
+      "invested_value": 90791.72827148438
+    },
+    {
+      "date": "2022-03-21",
+      "total_value": 149376.35363652345,
+      "cash_balance": 74450.6687,
+      "invested_value": 74925.68493652344
+    },
+    {
+      "date": "2022-03-22",
+      "total_value": 150163.45223457032,
+      "cash_balance": 82922.1318,
+      "invested_value": 67241.32043457031
+    },
+    {
+      "date": "2022-03-23",
+      "total_value": 149782.85722539062,
+      "cash_balance": 87972.8062,
+      "invested_value": 61810.051025390625
+    },
+    {
+      "date": "2022-03-24",
+      "total_value": 148546.3163873047,
+      "cash_balance": 89121.1544,
+      "invested_value": 59425.16198730469
+    },
+    {
+      "date": "2022-03-25",
+      "total_value": 148109.2020484375,
+      "cash_balance": 90278.8749,
+      "invested_value": 57830.3271484375
+    },
+    {
+      "date": "2022-03-28",
+      "total_value": 148524.39284433593,
+      "cash_balance": 90278.8749,
+      "invested_value": 58245.51794433594
+    },
+    {
+      "date": "2022-03-29",
+      "total_value": 149123.9082251953,
+      "cash_balance": 90278.8749,
+      "invested_value": 58845.03332519531
+    },
+    {
+      "date": "2022-03-30",
+      "total_value": 150237.55104746093,
+      "cash_balance": 90278.8749,
+      "invested_value": 59958.67614746094
+    },
+    {
+      "date": "2022-03-31",
+      "total_value": 150054.94887460937,
+      "cash_balance": 90278.8749,
+      "invested_value": 59776.073974609375
+    },
+    {
+      "date": "2022-04-01",
+      "total_value": 151979.81658496094,
+      "cash_balance": 108113.5545,
+      "invested_value": 43866.26208496094
+    },
+    {
+      "date": "2022-04-04",
+      "total_value": 153883.06360683593,
+      "cash_balance": 117302.0066,
+      "invested_value": 36581.05700683594
+    },
+    {
+      "date": "2022-04-05",
+      "total_value": 153379.40516464843,
+      "cash_balance": 121779.1714,
+      "invested_value": 31600.233764648438
+    },
+    {
+      "date": "2022-04-06",
+      "total_value": 153157.00215371093,
+      "cash_balance": 123932.8846,
+      "invested_value": 29224.117553710938
+    },
+    {
+      "date": "2022-04-07",
+      "total_value": 153250.07974765624,
+      "cash_balance": 111774.6359,
+      "invested_value": 41475.44384765625
+    },
+    {
+      "date": "2022-04-08",
+      "total_value": 153654.88858398437,
+      "cash_balance": 112466.2775,
+      "invested_value": 41188.611083984375
+    },
+    {
+      "date": "2022-04-11",
+      "total_value": 153562.9093042969,
+      "cash_balance": 77279.7074,
+      "invested_value": 76283.20190429688
+    },
+    {
+      "date": "2022-04-12",
+      "total_value": 152825.34214589844,
+      "cash_balance": 48214.2451,
+      "invested_value": 104611.09704589844
+    },
+    {
+      "date": "2022-04-13",
+      "total_value": 152621.8253001953,
+      "cash_balance": 48214.2451,
+      "invested_value": 104407.58020019531
+    },
+    {
+      "date": "2022-04-18",
+      "total_value": 148243.67642578125,
+      "cash_balance": 89622.9025,
+      "invested_value": 58620.77392578125
+    },
+    {
+      "date": "2022-04-19",
+      "total_value": 147904.65033203125,
+      "cash_balance": 75191.6225,
+      "invested_value": 72713.02783203125
+    },
+    {
+      "date": "2022-04-20",
+      "total_value": 148706.26554609375,
+      "cash_balance": 48601.6508,
+      "invested_value": 100104.61474609375
+    },
+    {
+      "date": "2022-04-21",
+      "total_value": 150425.70093964844,
+      "cash_balance": 29252.7328,
+      "invested_value": 121172.96813964844
+    },
+    {
+      "date": "2022-04-22",
+      "total_value": 148843.91102265625,
+      "cash_balance": 29252.7328,
+      "invested_value": 119591.17822265625
+    },
+    {
+      "date": "2022-04-25",
+      "total_value": 147692.4651902344,
+      "cash_balance": 13312.4752,
+      "invested_value": 134379.98999023438
+    },
+    {
+      "date": "2022-04-26",
+      "total_value": 149058.79514628905,
+      "cash_balance": 13312.4752,
+      "invested_value": 135746.31994628906
+    },
+    {
+      "date": "2022-04-27",
+      "total_value": 148039.076315625,
+      "cash_balance": 15266.5978,
+      "invested_value": 132772.478515625
+    },
+    {
+      "date": "2022-04-28",
+      "total_value": 149522.80959199218,
+      "cash_balance": 15266.5978,
+      "invested_value": 134256.2117919922
+    },
+    {
+      "date": "2022-04-29",
+      "total_value": 148646.9561984375,
+      "cash_balance": 15266.5978,
+      "invested_value": 133380.3583984375
+    },
+    {
+      "date": "2022-05-02",
+      "total_value": 149251.01778291014,
+      "cash_balance": 16266.5978,
+      "invested_value": 132984.41998291016
+    },
+    {
+      "date": "2022-05-04",
+      "total_value": 146330.2785314453,
+      "cash_balance": 1549.5538,
+      "invested_value": 144780.7247314453
+    },
+    {
+      "date": "2022-05-05",
+      "total_value": 146465.08619726563,
+      "cash_balance": 45580.7715,
+      "invested_value": 100884.31469726562
+    },
+    {
+      "date": "2022-05-06",
+      "total_value": 143969.62603554688,
+      "cash_balance": 76586.0921,
+      "invested_value": 67383.53393554688
+    },
+    {
+      "date": "2022-05-09",
+      "total_value": 143292.03430273436,
+      "cash_balance": 97684.9115,
+      "invested_value": 45607.122802734375
+    },
+    {
+      "date": "2022-05-10",
+      "total_value": 142666.2865,
+      "cash_balance": 97684.9115,
+      "invested_value": 44981.375
+    },
+    {
+      "date": "2022-05-11",
+      "total_value": 142032.85180761717,
+      "cash_balance": 97684.9115,
+      "invested_value": 44347.94030761719
+    },
+    {
+      "date": "2022-05-12",
+      "total_value": 141155.17942128907,
+      "cash_balance": 86623.8126,
+      "invested_value": 54531.36682128906
+    },
+    {
+      "date": "2022-05-13",
+      "total_value": 141321.38809785157,
+      "cash_balance": 111647.0203,
+      "invested_value": 29674.367797851562
+    },
+    {
+      "date": "2022-05-16",
+      "total_value": 141328.72806367188,
+      "cash_balance": 111647.0203,
+      "invested_value": 29681.707763671875
+    },
+    {
+      "date": "2022-05-17",
+      "total_value": 142575.44779023438,
+      "cash_balance": 111647.0203,
+      "invested_value": 30928.427490234375
+    },
+    {
+      "date": "2022-05-18",
+      "total_value": 142687.95328339844,
+      "cash_balance": 111647.0203,
+      "invested_value": 31040.932983398438
+    },
+    {
+      "date": "2022-05-19",
+      "total_value": 141972.56863984375,
+      "cash_balance": 111647.0203,
+      "invested_value": 30325.54833984375
+    },
+    {
+      "date": "2022-05-20",
+      "total_value": 143740.85440644532,
+      "cash_balance": 111647.0203,
+      "invested_value": 32093.834106445312
+    },
+    {
+      "date": "2022-05-23",
+      "total_value": 143526.23868378907,
+      "cash_balance": 111647.0203,
+      "invested_value": 31879.218383789062
+    },
+    {
+      "date": "2022-05-24",
+      "total_value": 143635.68558320313,
+      "cash_balance": 111647.0203,
+      "invested_value": 31988.665283203125
+    },
+    {
+      "date": "2022-05-25",
+      "total_value": 143588.600378125,
+      "cash_balance": 111647.0203,
+      "invested_value": 31941.580078125
+    },
+    {
+      "date": "2022-05-26",
+      "total_value": 143284.1022091797,
+      "cash_balance": 111647.0203,
+      "invested_value": 31637.081909179688
+    },
+    {
+      "date": "2022-05-27",
+      "total_value": 143137.35892304688,
+      "cash_balance": 111647.0203,
+      "invested_value": 31490.338623046875
+    },
+    {
+      "date": "2022-05-30",
+      "total_value": 144156.10097421875,
+      "cash_balance": 127258.9999,
+      "invested_value": 16897.10107421875
+    },
+    {
+      "date": "2022-05-31",
+      "total_value": 143952.24135507812,
+      "cash_balance": 127258.9999,
+      "invested_value": 16693.241455078125
+    },
+    {
+      "date": "2022-06-01",
+      "total_value": 144957.6297828125,
+      "cash_balance": 128258.9999,
+      "invested_value": 16698.6298828125
+    },
+    {
+      "date": "2022-06-02",
+      "total_value": 145478.25859589843,
+      "cash_balance": 136841.0678,
+      "invested_value": 8637.190795898438
+    },
+    {
+      "date": "2022-06-03",
+      "total_value": 145624.12720390625,
+      "cash_balance": 140588.5857,
+      "invested_value": 5035.54150390625
+    },
+    {
+      "date": "2022-06-06",
+      "total_value": 145579.2539890625,
+      "cash_balance": 143072.3077,
+      "invested_value": 2506.9462890625
+    },
+    {
+      "date": "2022-06-07",
+      "total_value": 145565.895325,
+      "cash_balance": 144310.0672,
+      "invested_value": 1255.828125
+    },
+    {
+      "date": "2022-06-08",
+      "total_value": 145543.83831816405,
+      "cash_balance": 144310.0672,
+      "invested_value": 1233.7711181640625
+    },
+    {
+      "date": "2022-06-09",
+      "total_value": 145577.67120390624,
+      "cash_balance": 144310.0672,
+      "invested_value": 1267.60400390625
+    },
+    {
+      "date": "2022-06-10",
+      "total_value": 145539.39971953124,
+      "cash_balance": 144310.0672,
+      "invested_value": 1229.33251953125
+    },
+    {
+      "date": "2022-06-13",
+      "total_value": 145398.52282695312,
+      "cash_balance": 115931.8302,
+      "invested_value": 29466.692626953125
+    },
+    {
+      "date": "2022-06-14",
+      "total_value": 145284.44311640624,
+      "cash_balance": 117103.2688,
+      "invested_value": 28181.17431640625
+    },
+    {
+      "date": "2022-06-15",
+      "total_value": 145247.14331171874,
+      "cash_balance": 117103.2688,
+      "invested_value": 28143.87451171875
+    },
+    {
+      "date": "2022-06-16",
+      "total_value": 144519.79183710937,
+      "cash_balance": 81044.2413,
+      "invested_value": 63475.550537109375
+    },
+    {
+      "date": "2022-06-17",
+      "total_value": 144391.4870336914,
+      "cash_balance": 52786.9025,
+      "invested_value": 91604.5845336914
+    },
+    {
+      "date": "2022-06-20",
+      "total_value": 143961.74189921876,
+      "cash_balance": 29553.3127,
+      "invested_value": 114408.42919921875
+    },
+    {
+      "date": "2022-06-21",
+      "total_value": 146006.99655205078,
+      "cash_balance": 15392.6232,
+      "invested_value": 130614.37335205078
+    },
+    {
+      "date": "2022-06-22",
+      "total_value": 144641.2772161133,
+      "cash_balance": 1203.2857,
+      "invested_value": 143437.99151611328
+    },
+    {
+      "date": "2022-06-23",
+      "total_value": 146281.2555583008,
+      "cash_balance": 16204.8783,
+      "invested_value": 130076.37725830078
+    },
+    {
+      "date": "2022-06-24",
+      "total_value": 147033.67694501954,
+      "cash_balance": 16204.8783,
+      "invested_value": 130828.79864501953
+    },
+    {
+      "date": "2022-06-27",
+      "total_value": 147737.96039228517,
+      "cash_balance": 16204.8783,
+      "invested_value": 131533.08209228516
+    },
+    {
+      "date": "2022-06-28",
+      "total_value": 147256.39062910157,
+      "cash_balance": 16204.8783,
+      "invested_value": 131051.51232910156
+    },
+    {
+      "date": "2022-06-29",
+      "total_value": 146240.3088419922,
+      "cash_balance": 16204.8783,
+      "invested_value": 130035.43054199219
+    },
+    {
+      "date": "2022-06-30",
+      "total_value": 146008.4770897461,
+      "cash_balance": 876.6251,
+      "invested_value": 145131.8519897461
+    },
+    {
+      "date": "2022-07-01",
+      "total_value": 146845.0401390625,
+      "cash_balance": 1876.6251,
+      "invested_value": 144968.4150390625
+    },
+    {
+      "date": "2022-07-04",
+      "total_value": 146078.42954335938,
+      "cash_balance": 1876.6251,
+      "invested_value": 144201.80444335938
+    },
+    {
+      "date": "2022-07-05",
+      "total_value": 145710.75589833985,
+      "cash_balance": 1876.6251,
+      "invested_value": 143834.13079833984
+    },
+    {
+      "date": "2022-07-06",
+      "total_value": 147085.42316972656,
+      "cash_balance": 5046.8542,
+      "invested_value": 142038.56896972656
+    },
+    {
+      "date": "2022-07-07",
+      "total_value": 148581.46423496093,
+      "cash_balance": 1749.2959,
+      "invested_value": 146832.16833496094
+    },
+    {
+      "date": "2022-07-08",
+      "total_value": 148334.3604473633,
+      "cash_balance": 6808.7244,
+      "invested_value": 141525.63604736328
+    },
+    {
+      "date": "2022-07-11",
+      "total_value": 145295.89753291017,
+      "cash_balance": 49552.1963,
+      "invested_value": 95743.70123291016
+    },
+    {
+      "date": "2022-07-12",
+      "total_value": 144355.256675,
+      "cash_balance": 21126.6473,
+      "invested_value": 123228.609375
+    },
+    {
+      "date": "2022-07-13",
+      "total_value": 141620.78425390625,
+      "cash_balance": 38875.9615,
+      "invested_value": 102744.82275390625
+    },
+    {
+      "date": "2022-07-14",
+      "total_value": 140667.42718447265,
+      "cash_balance": 4428.3656,
+      "invested_value": 136239.06158447266
+    },
+    {
+      "date": "2022-07-15",
+      "total_value": 140525.69067324218,
+      "cash_balance": 4428.3656,
+      "invested_value": 136097.3250732422
+    },
+    {
+      "date": "2022-07-18",
+      "total_value": 143455.43957460937,
+      "cash_balance": 4428.3656,
+      "invested_value": 139027.07397460938
+    },
+    {
+      "date": "2022-07-19",
+      "total_value": 143986.41339052733,
+      "cash_balance": 4428.3656,
+      "invested_value": 139558.04779052734
+    },
+    {
+      "date": "2022-07-20",
+      "total_value": 148042.57501162108,
+      "cash_balance": 4428.3656,
+      "invested_value": 143614.2094116211
+    },
+    {
+      "date": "2022-07-21",
+      "total_value": 148453.1035760742,
+      "cash_balance": 4428.3656,
+      "invested_value": 144024.73797607422
+    },
+    {
+      "date": "2022-07-22",
+      "total_value": 148310.4819330078,
+      "cash_balance": 4428.3656,
+      "invested_value": 143882.1163330078
+    },
+    {
+      "date": "2022-07-25",
+      "total_value": 147528.53671914063,
+      "cash_balance": 2533.4271,
+      "invested_value": 144995.10961914062
+    },
+    {
+      "date": "2022-07-26",
+      "total_value": 144906.60410195313,
+      "cash_balance": 2533.4271,
+      "invested_value": 142373.17700195312
+    },
+    {
+      "date": "2022-07-27",
+      "total_value": 148075.98410683594,
+      "cash_balance": 2533.4271,
+      "invested_value": 145542.55700683594
+    },
+    {
+      "date": "2022-07-28",
+      "total_value": 151484.12558632813,
+      "cash_balance": 2533.4271,
+      "invested_value": 148950.69848632812
+    },
+    {
+      "date": "2022-07-29",
+      "total_value": 153508.1967533203,
+      "cash_balance": 2533.4271,
+      "invested_value": 150974.7696533203
+    },
+    {
+      "date": "2022-08-01",
+      "total_value": 154401.68570595703,
+      "cash_balance": 3533.4271,
+      "invested_value": 150868.25860595703
+    },
+    {
+      "date": "2022-08-02",
+      "total_value": 154033.49637490234,
+      "cash_balance": 3533.4271,
+      "invested_value": 150500.06927490234
+    },
+    {
+      "date": "2022-08-03",
+      "total_value": 156211.10697060547,
+      "cash_balance": 3533.4271,
+      "invested_value": 152677.67987060547
+    },
+    {
+      "date": "2022-08-04",
+      "total_value": 157192.3826053711,
+      "cash_balance": 3533.4271,
+      "invested_value": 153658.9555053711
+    },
+    {
+      "date": "2022-08-05",
+      "total_value": 157797.02591591797,
+      "cash_balance": 3533.4271,
+      "invested_value": 154263.59881591797
+    },
+    {
+      "date": "2022-08-08",
+      "total_value": 158210.5018680664,
+      "cash_balance": 3533.4271,
+      "invested_value": 154677.0747680664
+    },
+    {
+      "date": "2022-08-10",
+      "total_value": 157223.53330117188,
+      "cash_balance": 3533.4271,
+      "invested_value": 153690.10620117188
+    },
+    {
+      "date": "2022-08-11",
+      "total_value": 159988.4128100586,
+      "cash_balance": 72616.2825,
+      "invested_value": 87372.1303100586
+    },
+    {
+      "date": "2022-08-12",
+      "total_value": 159303.10604736328,
+      "cash_balance": 72616.2825,
+      "invested_value": 86686.82354736328
+    },
+    {
+      "date": "2022-08-16",
+      "total_value": 159153.69943115234,
+      "cash_balance": 72616.2825,
+      "invested_value": 86537.41693115234
+    },
+    {
+      "date": "2022-08-17",
+      "total_value": 159432.026640625,
+      "cash_balance": 72616.2825,
+      "invested_value": 86815.744140625
+    },
+    {
+      "date": "2022-08-18",
+      "total_value": 158783.7253100586,
+      "cash_balance": 72616.2825,
+      "invested_value": 86167.4428100586
+    },
+    {
+      "date": "2022-08-19",
+      "total_value": 159011.38986083984,
+      "cash_balance": 72616.2825,
+      "invested_value": 86395.10736083984
+    },
+    {
+      "date": "2022-08-22",
+      "total_value": 158116.1273609375,
+      "cash_balance": 73423.4174,
+      "invested_value": 84692.7099609375
+    },
+    {
+      "date": "2022-08-23",
+      "total_value": 156003.891575,
+      "cash_balance": 135189.2822,
+      "invested_value": 20814.609375
+    },
+    {
+      "date": "2022-08-24",
+      "total_value": 156104.00082792967,
+      "cash_balance": 135189.2822,
+      "invested_value": 20914.718627929688
+    },
+    {
+      "date": "2022-08-25",
+      "total_value": 155905.21537871094,
+      "cash_balance": 106781.2072,
+      "invested_value": 49124.00817871094
+    },
+    {
+      "date": "2022-08-26",
+      "total_value": 155943.96720976563,
+      "cash_balance": 106781.2072,
+      "invested_value": 49162.760009765625
+    },
+    {
+      "date": "2022-08-29",
+      "total_value": 154611.95350878907,
+      "cash_balance": 114106.0945,
+      "invested_value": 40505.85900878906
+    },
+    {
+      "date": "2022-08-30",
+      "total_value": 155512.21711796874,
+      "cash_balance": 93654.4637,
+      "invested_value": 61857.75341796875
+    },
+    {
+      "date": "2022-09-01",
+      "total_value": 154855.15101171876,
+      "cash_balance": 95557.0265,
+      "invested_value": 59298.12451171875
+    },
+    {
+      "date": "2022-09-02",
+      "total_value": 154596.37171484376,
+      "cash_balance": 95557.0265,
+      "invested_value": 59039.34521484375
+    },
+    {
+      "date": "2022-09-05",
+      "total_value": 155237.28495078126,
+      "cash_balance": 56865.8079,
+      "invested_value": 98371.47705078125
+    },
+    {
+      "date": "2022-09-06",
+      "total_value": 155483.71964316408,
+      "cash_balance": 56865.8079,
+      "invested_value": 98617.91174316406
+    },
+    {
+      "date": "2022-09-07",
+      "total_value": 155435.03324179686,
+      "cash_balance": 56865.8079,
+      "invested_value": 98569.22534179688
+    },
+    {
+      "date": "2022-09-08",
+      "total_value": 155954.05240683595,
+      "cash_balance": 56865.8079,
+      "invested_value": 99088.24450683594
+    },
+    {
+      "date": "2022-09-09",
+      "total_value": 156270.63469492187,
+      "cash_balance": 33409.7824,
+      "invested_value": 122860.85229492188
+    },
+    {
+      "date": "2022-09-12",
+      "total_value": 156819.51536445314,
+      "cash_balance": 16996.7368,
+      "invested_value": 139822.77856445312
+    },
+    {
+      "date": "2022-09-13",
+      "total_value": 157653.57963447267,
+      "cash_balance": 16996.7368,
+      "invested_value": 140656.84283447266
+    },
+    {
+      "date": "2022-09-14",
+      "total_value": 155420.4100484375,
+      "cash_balance": 3752.7079,
+      "invested_value": 151667.7021484375
+    },
+    {
+      "date": "2022-09-15",
+      "total_value": 153505.0628538086,
+      "cash_balance": 3568.6552,
+      "invested_value": 149936.4076538086
+    },
+    {
+      "date": "2022-09-16",
+      "total_value": 148528.39527255858,
+      "cash_balance": 67674.0384,
+      "invested_value": 80854.3568725586
+    },
+    {
+      "date": "2022-09-19",
+      "total_value": 148869.3852017578,
+      "cash_balance": 67674.0384,
+      "invested_value": 81195.34680175781
+    },
+    {
+      "date": "2022-09-20",
+      "total_value": 149414.94666416015,
+      "cash_balance": 67674.0384,
+      "invested_value": 81740.90826416016
+    },
+    {
+      "date": "2022-09-21",
+      "total_value": 149445.20740634765,
+      "cash_balance": 67674.0384,
+      "invested_value": 81771.16900634766
+    },
+    {
+      "date": "2022-09-22",
+      "total_value": 148035.0281524414,
+      "cash_balance": 31130.3694,
+      "invested_value": 116904.6587524414
+    },
+    {
+      "date": "2022-09-23",
+      "total_value": 145665.83007578124,
+      "cash_balance": 72914.8999,
+      "invested_value": 72750.93017578125
+    },
+    {
+      "date": "2022-09-26",
+      "total_value": 146454.3774390625,
+      "cash_balance": 72914.8999,
+      "invested_value": 73539.4775390625
+    },
+    {
+      "date": "2022-09-27",
+      "total_value": 147163.0102515625,
+      "cash_balance": 72914.8999,
+      "invested_value": 74248.1103515625
+    },
+    {
+      "date": "2022-09-28",
+      "total_value": 147224.2700171875,
+      "cash_balance": 72914.8999,
+      "invested_value": 74309.3701171875
+    },
+    {
+      "date": "2022-09-29",
+      "total_value": 147434.72411875,
+      "cash_balance": 72914.8999,
+      "invested_value": 74519.82421875
+    },
+    {
+      "date": "2022-09-30",
+      "total_value": 148223.27880625,
+      "cash_balance": 72914.8999,
+      "invested_value": 75308.37890625
+    },
+    {
+      "date": "2022-10-03",
+      "total_value": 148173.659665625,
+      "cash_balance": 73914.8999,
+      "invested_value": 74258.759765625
+    },
+    {
+      "date": "2022-10-04",
+      "total_value": 150073.093259375,
+      "cash_balance": 73914.8999,
+      "invested_value": 76158.193359375
+    },
+    {
+      "date": "2022-10-06",
+      "total_value": 151395.8666642578,
+      "cash_balance": 52954.4808,
+      "invested_value": 98441.38586425781
+    },
+    {
+      "date": "2022-10-07",
+      "total_value": 151273.90914472655,
+      "cash_balance": 52954.4808,
+      "invested_value": 98319.42834472656
+    },
+    {
+      "date": "2022-10-10",
+      "total_value": 151414.9925205078,
+      "cash_balance": 75212.0715,
+      "invested_value": 76202.92102050781
+    },
+    {
+      "date": "2022-10-11",
+      "total_value": 149631.63600117186,
+      "cash_balance": 56225.7173,
+      "invested_value": 93405.91870117188
+    },
+    {
+      "date": "2022-10-12",
+      "total_value": 150215.04343417968,
+      "cash_balance": 31803.5084,
+      "invested_value": 118411.53503417969
+    },
+    {
+      "date": "2022-10-13",
+      "total_value": 149661.03928378905,
+      "cash_balance": 31803.5084,
+      "invested_value": 117857.53088378906
+    },
+    {
+      "date": "2022-10-14",
+      "total_value": 151315.96384492188,
+      "cash_balance": 38240.8928,
+      "invested_value": 113075.07104492188
+    },
+    {
+      "date": "2022-10-17",
+      "total_value": 152562.13177021485,
+      "cash_balance": 16263.6748,
+      "invested_value": 136298.45697021484
+    },
+    {
+      "date": "2022-10-18",
+      "total_value": 154280.6549821289,
+      "cash_balance": 32240.8683,
+      "invested_value": 122039.7866821289
+    },
+    {
+      "date": "2022-10-19",
+      "total_value": 154362.79048115233,
+      "cash_balance": 17442.8423,
+      "invested_value": 136919.94818115234
+    },
+    {
+      "date": "2022-10-20",
+      "total_value": 155009.27833515624,
+      "cash_balance": 17442.8423,
+      "invested_value": 137566.43603515625
+    },
+    {
+      "date": "2022-10-21",
+      "total_value": 154554.86547617186,
+      "cash_balance": 2464.2124,
+      "invested_value": 152090.65307617188
+    },
+    {
+      "date": "2022-10-24",
+      "total_value": 156052.12358710938,
+      "cash_balance": 10522.1668,
+      "invested_value": 145529.95678710938
+    },
+    {
+      "date": "2022-10-25",
+      "total_value": 155126.2605783203,
+      "cash_balance": 14565.8503,
+      "invested_value": 140560.4102783203
+    },
+    {
+      "date": "2022-10-27",
+      "total_value": 155299.2021107422,
+      "cash_balance": 17280.1036,
+      "invested_value": 138019.0985107422
+    },
+    {
+      "date": "2022-10-28",
+      "total_value": 156364.26802480468,
+      "cash_balance": 18620.2701,
+      "invested_value": 137743.9979248047
+    },
+    {
+      "date": "2022-10-31",
+      "total_value": 157321.06062734374,
+      "cash_balance": 18620.2701,
+      "invested_value": 138700.79052734375
+    },
+    {
+      "date": "2022-11-01",
+      "total_value": 158645.06587636718,
+      "cash_balance": 19620.2701,
+      "invested_value": 139024.7957763672
+    },
+    {
+      "date": "2022-11-02",
+      "total_value": 158620.6284984375,
+      "cash_balance": 19620.2701,
+      "invested_value": 139000.3583984375
+    },
+    {
+      "date": "2022-11-03",
+      "total_value": 158599.78242910156,
+      "cash_balance": 19620.2701,
+      "invested_value": 138979.51232910156
+    },
+    {
+      "date": "2022-11-04",
+      "total_value": 159428.08344921874,
+      "cash_balance": 20961.248,
+      "invested_value": 138466.83544921875
+    },
+    {
+      "date": "2022-11-07",
+      "total_value": 160485.37959179687,
+      "cash_balance": 20961.248,
+      "invested_value": 139524.13159179688
+    },
+    {
+      "date": "2022-11-09",
+      "total_value": 159909.8935078125,
+      "cash_balance": 20961.248,
+      "invested_value": 138948.6455078125
+    },
+    {
+      "date": "2022-11-10",
+      "total_value": 159055.19782910155,
+      "cash_balance": 20961.248,
+      "invested_value": 138093.94982910156
+    },
+    {
+      "date": "2022-11-11",
+      "total_value": 161536.8643330078,
+      "cash_balance": 20961.248,
+      "invested_value": 140575.6163330078
+    },
+    {
+      "date": "2022-11-14",
+      "total_value": 160943.5000751953,
+      "cash_balance": 20961.248,
+      "invested_value": 139982.2520751953
+    },
+    {
+      "date": "2022-11-15",
+      "total_value": 161378.20100292968,
+      "cash_balance": 20961.248,
+      "invested_value": 140416.9530029297
+    },
+    {
+      "date": "2022-11-16",
+      "total_value": 161370.48274121093,
+      "cash_balance": 20961.248,
+      "invested_value": 140409.23474121094
+    },
+    {
+      "date": "2022-11-17",
+      "total_value": 161731.94026074218,
+      "cash_balance": 20961.248,
+      "invested_value": 140770.6922607422
+    },
+    {
+      "date": "2022-11-18",
+      "total_value": 161659.6688984375,
+      "cash_balance": 20961.248,
+      "invested_value": 140698.4208984375
+    },
+    {
+      "date": "2022-11-21",
+      "total_value": 159914.12043652343,
+      "cash_balance": 20961.248,
+      "invested_value": 138952.87243652344
+    },
+    {
+      "date": "2022-11-22",
+      "total_value": 160711.5907734375,
+      "cash_balance": 20961.248,
+      "invested_value": 139750.3427734375
+    },
+    {
+      "date": "2022-11-23",
+      "total_value": 160613.2110126953,
+      "cash_balance": 20961.248,
+      "invested_value": 139651.9630126953
+    },
+    {
+      "date": "2022-11-24",
+      "total_value": 162465.8360126953,
+      "cash_balance": 20961.248,
+      "invested_value": 141504.5880126953
+    },
+    {
+      "date": "2022-11-25",
+      "total_value": 163103.91535839843,
+      "cash_balance": 20961.248,
+      "invested_value": 142142.66735839844
+    },
+    {
+      "date": "2022-11-28",
+      "total_value": 165609.5995625,
+      "cash_balance": 20961.248,
+      "invested_value": 144648.3515625
+    },
+    {
+      "date": "2022-11-29",
+      "total_value": 166159.75605664062,
+      "cash_balance": 20961.248,
+      "invested_value": 145198.50805664062
+    },
+    {
+      "date": "2022-11-30",
+      "total_value": 166810.871046875,
+      "cash_balance": 20961.248,
+      "invested_value": 145849.623046875
+    },
+    {
+      "date": "2022-12-01",
+      "total_value": 168028.62470898437,
+      "cash_balance": 21961.248,
+      "invested_value": 146067.37670898438
+    },
+    {
+      "date": "2022-12-02",
+      "total_value": 167155.43086132812,
+      "cash_balance": 21961.248,
+      "invested_value": 145194.18286132812
+    },
+    {
+      "date": "2022-12-05",
+      "total_value": 166198.94648632812,
+      "cash_balance": 21961.248,
+      "invested_value": 144237.69848632812
+    },
+    {
+      "date": "2022-12-06",
+      "total_value": 165264.77068515625,
+      "cash_balance": 31617.6784,
+      "invested_value": 133647.09228515625
+    },
+    {
+      "date": "2022-12-07",
+      "total_value": 164180.419571875,
+      "cash_balance": 310.5934,
+      "invested_value": 163869.826171875
+    },
+    {
+      "date": "2022-12-08",
+      "total_value": 164364.67200507812,
+      "cash_balance": 38641.8368,
+      "invested_value": 125722.83520507812
+    },
+    {
+      "date": "2022-12-09",
+      "total_value": 163203.06105195312,
+      "cash_balance": 14853.1028,
+      "invested_value": 148349.95825195312
+    },
+    {
+      "date": "2022-12-12",
+      "total_value": 163361.0130783203,
+      "cash_balance": 14853.1028,
+      "invested_value": 148507.9102783203
+    },
+    {
+      "date": "2022-12-13",
+      "total_value": 163929.84962617187,
+      "cash_balance": 14853.1028,
+      "invested_value": 149076.74682617188
+    },
+    {
+      "date": "2022-12-14",
+      "total_value": 162860.37257539062,
+      "cash_balance": 14853.1028,
+      "invested_value": 148007.26977539062
+    },
+    {
+      "date": "2022-12-15",
+      "total_value": 160214.4893671875,
+      "cash_balance": 121493.0255,
+      "invested_value": 38721.4638671875
+    },
+    {
+      "date": "2022-12-16",
+      "total_value": 159631.55919667968,
+      "cash_balance": 85230.3601,
+      "invested_value": 74401.19909667969
+    },
+    {
+      "date": "2022-12-19",
+      "total_value": 159628.99303925782,
+      "cash_balance": 45571.1853,
+      "invested_value": 114057.80773925781
+    },
+    {
+      "date": "2022-12-20",
+      "total_value": 160338.6341607422,
+      "cash_balance": 7560.5669,
+      "invested_value": 152778.0672607422
+    },
+    {
+      "date": "2022-12-21",
+      "total_value": 160230.19446347657,
+      "cash_balance": 7560.5669,
+      "invested_value": 152669.62756347656
+    },
+    {
+      "date": "2022-12-22",
+      "total_value": 160654.89368222657,
+      "cash_balance": 7560.5669,
+      "invested_value": 153094.32678222656
+    },
+    {
+      "date": "2022-12-23",
+      "total_value": 157758.683784375,
+      "cash_balance": 42617.4748,
+      "invested_value": 115141.208984375
+    },
+    {
+      "date": "2022-12-26",
+      "total_value": 158328.38056171875,
+      "cash_balance": 42617.4748,
+      "invested_value": 115710.90576171875
+    },
+    {
+      "date": "2022-12-27",
+      "total_value": 159035.79071796875,
+      "cash_balance": 42617.4748,
+      "invested_value": 116418.31591796875
+    },
+    {
+      "date": "2022-12-28",
+      "total_value": 158769.8761671875,
+      "cash_balance": 42617.4748,
+      "invested_value": 116152.4013671875
+    },
+    {
+      "date": "2022-12-29",
+      "total_value": 159285.804878125,
+      "cash_balance": 42617.4748,
+      "invested_value": 116668.330078125
+    },
+    {
+      "date": "2022-12-30",
+      "total_value": 158666.8996046875,
+      "cash_balance": 42617.4748,
+      "invested_value": 116049.4248046875
+    },
+    {
+      "date": "2023-01-02",
+      "total_value": 160519.8605421875,
+      "cash_balance": 43617.4748,
+      "invested_value": 116902.3857421875
+    },
+    {
+      "date": "2023-01-03",
+      "total_value": 161063.39276875,
+      "cash_balance": 43617.4748,
+      "invested_value": 117445.91796875
+    },
+    {
+      "date": "2023-01-04",
+      "total_value": 159347.94015058593,
+      "cash_balance": 79487.1683,
+      "invested_value": 79860.77185058594
+    },
+    {
+      "date": "2023-01-05",
+      "total_value": 158703.50900195312,
+      "cash_balance": 40556.1445,
+      "invested_value": 118147.36450195312
+    },
+    {
+      "date": "2023-01-06",
+      "total_value": 156667.36933984375,
+      "cash_balance": 80634.8835,
+      "invested_value": 76032.48583984375
+    },
+    {
+      "date": "2023-01-09",
+      "total_value": 158750.63963398436,
+      "cash_balance": 54589.8723,
+      "invested_value": 104160.76733398438
+    },
+    {
+      "date": "2023-01-10",
+      "total_value": 157307.6742203125,
+      "cash_balance": 28410.7084,
+      "invested_value": 128896.9658203125
+    },
+    {
+      "date": "2023-01-11",
+      "total_value": 157238.4402640625,
+      "cash_balance": 7781.1346,
+      "invested_value": 149457.3056640625
+    },
+    {
+      "date": "2023-01-12",
+      "total_value": 155599.27211367188,
+      "cash_balance": 32093.3456,
+      "invested_value": 123505.92651367188
+    },
+    {
+      "date": "2023-01-13",
+      "total_value": 156457.8359265625,
+      "cash_balance": 7688.1162,
+      "invested_value": 148769.7197265625
+    },
+    {
+      "date": "2023-01-16",
+      "total_value": 157350.719715625,
+      "cash_balance": 7688.1162,
+      "invested_value": 149662.603515625
+    },
+    {
+      "date": "2023-01-17",
+      "total_value": 159273.66698125,
+      "cash_balance": 7688.1162,
+      "invested_value": 151585.55078125
+    },
+    {
+      "date": "2023-01-18",
+      "total_value": 159609.22923710936,
+      "cash_balance": 7688.1162,
+      "invested_value": 151921.11303710938
+    },
+    {
+      "date": "2023-01-19",
+      "total_value": 159020.9912,
+      "cash_balance": 7688.1162,
+      "invested_value": 151332.875
+    },
+    {
+      "date": "2023-01-20",
+      "total_value": 158089.35423710936,
+      "cash_balance": 7688.1162,
+      "invested_value": 150401.23803710938
+    },
+    {
+      "date": "2023-01-23",
+      "total_value": 159616.92064335936,
+      "cash_balance": 7688.1162,
+      "invested_value": 151928.80444335938
+    },
+    {
+      "date": "2023-01-24",
+      "total_value": 159644.6514251953,
+      "cash_balance": 49630.4306,
+      "invested_value": 110014.22082519531
+    },
+    {
+      "date": "2023-01-25",
+      "total_value": 158744.89939570313,
+      "cash_balance": 50870.2263,
+      "invested_value": 107874.67309570312
+    },
+    {
+      "date": "2023-01-27",
+      "total_value": 156764.07946621094,
+      "cash_balance": 49470.8291,
+      "invested_value": 107293.25036621094
+    },
+    {
+      "date": "2023-01-30",
+      "total_value": 157406.6860357422,
+      "cash_balance": 29513.1969,
+      "invested_value": 127893.48913574219
+    },
+    {
+      "date": "2023-01-31",
+      "total_value": 156686.5609175781,
+      "cash_balance": 14298.4679,
+      "invested_value": 142388.09301757812
+    },
+    {
+      "date": "2023-02-01",
+      "total_value": 158247.7904097656,
+      "cash_balance": 15298.4679,
+      "invested_value": 142949.32250976562
+    },
+    {
+      "date": "2023-02-02",
+      "total_value": 158511.9036910156,
+      "cash_balance": 15298.4679,
+      "invested_value": 143213.43579101562
+    },
+    {
+      "date": "2023-02-03",
+      "total_value": 159686.54260703124,
+      "cash_balance": 15298.4679,
+      "invested_value": 144388.07470703125
+    },
+    {
+      "date": "2023-02-06",
+      "total_value": 158414.43530722655,
+      "cash_balance": 15298.4679,
+      "invested_value": 143115.96740722656
+    },
+    {
+      "date": "2023-02-07",
+      "total_value": 158260.0941207031,
+      "cash_balance": 15298.4679,
+      "invested_value": 142961.62622070312
+    },
+    {
+      "date": "2023-02-08",
+      "total_value": 160379.99440957032,
+      "cash_balance": 13628.0021,
+      "invested_value": 146751.9923095703
+    },
+    {
+      "date": "2023-02-09",
+      "total_value": 161190.9661515625,
+      "cash_balance": 19989.4183,
+      "invested_value": 141201.5478515625
+    },
+    {
+      "date": "2023-02-10",
+      "total_value": 160447.05389980468,
+      "cash_balance": 23160.3841,
+      "invested_value": 137286.6697998047
+    },
+    {
+      "date": "2023-02-13",
+      "total_value": 158930.96600917968,
+      "cash_balance": 23160.3841,
+      "invested_value": 135770.5819091797
+    },
+    {
+      "date": "2023-02-14",
+      "total_value": 161442.26459316406,
+      "cash_balance": 23160.3841,
+      "invested_value": 138281.88049316406
+    },
+    {
+      "date": "2023-02-15",
+      "total_value": 163054.68629628906,
+      "cash_balance": 7458.0226,
+      "invested_value": 155596.66369628906
+    },
+    {
+      "date": "2023-02-16",
+      "total_value": 163061.72108632812,
+      "cash_balance": 7458.0226,
+      "invested_value": 155603.69848632812
+    },
+    {
+      "date": "2023-02-17",
+      "total_value": 162837.9709642578,
+      "cash_balance": 7458.0226,
+      "invested_value": 155379.9483642578
+    },
+    {
+      "date": "2023-02-20",
+      "total_value": 161878.48988515625,
+      "cash_balance": 7458.0226,
+      "invested_value": 154420.46728515625
+    },
+    {
+      "date": "2023-02-21",
+      "total_value": 162338.90089589843,
+      "cash_balance": 7458.0226,
+      "invested_value": 154880.87829589844
+    },
+    {
+      "date": "2023-02-22",
+      "total_value": 159347.13687148437,
+      "cash_balance": 10504.7836,
+      "invested_value": 148842.35327148438
+    },
+    {
+      "date": "2023-02-23",
+      "total_value": 158286.79104785156,
+      "cash_balance": 9804.2045,
+      "invested_value": 148482.58654785156
+    },
+    {
+      "date": "2023-02-24",
+      "total_value": 158052.37892265627,
+      "cash_balance": 29041.7007,
+      "invested_value": 129010.67822265625
+    },
+    {
+      "date": "2023-02-27",
+      "total_value": 157551.83778496092,
+      "cash_balance": 29041.7007,
+      "invested_value": 128510.13708496094
+    },
+    {
+      "date": "2023-02-28",
+      "total_value": 155574.85598125,
+      "cash_balance": 78210.0552,
+      "invested_value": 77364.80078125
+    },
+    {
+      "date": "2023-03-01",
+      "total_value": 156885.94997539063,
+      "cash_balance": 79210.0552,
+      "invested_value": 77675.89477539062
+    },
+    {
+      "date": "2023-03-02",
+      "total_value": 156159.828609375,
+      "cash_balance": 40111.604,
+      "invested_value": 116048.224609375
+    },
+    {
+      "date": "2023-03-03",
+      "total_value": 158568.0959859375,
+      "cash_balance": 3287.1204,
+      "invested_value": 155280.9755859375
+    },
+    {
+      "date": "2023-03-06",
+      "total_value": 159769.438759375,
+      "cash_balance": 3287.1204,
+      "invested_value": 156482.318359375
+    },
+    {
+      "date": "2023-03-08",
+      "total_value": 160144.7688375,
+      "cash_balance": 3287.1204,
+      "invested_value": 156857.6484375
+    },
+    {
+      "date": "2023-03-09",
+      "total_value": 159205.14920859376,
+      "cash_balance": 3287.1204,
+      "invested_value": 155918.02880859375
+    },
+    {
+      "date": "2023-03-10",
+      "total_value": 155371.00935273437,
+      "cash_balance": 2721.1053,
+      "invested_value": 152649.90405273438
+    },
+    {
+      "date": "2023-03-13",
+      "total_value": 152752.8466015625,
+      "cash_balance": 117212.5175,
+      "invested_value": 35540.3291015625
+    },
+    {
+      "date": "2023-03-14",
+      "total_value": 151876.6786363281,
+      "cash_balance": 79345.8864,
+      "invested_value": 72530.79223632812
+    },
+    {
+      "date": "2023-03-15",
+      "total_value": 151112.539696875,
+      "cash_balance": 113501.8229,
+      "invested_value": 37610.716796875
+    },
+    {
+      "date": "2023-03-16",
+      "total_value": 150799.1486980469,
+      "cash_balance": 75952.6382,
+      "invested_value": 74846.51049804689
+    },
+    {
+      "date": "2023-03-17",
+      "total_value": 150600.23890771484,
+      "cash_balance": 38471.696,
+      "invested_value": 112128.54290771484
+    },
+    {
+      "date": "2023-03-20",
+      "total_value": 149392.52672460937,
+      "cash_balance": 1357.234,
+      "invested_value": 148035.29272460938
+    },
+    {
+      "date": "2023-03-21",
+      "total_value": 153995.8199375,
+      "cash_balance": 1357.234,
+      "invested_value": 152638.5859375
+    },
+    {
+      "date": "2023-03-22",
+      "total_value": 154459.85558203125,
+      "cash_balance": 1357.234,
+      "invested_value": 153102.62158203125
+    },
+    {
+      "date": "2023-03-23",
+      "total_value": 152523.05553320312,
+      "cash_balance": 1357.234,
+      "invested_value": 151165.82153320312
+    },
+    {
+      "date": "2023-03-24",
+      "total_value": 149530.39147070312,
+      "cash_balance": 1357.234,
+      "invested_value": 148173.15747070312
+    },
+    {
+      "date": "2023-03-27",
+      "total_value": 151833.71373632812,
+      "cash_balance": 1357.234,
+      "invested_value": 150476.47973632812
+    },
+    {
+      "date": "2023-03-28",
+      "total_value": 152536.50597265625,
+      "cash_balance": 1357.234,
+      "invested_value": 151179.27197265622
+    },
+    {
+      "date": "2023-03-29",
+      "total_value": 151642.07433203125,
+      "cash_balance": 1357.234,
+      "invested_value": 150284.84033203122
+    },
+    {
+      "date": "2023-03-31",
+      "total_value": 158121.66319921875,
+      "cash_balance": 1357.234,
+      "invested_value": 156764.42919921875
+    },
+    {
+      "date": "2023-04-03",
+      "total_value": 159148.564078125,
+      "cash_balance": 2357.234,
+      "invested_value": 156791.330078125
+    },
+    {
+      "date": "2023-04-05",
+      "total_value": 158771.9517734375,
+      "cash_balance": 2357.234,
+      "invested_value": 156414.7177734375
+    },
+    {
+      "date": "2023-04-06",
+      "total_value": 159821.04991796875,
+      "cash_balance": 2357.234,
+      "invested_value": 157463.81591796875
+    },
+    {
+      "date": "2023-04-10",
+      "total_value": 158704.69054296875,
+      "cash_balance": 2357.234,
+      "invested_value": 156347.45654296875
+    },
+    {
+      "date": "2023-04-11",
+      "total_value": 159478.07726171875,
+      "cash_balance": 2357.234,
+      "invested_value": 157120.84326171875
+    },
+    {
+      "date": "2023-04-12",
+      "total_value": 160170.76134375,
+      "cash_balance": 2357.234,
+      "invested_value": 157813.52734375
+    },
+    {
+      "date": "2023-04-13",
+      "total_value": 160506.5196214844,
+      "cash_balance": 49647.6976,
+      "invested_value": 110858.82202148438
+    },
+    {
+      "date": "2023-04-17",
+      "total_value": 160098.58514726564,
+      "cash_balance": 55133.1767,
+      "invested_value": 104965.40844726562
+    },
+    {
+      "date": "2023-04-18",
+      "total_value": 159421.08680742187,
+      "cash_balance": 38135.1017,
+      "invested_value": 121285.98510742188
+    },
+    {
+      "date": "2023-04-19",
+      "total_value": 158214.29774375,
+      "cash_balance": 18155.8329,
+      "invested_value": 140058.46484375
+    },
+    {
+      "date": "2023-04-20",
+      "total_value": 158551.94251914063,
+      "cash_balance": 18155.8329,
+      "invested_value": 140396.10961914062
+    },
+    {
+      "date": "2023-04-21",
+      "total_value": 160502.0720357422,
+      "cash_balance": 18155.8329,
+      "invested_value": 142346.2391357422
+    },
+    {
+      "date": "2023-04-24",
+      "total_value": 160952.61421191407,
+      "cash_balance": 10209.972,
+      "invested_value": 150742.64221191406
+    },
+    {
+      "date": "2023-04-25",
+      "total_value": 161196.77723671874,
+      "cash_balance": 15580.8871,
+      "invested_value": 145615.89013671875
+    },
+    {
+      "date": "2023-04-26",
+      "total_value": 161949.2593328125,
+      "cash_balance": 17707.4107,
+      "invested_value": 144241.8486328125
+    },
+    {
+      "date": "2023-04-27",
+      "total_value": 161889.5589352539,
+      "cash_balance": 429.7078,
+      "invested_value": 161459.8511352539
+    },
+    {
+      "date": "2023-04-28",
+      "total_value": 163101.90943398437,
+      "cash_balance": 1511.5171,
+      "invested_value": 161590.39233398438
+    },
+    {
+      "date": "2023-05-02",
+      "total_value": 164531.1610819336,
+      "cash_balance": 2511.5171,
+      "invested_value": 162019.6439819336
+    },
+    {
+      "date": "2023-05-03",
+      "total_value": 163169.7359720703,
+      "cash_balance": 2511.5171,
+      "invested_value": 160658.2188720703
+    },
+    {
+      "date": "2023-05-04",
+      "total_value": 164958.93708291015,
+      "cash_balance": 2511.5171,
+      "invested_value": 162447.41998291016
+    },
+    {
+      "date": "2023-05-05",
+      "total_value": 164009.3615984375,
+      "cash_balance": 20134.0657,
+      "invested_value": 143875.2958984375
+    },
+    {
+      "date": "2023-05-08",
+      "total_value": 164986.956325,
+      "cash_balance": 20134.0657,
+      "invested_value": 144852.890625
+    },
+    {
+      "date": "2023-05-09",
+      "total_value": 166081.5323748047,
+      "cash_balance": 20134.0657,
+      "invested_value": 145947.4666748047
+    },
+    {
+      "date": "2023-05-10",
+      "total_value": 166139.43947929688,
+      "cash_balance": 20134.0657,
+      "invested_value": 146005.37377929688
+    },
+    {
+      "date": "2023-05-11",
+      "total_value": 165941.4659685547,
+      "cash_balance": 20134.0657,
+      "invested_value": 145807.4002685547
+    },
+    {
+      "date": "2023-05-12",
+      "total_value": 165625.38332695313,
+      "cash_balance": 20134.0657,
+      "invested_value": 145491.31762695312
+    },
+    {
+      "date": "2023-05-15",
+      "total_value": 165197.73806328126,
+      "cash_balance": 20134.0657,
+      "invested_value": 145063.67236328125
+    },
+    {
+      "date": "2023-05-16",
+      "total_value": 165376.8468279297,
+      "cash_balance": 20134.0657,
+      "invested_value": 145242.7811279297
+    },
+    {
+      "date": "2023-05-17",
+      "total_value": 162837.0406685547,
+      "cash_balance": 89809.3279,
+      "invested_value": 73027.71276855469
+    },
+    {
+      "date": "2023-05-18",
+      "total_value": 162867.55475585937,
+      "cash_balance": 53512.7425,
+      "invested_value": 109354.81225585938
+    },
+    {
+      "date": "2023-05-19",
+      "total_value": 163995.16741796874,
+      "cash_balance": 26101.9765,
+      "invested_value": 137893.19091796875
+    },
+    {
+      "date": "2023-05-22",
+      "total_value": 165356.10320898436,
+      "cash_balance": 26101.9765,
+      "invested_value": 139254.12670898438
+    },
+    {
+      "date": "2023-05-23",
+      "total_value": 165805.4559921875,
+      "cash_balance": 26101.9765,
+      "invested_value": 139703.4794921875
+    },
+    {
+      "date": "2023-05-24",
+      "total_value": 164995.63787695311,
+      "cash_balance": 26101.9765,
+      "invested_value": 138893.66137695312
+    },
+    {
+      "date": "2023-05-25",
+      "total_value": 165217.14568945311,
+      "cash_balance": 26101.9765,
+      "invested_value": 139115.16918945312
+    },
+    {
+      "date": "2023-05-26",
+      "total_value": 166422.16876074218,
+      "cash_balance": 26101.9765,
+      "invested_value": 140320.1922607422
+    },
+    {
+      "date": "2023-05-29",
+      "total_value": 166606.79083105468,
+      "cash_balance": 26101.9765,
+      "invested_value": 140504.8143310547
+    },
+    {
+      "date": "2023-05-30",
+      "total_value": 167288.43108984374,
+      "cash_balance": 26101.9765,
+      "invested_value": 141186.45458984375
+    },
+    {
+      "date": "2023-05-31",
+      "total_value": 166338.8565048828,
+      "cash_balance": 26101.9765,
+      "invested_value": 140236.8800048828
+    },
+    {
+      "date": "2023-06-01",
+      "total_value": 167014.0518173828,
+      "cash_balance": 27101.9765,
+      "invested_value": 139912.0753173828
+    },
+    {
+      "date": "2023-06-02",
+      "total_value": 166909.55218359374,
+      "cash_balance": 27101.9765,
+      "invested_value": 139807.57568359375
+    },
+    {
+      "date": "2023-06-05",
+      "total_value": 167395.01129003905,
+      "cash_balance": 27101.9765,
+      "invested_value": 140293.03479003906
+    },
+    {
+      "date": "2023-06-06",
+      "total_value": 165291.7686519531,
+      "cash_balance": 24196.8729,
+      "invested_value": 141094.89575195312
+    },
+    {
+      "date": "2023-06-07",
+      "total_value": 166415.55917929686,
+      "cash_balance": 24196.8729,
+      "invested_value": 142218.68627929688
+    },
+    {
+      "date": "2023-06-08",
+      "total_value": 165511.54062460936,
+      "cash_balance": 24196.8729,
+      "invested_value": 141314.66772460938
+    },
+    {
+      "date": "2023-06-09",
+      "total_value": 163852.07406679686,
+      "cash_balance": 108047.6456,
+      "invested_value": 55804.428466796875
+    },
+    {
+      "date": "2023-06-12",
+      "total_value": 164162.11997421875,
+      "cash_balance": 69866.3939,
+      "invested_value": 94295.72607421875
+    },
+    {
+      "date": "2023-06-13",
+      "total_value": 164234.10825546875,
+      "cash_balance": 69866.3939,
+      "invested_value": 94367.71435546875
+    },
+    {
+      "date": "2023-06-14",
+      "total_value": 164275.413603125,
+      "cash_balance": 46616.8179,
+      "invested_value": 117658.595703125
+    },
+    {
+      "date": "2023-06-15",
+      "total_value": 163619.0043953125,
+      "cash_balance": 26384.2417,
+      "invested_value": 137234.7626953125
+    },
+    {
+      "date": "2023-06-16",
+      "total_value": 162336.95458515626,
+      "cash_balance": 5263.3623,
+      "invested_value": 157073.59228515625
+    },
+    {
+      "date": "2023-06-19",
+      "total_value": 163153.60009296876,
+      "cash_balance": 5263.3623,
+      "invested_value": 157890.23779296875
+    },
+    {
+      "date": "2023-06-20",
+      "total_value": 163858.49535664063,
+      "cash_balance": 5263.3623,
+      "invested_value": 158595.13305664062
+    },
+    {
+      "date": "2023-06-21",
+      "total_value": 165064.23314960938,
+      "cash_balance": 5263.3623,
+      "invested_value": 159800.87084960938
+    },
+    {
+      "date": "2023-06-22",
+      "total_value": 163868.4531203125,
+      "cash_balance": 5263.3623,
+      "invested_value": 158605.0908203125
+    },
+    {
+      "date": "2023-06-23",
+      "total_value": 162627.96271875,
+      "cash_balance": 48588.7635,
+      "invested_value": 114039.19921875
+    },
+    {
+      "date": "2023-06-26",
+      "total_value": 161681.27961328125,
+      "cash_balance": 48588.7635,
+      "invested_value": 113092.51611328125
+    },
+    {
+      "date": "2023-06-27",
+      "total_value": 161875.27455429686,
+      "cash_balance": 23099.1039,
+      "invested_value": 138776.17065429688
+    },
+    {
+      "date": "2023-06-28",
+      "total_value": 162736.61146445313,
+      "cash_balance": 580.2079,
+      "invested_value": 162156.40356445312
+    },
+    {
+      "date": "2023-06-30",
+      "total_value": 166539.53480429688,
+      "cash_balance": 580.2079,
+      "invested_value": 165959.32690429688
+    },
+    {
+      "date": "2023-07-03",
+      "total_value": 167006.17274375,
+      "cash_balance": 1580.2079,
+      "invested_value": 165425.96484375
+    },
+    {
+      "date": "2023-07-04",
+      "total_value": 168543.41566367188,
+      "cash_balance": 1580.2079,
+      "invested_value": 166963.20776367188
+    },
+    {
+      "date": "2023-07-05",
+      "total_value": 167359.89369101563,
+      "cash_balance": 1580.2079,
+      "invested_value": 165779.68579101562
+    },
+    {
+      "date": "2023-07-06",
+      "total_value": 167513.330946875,
+      "cash_balance": 1580.2079,
+      "invested_value": 165933.123046875
+    },
+    {
+      "date": "2023-07-07",
+      "total_value": 167319.07655234376,
+      "cash_balance": 1580.2079,
+      "invested_value": 165738.86865234375
+    },
+    {
+      "date": "2023-07-10",
+      "total_value": 165173.96888632813,
+      "cash_balance": 1580.2079,
+      "invested_value": 163593.76098632812
+    },
+    {
+      "date": "2023-07-11",
+      "total_value": 164734.1880082031,
+      "cash_balance": 23453.3196,
+      "invested_value": 141280.86840820312
+    },
+    {
+      "date": "2023-07-12",
+      "total_value": 163987.3408734375,
+      "cash_balance": 339.4981,
+      "invested_value": 163647.8427734375
+    },
+    {
+      "date": "2023-07-13",
+      "total_value": 167521.43938417968,
+      "cash_balance": 339.4981,
+      "invested_value": 167181.9412841797
+    },
+    {
+      "date": "2023-07-14",
+      "total_value": 174422.11960097656,
+      "cash_balance": 60673.5936,
+      "invested_value": 113748.52600097656
+    },
+    {
+      "date": "2023-07-17",
+      "total_value": 174280.08717158204,
+      "cash_balance": 70515.1313,
+      "invested_value": 103764.95587158203
+    },
+    {
+      "date": "2023-07-18",
+      "total_value": 175063.37630839844,
+      "cash_balance": 63795.7402,
+      "invested_value": 111267.63610839844
+    },
+    {
+      "date": "2023-07-19",
+      "total_value": 175219.32473173828,
+      "cash_balance": 70070.7297,
+      "invested_value": 105148.59503173828
+    },
+    {
+      "date": "2023-07-20",
+      "total_value": 174863.16891933593,
+      "cash_balance": 43237.9166,
+      "invested_value": 131625.25231933594
+    },
+    {
+      "date": "2023-07-21",
+      "total_value": 171703.09634296875,
+      "cash_balance": 47657.1398,
+      "invested_value": 124045.95654296875
+    },
+    {
+      "date": "2023-07-24",
+      "total_value": 172007.57465585938,
+      "cash_balance": 31692.1999,
+      "invested_value": 140315.37475585938
+    },
+    {
+      "date": "2023-07-25",
+      "total_value": 173042.2475512695,
+      "cash_balance": 1570.32,
+      "invested_value": 171471.92755126953
+    },
+    {
+      "date": "2023-07-26",
+      "total_value": 172766.8907397461,
+      "cash_balance": 1570.32,
+      "invested_value": 171196.5707397461
+    },
+    {
+      "date": "2023-07-27",
+      "total_value": 171326.43596679688,
+      "cash_balance": 1570.32,
+      "invested_value": 169756.11596679688
+    },
+    {
+      "date": "2023-07-28",
+      "total_value": 168899.3030932617,
+      "cash_balance": 1570.32,
+      "invested_value": 167328.98309326172
+    },
+    {
+      "date": "2023-07-31",
+      "total_value": 170111.42870361326,
+      "cash_balance": 1570.32,
+      "invested_value": 168541.10870361328
+    },
+    {
+      "date": "2023-08-01",
+      "total_value": 171955.58867675782,
+      "cash_balance": 2570.32,
+      "invested_value": 169385.2686767578
+    },
+    {
+      "date": "2023-08-02",
+      "total_value": 169736.8713234375,
+      "cash_balance": 128735.3098,
+      "invested_value": 41001.5615234375
+    },
+    {
+      "date": "2023-08-03",
+      "total_value": 169256.2314126953,
+      "cash_balance": 86512.1434,
+      "invested_value": 82744.08801269531
+    },
+    {
+      "date": "2023-08-04",
+      "total_value": 170398.3669107422,
+      "cash_balance": 86512.1434,
+      "invested_value": 83886.22351074219
+    },
+    {
+      "date": "2023-08-07",
+      "total_value": 170760.6482828125,
+      "cash_balance": 86512.1434,
+      "invested_value": 84248.5048828125
+    },
+    {
+      "date": "2023-08-08",
+      "total_value": 170457.00917246094,
+      "cash_balance": 57043.5674,
+      "invested_value": 113413.44177246094
+    },
+    {
+      "date": "2023-08-09",
+      "total_value": 170543.56758310547,
+      "cash_balance": 57043.5674,
+      "invested_value": 113500.00018310547
+    },
+    {
+      "date": "2023-08-10",
+      "total_value": 169725.9175154297,
+      "cash_balance": 15432.3942,
+      "invested_value": 154293.5233154297
+    },
+    {
+      "date": "2023-08-11",
+      "total_value": 168629.56717363282,
+      "cash_balance": 15432.3942,
+      "invested_value": 153197.1729736328
+    },
+    {
+      "date": "2023-08-14",
+      "total_value": 168627.7975203125,
+      "cash_balance": 15432.3942,
+      "invested_value": 153195.4033203125
+    },
+    {
+      "date": "2023-08-16",
+      "total_value": 168098.39717666016,
+      "cash_balance": 97469.6686,
+      "invested_value": 70628.72857666016
+    },
+    {
+      "date": "2023-08-17",
+      "total_value": 167464.88394853516,
+      "cash_balance": 56090.0792,
+      "invested_value": 111374.80474853516
+    },
+    {
+      "date": "2023-08-18",
+      "total_value": 166781.4858253906,
+      "cash_balance": 28294.6848,
+      "invested_value": 138486.80102539062
+    },
+    {
+      "date": "2023-08-21",
+      "total_value": 166658.01841816408,
+      "cash_balance": 28294.6848,
+      "invested_value": 138363.33361816406
+    },
+    {
+      "date": "2023-08-22",
+      "total_value": 166232.86082539064,
+      "cash_balance": 28294.6848,
+      "invested_value": 137938.17602539062
+    },
+    {
+      "date": "2023-08-23",
+      "total_value": 166948.63957294924,
+      "cash_balance": 28294.6848,
+      "invested_value": 138653.95477294922
+    },
+    {
+      "date": "2023-08-24",
+      "total_value": 166013.70860371093,
+      "cash_balance": 28294.6848,
+      "invested_value": 137719.02380371094
+    },
+    {
+      "date": "2023-08-25",
+      "total_value": 165352.35459980468,
+      "cash_balance": 28294.6848,
+      "invested_value": 137057.6697998047
+    },
+    {
+      "date": "2023-08-28",
+      "total_value": 165159.57164316406,
+      "cash_balance": 70400.5974,
+      "invested_value": 94758.97424316406
+    },
+    {
+      "date": "2023-08-29",
+      "total_value": 165285.44893603516,
+      "cash_balance": 29626.652,
+      "invested_value": 135658.79693603516
+    },
+    {
+      "date": "2023-08-30",
+      "total_value": 164787.16890673828,
+      "cash_balance": 29626.652,
+      "invested_value": 135160.51690673828
+    },
+    {
+      "date": "2023-08-31",
+      "total_value": 164112.41696230468,
+      "cash_balance": 7377.7706,
+      "invested_value": 156734.6463623047
+    },
+    {
+      "date": "2023-09-01",
+      "total_value": 165885.53213564452,
+      "cash_balance": 8377.7706,
+      "invested_value": 157507.76153564453
+    },
+    {
+      "date": "2023-09-04",
+      "total_value": 166681.83804384765,
+      "cash_balance": 8377.7706,
+      "invested_value": 158304.06744384766
+    },
+    {
+      "date": "2023-09-05",
+      "total_value": 166973.35324160155,
+      "cash_balance": 8377.7706,
+      "invested_value": 158595.58264160156
+    },
+    {
+      "date": "2023-09-06",
+      "total_value": 167243.5080267578,
+      "cash_balance": 8377.7706,
+      "invested_value": 158865.7374267578
+    },
+    {
+      "date": "2023-09-07",
+      "total_value": 167953.13772646483,
+      "cash_balance": 8377.7706,
+      "invested_value": 159575.36712646484
+    },
+    {
+      "date": "2023-09-08",
+      "total_value": 168653.16098085936,
+      "cash_balance": 8377.7706,
+      "invested_value": 160275.39038085938
+    },
+    {
+      "date": "2023-09-11",
+      "total_value": 169935.17294375,
+      "cash_balance": 8377.7706,
+      "invested_value": 161557.40234375
+    },
+    {
+      "date": "2023-09-12",
+      "total_value": 170802.29037558593,
+      "cash_balance": 1703.7529,
+      "invested_value": 169098.53747558594
+    },
+    {
+      "date": "2023-09-13",
+      "total_value": 171006.45327841796,
+      "cash_balance": 1703.7529,
+      "invested_value": 169302.70037841797
+    },
+    {
+      "date": "2023-09-14",
+      "total_value": 171016.7818916992,
+      "cash_balance": 1703.7529,
+      "invested_value": 169313.02899169922
+    },
+    {
+      "date": "2023-09-15",
+      "total_value": 172144.78109824218,
+      "cash_balance": 1703.7529,
+      "invested_value": 170441.0281982422
+    },
+    {
+      "date": "2023-09-18",
+      "total_value": 170637.18893515624,
+      "cash_balance": 1703.7529,
+      "invested_value": 168933.43603515625
+    },
+    {
+      "date": "2023-09-20",
+      "total_value": 167415.30715341796,
+      "cash_balance": 40450.7474,
+      "invested_value": 126964.55975341797
+    },
+    {
+      "date": "2023-09-21",
+      "total_value": 166080.731821875,
+      "cash_balance": 48790.2494,
+      "invested_value": 117290.482421875
+    },
+    {
+      "date": "2023-09-22",
+      "total_value": 165763.08174316405,
+      "cash_balance": 7627.295,
+      "invested_value": 158135.78674316406
+    },
+    {
+      "date": "2023-09-25",
+      "total_value": 164666.52119628908,
+      "cash_balance": 7627.295,
+      "invested_value": 157039.22619628906
+    },
+    {
+      "date": "2023-09-26",
+      "total_value": 164445.36590546876,
+      "cash_balance": 50030.7453,
+      "invested_value": 114414.62060546875
+    },
+    {
+      "date": "2023-09-27",
+      "total_value": 164645.11761445313,
+      "cash_balance": 50030.7453,
+      "invested_value": 114614.37231445312
+    },
+    {
+      "date": "2023-09-28",
+      "total_value": 163384.3034140625,
+      "cash_balance": 9470.7165,
+      "invested_value": 153913.5869140625
+    },
+    {
+      "date": "2023-09-29",
+      "total_value": 163967.45136328126,
+      "cash_balance": 9470.7165,
+      "invested_value": 154496.73486328125
+    },
+    {
+      "date": "2023-10-03",
+      "total_value": 163291.08379921876,
+      "cash_balance": 50464.5921,
+      "invested_value": 112826.49169921875
+    },
+    {
+      "date": "2023-10-04",
+      "total_value": 163645.35040078126,
+      "cash_balance": 50464.5921,
+      "invested_value": 113180.75830078125
+    },
+    {
+      "date": "2023-10-05",
+      "total_value": 164685.35276875,
+      "cash_balance": 30774.3723,
+      "invested_value": 133910.98046875
+    },
+    {
+      "date": "2023-10-06",
+      "total_value": 165293.9338234375,
+      "cash_balance": 30774.3723,
+      "invested_value": 134519.5615234375
+    },
+    {
+      "date": "2023-10-09",
+      "total_value": 164733.67929257813,
+      "cash_balance": 10829.4769,
+      "invested_value": 153904.20239257812
+    },
+    {
+      "date": "2023-10-10",
+      "total_value": 165315.65658749998,
+      "cash_balance": 10829.4769,
+      "invested_value": 154486.1796875
+    },
+    {
+      "date": "2023-10-11",
+      "total_value": 165411.67245664063,
+      "cash_balance": 10829.4769,
+      "invested_value": 154582.19555664062
+    },
+    {
+      "date": "2023-10-12",
+      "total_value": 164385.305025,
+      "cash_balance": 10829.4769,
+      "invested_value": 153555.828125
+    },
+    {
+      "date": "2023-10-13",
+      "total_value": 164448.12680234376,
+      "cash_balance": 10829.4769,
+      "invested_value": 153618.64990234375
+    },
+    {
+      "date": "2023-10-16",
+      "total_value": 163349.0462359375,
+      "cash_balance": 10829.4769,
+      "invested_value": 152519.5693359375
+    },
+    {
+      "date": "2023-10-17",
+      "total_value": 163426.48324765626,
+      "cash_balance": 10829.4769,
+      "invested_value": 152597.00634765625
+    },
+    {
+      "date": "2023-10-18",
+      "total_value": 162018.60409726563,
+      "cash_balance": 10829.4769,
+      "invested_value": 151189.12719726562
+    },
+    {
+      "date": "2023-10-19",
+      "total_value": 160955.06014882814,
+      "cash_balance": 80167.4476,
+      "invested_value": 80787.61254882812
+    },
+    {
+      "date": "2023-10-20",
+      "total_value": 160937.39793984374,
+      "cash_balance": 120109.6621,
+      "invested_value": 40827.73583984375
+    },
+    {
+      "date": "2023-10-23",
+      "total_value": 160488.31444375,
+      "cash_balance": 120109.6621,
+      "invested_value": 40378.65234375
+    },
+    {
+      "date": "2023-10-25",
+      "total_value": 159985.20307773436,
+      "cash_balance": 120941.9084,
+      "invested_value": 39043.294677734375
+    },
+    {
+      "date": "2023-10-26",
+      "total_value": 159333.25729296874,
+      "cash_balance": 81234.332,
+      "invested_value": 78098.92529296875
+    },
+    {
+      "date": "2023-10-27",
+      "total_value": 160606.2251640625,
+      "cash_balance": 41949.732,
+      "invested_value": 118656.4931640625
+    },
+    {
+      "date": "2023-10-30",
+      "total_value": 162958.0997125,
+      "cash_balance": 14436.6544,
+      "invested_value": 148521.4453125
+    },
+    {
+      "date": "2023-10-31",
+      "total_value": 161378.15220273437,
+      "cash_balance": 14436.6544,
+      "invested_value": 146941.49780273438
+    },
+    {
+      "date": "2023-11-01",
+      "total_value": 162988.28892148437,
+      "cash_balance": 15436.6544,
+      "invested_value": 147551.63452148438
+    },
+    {
+      "date": "2023-11-02",
+      "total_value": 164452.62974179687,
+      "cash_balance": 15436.6544,
+      "invested_value": 149015.97534179688
+    },
+    {
+      "date": "2023-11-03",
+      "total_value": 164420.51060117187,
+      "cash_balance": 15436.6544,
+      "invested_value": 148983.85620117188
+    },
+    {
+      "date": "2023-11-06",
+      "total_value": 165660.06504453125,
+      "cash_balance": 15436.6544,
+      "invested_value": 150223.41064453125
+    },
+    {
+      "date": "2023-11-07",
+      "total_value": 164683.84312070312,
+      "cash_balance": 15436.6544,
+      "invested_value": 149247.18872070312
+    },
+    {
+      "date": "2023-11-08",
+      "total_value": 165460.97080625,
+      "cash_balance": 15436.6544,
+      "invested_value": 150024.31640625
+    },
+    {
+      "date": "2023-11-09",
+      "total_value": 163832.8604546875,
+      "cash_balance": 15436.6544,
+      "invested_value": 148396.2060546875
+    },
+    {
+      "date": "2023-11-10",
+      "total_value": 164112.23667539062,
+      "cash_balance": 15436.6544,
+      "invested_value": 148675.58227539062
+    },
+    {
+      "date": "2023-11-13",
+      "total_value": 164092.9874078125,
+      "cash_balance": 15436.6544,
+      "invested_value": 148656.3330078125
+    },
+    {
+      "date": "2023-11-15",
+      "total_value": 166780.80723203125,
+      "cash_balance": 15436.6544,
+      "invested_value": 151344.15283203125
+    },
+    {
+      "date": "2023-11-16",
+      "total_value": 166824.4977328125,
+      "cash_balance": 68856.5241,
+      "invested_value": 97967.9736328125
+    },
+    {
+      "date": "2023-11-17",
+      "total_value": 166567.12767539063,
+      "cash_balance": 46407.7954,
+      "invested_value": 120159.33227539062
+    },
+    {
+      "date": "2023-11-20",
+      "total_value": 166419.5346578125,
+      "cash_balance": 46407.7954,
+      "invested_value": 120011.7392578125
+    },
+    {
+      "date": "2023-11-21",
+      "total_value": 167538.0892,
+      "cash_balance": 23905.5267,
+      "invested_value": 143632.5625
+    },
+    {
+      "date": "2023-11-22",
+      "total_value": 168066.83113046875,
+      "cash_balance": 73347.6949,
+      "invested_value": 94719.13623046875
+    },
+    {
+      "date": "2023-11-23",
+      "total_value": 167833.73963300782,
+      "cash_balance": 75654.1858,
+      "invested_value": 92179.55383300781
+    },
+    {
+      "date": "2023-11-24",
+      "total_value": 166730.6927185547,
+      "cash_balance": 58942.6987,
+      "invested_value": 107787.99401855469
+    },
+    {
+      "date": "2023-11-28",
+      "total_value": 167010.46297578124,
+      "cash_balance": 38752.0953,
+      "invested_value": 128258.36767578125
+    },
+    {
+      "date": "2023-11-29",
+      "total_value": 168250.80841875,
+      "cash_balance": 12616.9217,
+      "invested_value": 155633.88671875
+    },
+    {
+      "date": "2023-11-30",
+      "total_value": 166959.56208085938,
+      "cash_balance": 12616.9217,
+      "invested_value": 154342.64038085938
+    },
+    {
+      "date": "2023-12-01",
+      "total_value": 169035.13214921876,
+      "cash_balance": 13616.9217,
+      "invested_value": 155418.21044921875
+    },
+    {
+      "date": "2023-12-04",
+      "total_value": 169696.84235429688,
+      "cash_balance": 13616.9217,
+      "invested_value": 156079.92065429688
+    },
+    {
+      "date": "2023-12-05",
+      "total_value": 170655.38483476563,
+      "cash_balance": 13616.9217,
+      "invested_value": 157038.46313476562
+    },
+    {
+      "date": "2023-12-06",
+      "total_value": 173219.81842851563,
+      "cash_balance": 13616.9217,
+      "invested_value": 159602.89672851562
+    },
+    {
+      "date": "2023-12-07",
+      "total_value": 173415.84381914063,
+      "cash_balance": 13616.9217,
+      "invested_value": 159798.92211914062
+    },
+    {
+      "date": "2023-12-08",
+      "total_value": 173707.243965625,
+      "cash_balance": 13616.9217,
+      "invested_value": 160090.322265625
+    },
+    {
+      "date": "2023-12-11",
+      "total_value": 174240.31281328126,
+      "cash_balance": 13616.9217,
+      "invested_value": 160623.39111328125
+    },
+    {
+      "date": "2023-12-12",
+      "total_value": 174168.8504109375,
+      "cash_balance": 13616.9217,
+      "invested_value": 160551.9287109375
+    },
+    {
+      "date": "2023-12-13",
+      "total_value": 172259.91120195313,
+      "cash_balance": 13616.9217,
+      "invested_value": 158642.98950195312
+    },
+    {
+      "date": "2023-12-14",
+      "total_value": 175026.4383015625,
+      "cash_balance": 13616.9217,
+      "invested_value": 161409.5166015625
+    },
+    {
+      "date": "2023-12-15",
+      "total_value": 180984.34154726562,
+      "cash_balance": 23349.6206,
+      "invested_value": 157634.72094726562
+    },
+    {
+      "date": "2023-12-18",
+      "total_value": 181410.09397109374,
+      "cash_balance": 4615.4636,
+      "invested_value": 176794.63037109375
+    },
+    {
+      "date": "2023-12-19",
+      "total_value": 181104.96607617187,
+      "cash_balance": 22137.813,
+      "invested_value": 158967.15307617188
+    },
+    {
+      "date": "2023-12-20",
+      "total_value": 179368.14519296875,
+      "cash_balance": 824.7199,
+      "invested_value": 178543.42529296875
+    },
+    {
+      "date": "2023-12-21",
+      "total_value": 180621.7365015625,
+      "cash_balance": 824.7199,
+      "invested_value": 179797.0166015625
+    },
+    {
+      "date": "2023-12-22",
+      "total_value": 181696.51433359375,
+      "cash_balance": 824.7199,
+      "invested_value": 180871.79443359375
+    },
+    {
+      "date": "2023-12-26",
+      "total_value": 181301.8927515625,
+      "cash_balance": 824.7199,
+      "invested_value": 180477.1728515625
+    },
+    {
+      "date": "2023-12-27",
+      "total_value": 181991.79753671875,
+      "cash_balance": 824.7199,
+      "invested_value": 181167.07763671875
+    },
+    {
+      "date": "2023-12-28",
+      "total_value": 182103.63603242187,
+      "cash_balance": 21644.3228,
+      "invested_value": 160459.31323242188
+    },
+    {
+      "date": "2023-12-29",
+      "total_value": 181456.80021699218,
+      "cash_balance": 21644.3228,
+      "invested_value": 159812.4774169922
+    }
+  ]
+}
