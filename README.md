@@ -20,7 +20,7 @@
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-08-24` | **Total Value:** `₹97,118.97` | **Cash:** `₹35,969.37`
+> **Last Updated:** `2026-08-25` | **Total Value:** `₹97,118.97` | **Cash:** `₹35,969.37`
 
 <div align="center">
 
