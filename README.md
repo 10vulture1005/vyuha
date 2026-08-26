@@ -20,16 +20,16 @@
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-08-25` | **Total Value:** `₹97,118.97` | **Cash:** `₹35,969.37`
+> **Last Updated:** `2026-08-26` | **Total Value:** `₹96,472.97` | **Cash:** `₹35,969.37`
 
 <div align="center">
 
 | Metric | Value | Graphic |
 |---|---|---|
-| **Net PnL** | 🔴 ₹-2,881.03 (-2.88%) | - |
+| **Net PnL** | 🔴 ₹-3,527.03 (-3.53%) | - |
 | **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
-| **Max Drawdown** | -2.88% | ██░░░░░░░░░░░░░ |
-| **Portfolio Heat** | 6.62% / 6.00% | ███████████████ |
+| **Max Drawdown** | -3.53% | ███░░░░░░░░░░░░ |
+| **Portfolio Heat** | 6.66% / 6.00% | ███████████████ |
 
 </div>
 
