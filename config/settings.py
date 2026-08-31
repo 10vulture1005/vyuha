@@ -39,9 +39,64 @@ class Settings(BaseSettings):
     GROQ_API_KEY: Optional[SecretStr] = Field(
         default=None, description="Groq API Key for LPU models"
     )
+    GOOGLE_API_KEY: Optional[SecretStr] = Field(
+        default=None, description="Google API Key (Gemini)"
+    )
+    DEEPSEEK_API_KEY: Optional[SecretStr] = Field(
+        default=None, description="DeepSeek API Key"
+    )
+    OPENROUTER_API_KEY: Optional[SecretStr] = Field(
+        default=None, description="OpenRouter API Key"
+    )
     DEFAULT_LLM_MODEL: str = Field(
         default="claude-3-5-sonnet-20241022",
         description="Default model for CrewAI reasoning",
+    )
+
+    # ─── TradingAgents LLM Pipeline ──────────────────────────────────────────
+    TRADINGAGENTS_ENABLED: bool = Field(
+        default=False,
+        description="Master switch: when True, TradingAgents LLM pipeline runs as a cross-check alongside rule-based agents",
+    )
+    TRADINGAGENTS_LLM_PROVIDER: str = Field(
+        default="anthropic",
+        description="LLM provider for TradingAgents: openai|anthropic|google|deepseek|openrouter|ollama|openai_compatible",
+    )
+    TRADINGAGENTS_DEEP_THINK_LLM: str = Field(
+        default="claude-sonnet-4-6",
+        description="Model used for complex reasoning nodes (portfolio manager, researcher judge)",
+    )
+    TRADINGAGENTS_QUICK_THINK_LLM: str = Field(
+        default="claude-haiku-4-5",
+        description="Model used for fast tool-calling nodes (analysts)",
+    )
+    TRADINGAGENTS_MAX_DEBATE_ROUNDS: int = Field(
+        default=1, ge=1, le=3,
+        description="Bull/bear research debate rounds",
+    )
+    TRADINGAGENTS_MAX_RISK_ROUNDS: int = Field(
+        default=1, ge=1, le=3,
+        description="Aggressive/conservative/neutral risk debate rounds",
+    )
+    TRADINGAGENTS_OUTPUT_LANGUAGE: str = Field(
+        default="English",
+        description="Language for analyst reports and final decision",
+    )
+    TRADINGAGENTS_CHECKPOINT_ENABLED: bool = Field(
+        default=False,
+        description="Enable LangGraph checkpoint resume (useful for long Indian-market backtests)",
+    )
+    TRADINGAGENTS_DATA_VENDORS: str = Field(
+        default="yfinance",
+        description="Comma-separated fallback chain: yfinance,alpha_vantage",
+    )
+    TRADINGAGENTS_REQUIRE_CONFIRMATION: bool = Field(
+        default=True,
+        description="If True, LLM recommendations are logged but only acted on when they agree with the rule-based pipeline",
+    )
+    TRADINGAGENTS_HOLDING_DAYS: int = Field(
+        default=5, ge=1, le=30,
+        description="Days used by TradingAgents reflection layer for realized-return lookups",
     )
 
     # ─── Telegram ────────────────────────────────────────────────────────────

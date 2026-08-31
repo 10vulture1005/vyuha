@@ -269,3 +269,73 @@ class AgentRunLog(Base):
     __table_args__ = (
         Index("idx_agent_run_date", "agent_name", "run_date"),
     )
+
+
+class TradingAgentsDecision(Base):
+    """Immutable record of every TradingAgents LLM pipeline run.
+
+    Each row corresponds to one `propagate(ticker, date)` invocation.
+    Reports are stored as JSON blobs to keep the table column count low
+    while preserving every agent's output verbatim — useful for
+    debugging and backfilling the reflection log.
+    """
+
+    __tablename__ = "tradingagents_decisions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ticker: Mapped[str] = mapped_column(String(30), nullable=False)
+    trade_date: Mapped[date] = mapped_column(Date, default=date.today, nullable=False)
+    trade_decision: Mapped[str] = mapped_column(String(20), nullable=False)
+    final_signal: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    confirmed_by_rules: Mapped[bool] = mapped_column(default=False, nullable=False)
+    acted_on: Mapped[bool] = mapped_column(default=False, nullable=False)
+    llm_provider: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    deep_model: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
+    quick_model: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
+    market_report: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    sentiment_report: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    news_report: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    fundamentals_report: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    investment_plan: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    trader_plan: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    debate_history: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    risk_history: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    raw_state: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    error_msg: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    duration_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, nullable=False
+    )
+
+    __table_args__ = (
+        Index("idx_ta_ticker_date", "ticker", "trade_date"),
+        Index("idx_ta_decision_date", "trade_date", "trade_decision"),
+    )
+
+
+class TradingAgentsOutcome(Base):
+    """Realized outcome for a TradingAgents decision, filled by the
+    reflection layer once the holding window has elapsed.
+
+    Mirrors the upstream `TradingMemoryLog` to keep all vyuha-side state
+    in the database (easier queries, joins with `trade_log`).
+    """
+
+    __tablename__ = "tradingagents_outcomes"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ticker: Mapped[str] = mapped_column(String(30), nullable=False)
+    trade_date: Mapped[date] = mapped_column(Date, nullable=False)
+    resolution_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    holding_days: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    raw_return: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 6), nullable=True)
+    alpha_return: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 6), nullable=True)
+    benchmark: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    reflection: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, nullable=False
+    )
+
+    __table_args__ = (
+        Index("idx_ta_out_ticker_date", "ticker", "trade_date"),
+    )
