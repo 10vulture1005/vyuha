@@ -15,6 +15,19 @@ from agents.tools.ledger_tools import (
     run_fundamental_scan,
     run_sentiment_scan,
 )
+try:
+    # TradingAgents tools require the optional LLM extras. Import
+    # lazily so the rule-based-only pipeline keeps working without
+    # langgraph/langchain installed.
+    from agents.tools.tradingagents_tools import (
+        run_tradingagents_pipeline,
+        run_tradingagents_cross_check,
+        resolve_tradingagents_outcomes,
+    )
+    _TA_TOOLS_AVAILABLE = True
+except Exception:
+    _TA_TOOLS_AVAILABLE = False
+
 from crew.tasks import get_tasks
 
 def create_crew(is_weekly: bool = False) -> Crew:
@@ -77,11 +90,18 @@ def create_crew(is_weekly: bool = False) -> Crew:
     )
     
     # 5. Portfolio Manager
+    pm_tools = [run_capital_allocator]
+    if _TA_TOOLS_AVAILABLE and settings.TRADINGAGENTS_ENABLED:
+        # Give the PM access to the TradingAgents cross-check tool when
+        # the LLM layer is enabled. The PM can invoke it as an
+        # additional sanity check before allocating.
+        pm_tools.append(run_tradingagents_cross_check)
+
     portfolio_manager = Agent(
         role="Lead Portfolio Manager",
         goal="Synthesize daily technical setups and risk reviews to make final ₹1,000/month allocation decisions.",
         backstory="You are the lead PM of a concentrated accumulation fund. You follow strict priority rules and never over-allocate.",
-        tools=[run_capital_allocator],
+        tools=pm_tools,
         verbose=True,
         allow_delegation=False,
         llm=groq_llm,

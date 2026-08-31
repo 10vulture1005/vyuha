@@ -2,6 +2,7 @@
 import datetime
 from loguru import logger
 from crew.crew_definition import create_crew
+from agents.llm_crosscheck_agent import run_cross_check_execution
 import litellm
 
 # Monkey-patch litellm to remove 'cache_breakpoint' which causes Groq API to crash
@@ -91,4 +92,15 @@ def run_daily_flow(is_weekly: bool = False):
     result = crew.kickoff()
     
     logger.info(f"Crew execution finished. Final Output: {result}")
+
+    # Phase 7 — optional TradingAgents LLM cross-check. Runs after the
+    # rule-based pipeline so we have fresh TechnicalSignal rows in the
+    # DB to cross-reference. Never raises — failures are logged so the
+    # rule-based pipeline's output remains intact.
+    try:
+        confirmed = run_cross_check_execution()
+        logger.info(f"Phase 7 LLM cross-check confirmed symbols: {confirmed}")
+    except Exception as exc:
+        logger.exception(f"Phase 7 LLM cross-check failed: {exc}")
+
     return result
