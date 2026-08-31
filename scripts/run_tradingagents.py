@@ -7,32 +7,30 @@ Indian ticker and prints the final decision.
 
 Examples
 --------
-First-time setup — pick your LLM provider and paste its API key:
-    python scripts/run_tradingagents.py setup
+Just run it — interactive first-time wizard:
+    python scripts/run_tradingagents.py
 
-Single ticker (one-off analysis):
-    python scripts/run_tradingagents.py single RELIANCE
-    python scripts/run_tradingagents.py single TATASTEEL --date 2026-01-15
+Or jump straight to a subcommand:
+    python scripts/run_tradingagents.py setup               # pick provider / API key
+    python scripts/run_tradingagents.py single RELIANCE      # one ticker
+    python scripts/run_tradingagents.py single TATASTEEL.BO --date 2026-01-15
+    python scripts/run_tradingagents.py portfolio            # cross-check watchlist
+    python scripts/run_tradingagents.py resolve              # backfill realised outcomes
+    python scripts/run_tradingagents.py cli                  # upstream rich UI
 
-Portfolio mode — evaluate every ACTIVE watchlist symbol that has a
-fresh TechnicalSignal today:
-    python scripts/run_tradingagents.py --portfolio
-
-Resolve realised outcomes for past decisions (writes to
-``tradingagents_outcomes``):
-    python scripts/run_tradingagents.py --resolve-outcomes
-
-Showcase the framework's standalone CLI (delegates to upstream
-``cli_ta`` if you want to use the rich interactive UI):
-    python scripts/run_tradingagents.py --cli-ux
+Bare ``python scripts/run_tradingagents.py`` (no args) opens a
+guided flow: welcome banner → setup wizard (if needed) → main menu
+with single / portfolio / resolve / setup / cli / exit. Repeat
+actions until you choose Exit. Cron / piped callers should pass
+``--no-setup`` or use a subcommand to skip the interactive loop.
 
 If you run ``single``/``portfolio``/``resolve`` without first
-configuring a provider key, the CLI auto-launches the setup wizard
-so you never see an opaque authentication error. Pass
-``--no-setup`` to skip the wizard (for scripted/CI runs).
+configuring a provider key, the subcommand auto-launches the setup
+wizard (when stdin is a TTY) so you never see an opaque auth
+error. Pass ``--no-setup`` to skip the wizard for scripted runs.
 
 This script is the vyuha-side counterpart to TradingAgents' own
-``tradingagents`` command. The two coexist — ``--cli-ux`` lets you
+``tradingagents`` command. The two coexist — ``cli`` lets you
 launch the upstream interactive shell directly without going through
 vyuha's settings/config.
 """
@@ -369,6 +367,19 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     global _GLOBAL_NO_SETUP, _GLOBAL_FORCE_SETUP
 
+    # Detect "--help" before argparse eats it; we want the bare-CLI
+    # interactive loop to handle that case specially (show a friendly
+    # intro and offer to open the main menu instead of dumping help).
+    if len(sys.argv) == 1 and sys.stdin.isatty():
+        from scripts.cli_ui import run_first_time_wizard
+        return run_first_time_wizard()
+
+    if len(sys.argv) == 1:
+        # Non-TTY + no args: print help so cron / CI see a clear message
+        # rather than launching a useless interactive loop.
+        build_parser().print_help()
+        return 1
+
     args = build_parser().parse_args()
     # Prefer the top-level flags; fall back to subparser-level copies
     # so `single X --no-setup` works the same as `--no-setup single X`.
@@ -379,6 +390,13 @@ def main() -> int:
         getattr(args, "setup", False)
         and not (args.command == "setup")
     )
+
+    # When the user runs `run_tradingagents.py` with no subcommand and
+    # we already know we're on a TTY (handled above), launch the main
+    # menu. Otherwise fall through to the help screen.
+    if args.command is None and sys.stdin.isatty() and not _GLOBAL_FORCE_SETUP:
+        from scripts.cli_ui import run_main_loop
+        return run_main_loop()
 
     if args.command == "single":
         return cmd_single(args)
