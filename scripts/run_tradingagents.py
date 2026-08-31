@@ -7,9 +7,12 @@ Indian ticker and prints the final decision.
 
 Examples
 --------
+First-time setup — pick your LLM provider and paste its API key:
+    python scripts/run_tradingagents.py setup
+
 Single ticker (one-off analysis):
-    python scripts/run_tradingagents.py RELIANCE
-    python scripts/run_tradingagents.py TATASTEEL --date 2026-01-15
+    python scripts/run_tradingagents.py single RELIANCE
+    python scripts/run_tradingagents.py single TATASTEEL --date 2026-01-15
 
 Portfolio mode — evaluate every ACTIVE watchlist symbol that has a
 fresh TechnicalSignal today:
@@ -22,6 +25,11 @@ Resolve realised outcomes for past decisions (writes to
 Showcase the framework's standalone CLI (delegates to upstream
 ``cli_ta`` if you want to use the rich interactive UI):
     python scripts/run_tradingagents.py --cli-ux
+
+If you run ``single``/``portfolio``/``resolve`` without first
+configuring a provider key, the CLI auto-launches the setup wizard
+so you never see an opaque authentication error. Pass
+``--no-setup`` to skip the wizard (for scripted/CI runs).
 
 This script is the vyuha-side counterpart to TradingAgents' own
 ``tradingagents`` command. The two coexist — ``--cli-ux`` lets you
@@ -83,8 +91,19 @@ def _persist_summary(result) -> None:
         pass
 
 
+def cmd_setup(args: argparse.Namespace) -> int:
+    """Run the interactive LLM provider + API-key setup wizard."""
+    from scripts.setup_wizard import run_setup
+
+    run_setup()
+    return 0
+
+
 def cmd_single(args: argparse.Namespace) -> int:
     from agents.llm_trader import LLMPipelineAgent
+
+    if not _maybe_setup_interactive():
+        return 1
 
     trade_date = date.fromisoformat(args.date) if args.date else date.today()
     agent = LLMPipelineAgent()
@@ -129,6 +148,9 @@ def cmd_single(args: argparse.Namespace) -> int:
 
 def cmd_portfolio(args: argparse.Namespace) -> int:
     from agents.llm_trader import run_cross_check
+
+    if not _maybe_setup_interactive():
+        return 1
 
     trade_date = date.fromisoformat(args.date) if args.date else date.today()
     with get_session() as session:
@@ -182,6 +204,9 @@ def cmd_portfolio(args: argparse.Namespace) -> int:
 def cmd_resolve(args: argparse.Namespace) -> int:
     from agents.llm_trader import resolve_pending_outcomes
 
+    if not _maybe_setup_interactive():
+        return 1
+
     written = resolve_pending_outcomes(args.holding_days)
     print(f"Wrote {written} TradingAgents outcome row(s).")
     return 0
@@ -198,11 +223,70 @@ def cmd_cli_ux(args: argparse.Namespace) -> int:
     return 0
 
 
+def _maybe_setup_interactive() -> bool:
+    """Auto-launch the setup wizard if no API key is configured.
+
+    Reads ``_GLOBAL_NO_SETUP`` (set by ``--no-setup`` on the CLI) and
+    bails out without prompting when set. Reads ``_GLOBAL_FORCE_SETUP``
+    (``--setup``) to force the wizard even if a key looks present
+    (handy when the user wants to rotate providers).
+
+    Returns ``True`` if a key is (still) available for the chosen
+    provider, ``False`` if setup was attempted but couldn't run (non-
+    TTY stdin) or failed. Callers should bail out cleanly when this
+    returns ``False`` rather than making doomed API calls.
+    """
+    from config import settings
+
+    if _GLOBAL_NO_SETUP:
+        return True  # honour the override; let the call fail naturally
+
+    from scripts.setup_wizard import (
+        maybe_run_setup,
+        needs_api_key,
+        PROVIDER_ENV_VAR,
+    )
+
+    if not needs_api_key(settings.TRADINGAGENTS_LLM_PROVIDER):
+        return True
+
+    result = maybe_run_setup(force=_GLOBAL_FORCE_SETUP)
+    if result is None:
+        # Either setup was needed but couldn't run (non-TTY), or the
+        # user cancelled. Either way we have no usable key.
+        env_var = PROVIDER_ENV_VAR.get(settings.TRADINGAGENTS_LLM_PROVIDER) or "<unknown>"
+        if not settings.TRADINGAGENTS_ENABLED:
+            return True  # nothing to do
+        print(
+            f"[!] {env_var} not configured. Set it in .env or run "
+            f"`python scripts/run_tradingagents.py setup`.",
+            file=sys.stderr,
+        )
+        return False
+    return True
+
+
+# Set by argparse before any subcommand runs.
+_GLOBAL_NO_SETUP: bool = False
+_GLOBAL_FORCE_SETUP: bool = False
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Run the TradingAgents LLM pipeline for Indian tickers.",
     )
+    parser.add_argument(
+        "--no-setup", action="store_true",
+        help="Skip the auto-setup wizard (for CI / scripted runs)",
+    )
+    parser.add_argument(
+        "--setup", action="store_true",
+        help="Force the interactive setup wizard even if a key looks set",
+    )
     sub = parser.add_subparsers(dest="command")
+
+    p_setup = sub.add_parser("setup", help="Pick LLM provider + paste API key.")
+    p_setup.set_defaults(func=cmd_setup)
 
     p_single = sub.add_parser("single", help="Run the pipeline for one ticker.")
     p_single.add_argument("ticker", help="NSE/BSE ticker (bare or .NS/.BO-suffixed)")
@@ -210,6 +294,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_single.add_argument(
         "--full", action="store_true",
         help="Print every agent's report, not just the final decision",
+    )
+    p_single.add_argument(
+        "--no-setup", action="store_true",
+        help="Skip the auto-setup wizard (for CI / scripted runs)",
+    )
+    p_single.add_argument(
+        "--setup", action="store_true",
+        help="Force the interactive setup wizard even if a key looks set",
     )
     p_single.set_defaults(func=cmd_single)
 
@@ -222,6 +314,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--trade-date-only", action="store_true",
         help="Only evaluate symbols with fresh signals on --date",
     )
+    p_port.add_argument(
+        "--no-setup", action="store_true",
+        help="Skip the auto-setup wizard (for CI / scripted runs)",
+    )
+    p_port.add_argument(
+        "--setup", action="store_true",
+        help="Force the interactive setup wizard even if a key looks set",
+    )
     p_port.set_defaults(func=cmd_portfolio)
 
     p_resolve = sub.add_parser("resolve", help="Backfill realised outcomes.")
@@ -229,9 +329,25 @@ def build_parser() -> argparse.ArgumentParser:
         "--holding-days", type=int, default=None,
         help="Override Settings.TRADINGAGENTS_HOLDING_DAYS",
     )
+    p_resolve.add_argument(
+        "--no-setup", action="store_true",
+        help="Skip the auto-setup wizard (for CI / scripted runs)",
+    )
+    p_resolve.add_argument(
+        "--setup", action="store_true",
+        help="Force the interactive setup wizard even if a key looks set",
+    )
     p_resolve.set_defaults(func=cmd_resolve)
 
     p_cli = sub.add_parser("cli", help="Launch the upstream TradingAgents interactive CLI.")
+    p_cli.add_argument(
+        "--no-setup", action="store_true",
+        help="Skip the auto-setup wizard (for CI / scripted runs)",
+    )
+    p_cli.add_argument(
+        "--setup", action="store_true",
+        help="Force the interactive setup wizard even if a key looks set",
+    )
     p_cli.set_defaults(func=cmd_cli_ux)
 
     # Back-compat: bare args default to "single <ticker>".
@@ -251,7 +367,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    global _GLOBAL_NO_SETUP, _GLOBAL_FORCE_SETUP
+
     args = build_parser().parse_args()
+    # Prefer the top-level flags; fall back to subparser-level copies
+    # so `single X --no-setup` works the same as `--no-setup single X`.
+    _GLOBAL_NO_SETUP = bool(
+        getattr(args, "no_setup", False)
+    )
+    _GLOBAL_FORCE_SETUP = bool(
+        getattr(args, "setup", False)
+        and not (args.command == "setup")
+    )
 
     if args.command == "single":
         return cmd_single(args)
@@ -263,6 +390,8 @@ def main() -> int:
         return cmd_cli_ux(args)
 
     # Bare flags (back-compat with the original ad-hoc usage).
+    if args.setup and not args.command:
+        return cmd_setup(args)
     if args.cli_ux:
         return cmd_cli_ux(args)
     if args.portfolio:
