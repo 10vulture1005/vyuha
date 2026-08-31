@@ -1,0 +1,77 @@
+# TradingAgents configuration overlay for VYUHA.
+#
+# Loaded by `agents.llm_trader.config_builder.build_tradingagents_config`
+# on every pipeline run. Keys here mirror the keys consumed by
+# `tradingagents.default_config.DEFAULT_CONFIG` so they can be applied
+# with `_apply_env_overrides`-style merging.
+#
+# Indian-market defaults:
+#   * yfinance is the only data vendor — Yahoo covers NSE (.NS) and BSE
+#     (.BO) tickers natively, which is what Vyuha's universe uses.
+#   * Nifty 50 (^NSEI) is the alpha benchmark for all tickers (so even
+#     a BSE-only ticker gets the right regional benchmark).
+#   * Macro queries are rewritten to focus on RBI / India macro rather
+#     than the US Federal Reserve.
+
+tradingagents:
+  enabled: false
+  llm_provider: anthropic
+  deep_think_llm: claude-sonnet-4-6
+  quick_think_llm: claude-haiku-4-5
+  backend_url: null
+  temperature: 0.0
+  max_tokens: null
+  llm_max_retries: 4
+  output_language: English
+  max_debate_rounds: 1
+  max_risk_discuss_rounds: 1
+  max_recur_limit: 100
+  checkpoint_enabled: false
+  holding_days: 5
+  require_confirmation: true
+
+  # yfinance-only vendors. The "default" chain silently fans out to
+  # vendors the user did not configure, which can hit Alpha Vantage rate
+  # limits on a daily run. Vyuha intentionally narrows to yfinance.
+  data_vendors:
+    core_stock_apis: yfinance
+    technical_indicators: yfinance
+    fundamental_data: yfinance
+    news_data: yfinance
+    macro_data: null            # FRED is US-only; disabled by default.
+    prediction_markets: null    # Polymarket coverage is thin for Indian names.
+
+  # Macro headline queries used by the News Analyst when broadening
+  # beyond ticker-specific news. Replaces the US-centric defaults with
+  # India-relevant topics.
+  global_news_queries:
+    - "Reserve Bank of India interest rates inflation repo rate"
+    - "Nifty 50 Sensex earnings GDP economic outlook"
+    - "India geopolitical risk crude oil trade deficit sanctions"
+    - "RBI SEBI SEZ central bank policy India"
+    - "monsoon Indian agriculture commodities crude energy"
+
+  global_news_article_limit: 10
+  global_news_lookback_days: 7
+  news_article_limit: 20
+
+  # Selected analyst team. ``social`` is the upstream wire key for the
+  # Sentiment Analyst (StockTwits + Reddit + news). The friendly alias
+  # ``sentiment`` is also accepted and auto-rewritten by the bridge.
+  selected_analysts:
+    - market
+    - fundamentals
+    - news
+    - social
+
+  # Alpha benchmark override. ^NSEI (Nifty 50) is the canonical Indian
+  # index and is what vyuha uses elsewhere (regime_tools.py loads it
+  # as INDEX_NIFTY50). benchmark_map below inherits vyuha's defaults.
+  benchmark_ticker: ^NSEI
+  benchmark_map:
+    .NS: ^NSEI          # NSE India (Nifty 50)
+    .BO: ^NSEI          # BSE India — still benchmark vs Nifty
+    "": ^NSEI           # default for Indian tickers without a suffix
+
+  # Defaults inherited from upstream if a key above is omitted.
+  defaults_from: tradingagents.default_config:DEFAULT_CONFIG
