@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# vyuha — launcher for the VYUHA × Vyuha Agent interactive CLI.
+#
+# Drop this script anywhere on $PATH (e.g. ~/.local/bin/vyuha) and
+# run `vyuha` from any directory. The script locates the VYUHA
+# repo via VYUHA_HOME (if set) or by walking up from its own
+# location, activates the venv if one exists, then forwards all
+# arguments to scripts/run_vyuha_agent.py.
+#
+# Usage:
+#   vyuha                        # interactive first-time wizard
+#   vyuha setup                  # pick provider / API key
+#   vyuha single RELIANCE        # run for one ticker
+#   vyuha single RELIANCE --full # run + print every agent's report
+#   vyuha portfolio              # cross-check watchlist
+#   vyuha resolve                # backfill realised outcomes
+#   vyuha cli                    # upstream rich UI
+#   vyuha --no-setup single RELIANCE   # skip wizard (CI/scripted)
+#   vyuha --setup                # rotate provider
+#
+# Environment overrides:
+#   VYUHA_HOME      absolute path to the vyuha repo (else we walk up
+#                   from the script's own location to find pyproject.toml)
+#   VYUHA_PYTHON    Python interpreter to use (else: venv/bin/python,
+#                   else: python3 on PATH)
+
+set -e
+
+# ─── Locate the VYUHA repo ───────────────────────────────────────────────────
+if [[ -n "${VYUHA_HOME:-}" ]]; then
+    REPO="${VYUHA_HOME}"
+else
+    # This script lives at <repo>/bin/vyuha (or wherever the user put
+    # it). Walk up until we find pyproject.toml with name=vyuha-engine.
+    SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || python3 -c "import os,sys; print(os.path.realpath(sys.argv[1]))" "${BASH_SOURCE[0]}")"
+    REPO=""
+    CANDIDATE="$(dirname "${SCRIPT_PATH}")"
+    while [[ "${CANDIDATE}" != "/" ]]; do
+        if [[ -f "${CANDIDATE}/pyproject.toml" ]] && grep -q "vyuha-engine" "${CANDIDATE}/pyproject.toml" 2>/dev/null; then
+            REPO="${CANDIDATE}"
+            break
+        fi
+        CANDIDATE="$(dirname "${CANDIDATE}")"
+    done
+fi
+
+if [[ -z "${REPO}" ]] || [[ ! -f "${REPO}/scripts/run_vyuha_agent.py" ]]; then
+    echo "✗ Could not locate the VYUHA repo." >&2
+    echo "  Set VYUHA_HOME=/path/to/vyuha or copy this launcher into the repo." >&2
+    exit 1
+fi
+
+# ─── Pick a Python interpreter ────────────────────────────────────────────────
+if [[ -n "${VYUHA_PYTHON:-}" ]]; then
+    PY="${VYUHA_PYTHON}"
+elif [[ -x "${REPO}/.venv/bin/python" ]]; then
+    PY="${REPO}/.venv/bin/python"
+elif command -v python3.12 >/dev/null 2>&1; then
+    PY="$(command -v python3.12)"
+elif command -v python3 >/dev/null 2>&1; then
+    PY="$(command -v python3)"
+else
+    echo "✗ No python3 / python3.12 found on PATH." >&2
+    exit 1
+fi
+
+# ─── Ensure the venv exists (best-effort) ───────────────────────────────────────────────────────────────────────────
+if [[ ! -x "${REPO}/.venv/bin/python" ]] && [[ -z "${VYUHA_PYTHON:-}" ]]; then
+    # Lazy bootstrap: create a venv and install the project so the CLI
+    # works out of the box. Skipped silently if the user has already
+    # pointed VYUHA_PYTHON at a working interpreter.
+    echo "ℹ  First run — bootstrapping ${REPO}/.venv …" >&2
+    if command -v uv >/dev/null 2>&1; then
+        uv venv "${REPO}/.venv" --python 3.12 >&2
+        # shellcheck disable=SC1091
+        source "${REPO}/.venv/bin/activate"
+        uv pip install -e "${REPO}[vyuha_agent,dev]" >&2 || true
+        PY="${REPO}/.venv/bin/python"
+    elif command -v python3 >/dev/null 2>&1; then
+        python3 -m venv "${REPO}/.venv" >&2 || true
+    fi
+fi
+
+# ─── Run the CLI ─────────────────────────────────────────────────────────────
+cd "${REPO}"
+exec "${PY}" "${REPO}/scripts/run_vyuha_agent.py" "$@"

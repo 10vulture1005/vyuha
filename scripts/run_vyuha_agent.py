@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Standalone CLI for the TradingAgents LLM pipeline.
+"""Standalone CLI for the Vyuha Agent LLM pipeline.
 
 Runs the full multi-agent LangGraph pipeline (4 analysts + bull/bear
 researchers + trader + 3 risk debators + portfolio manager) for an
@@ -8,17 +8,17 @@ Indian ticker and prints the final decision.
 Examples
 --------
 Just run it — interactive first-time wizard:
-    python scripts/run_tradingagents.py
+    python scripts/run_vyuha_agent.py
 
 Or jump straight to a subcommand:
-    python scripts/run_tradingagents.py setup               # pick provider / API key
-    python scripts/run_tradingagents.py single RELIANCE      # one ticker
-    python scripts/run_tradingagents.py single TATASTEEL.BO --date 2026-01-15
-    python scripts/run_tradingagents.py portfolio            # cross-check watchlist
-    python scripts/run_tradingagents.py resolve              # backfill realised outcomes
-    python scripts/run_tradingagents.py cli                  # upstream rich UI
+    python scripts/run_vyuha_agent.py setup               # pick provider / API key
+    python scripts/run_vyuha_agent.py single RELIANCE      # one ticker
+    python scripts/run_vyuha_agent.py single TATASTEEL.BO --date 2026-01-15
+    python scripts/run_vyuha_agent.py portfolio            # cross-check watchlist
+    python scripts/run_vyuha_agent.py resolve              # backfill realised outcomes
+    python scripts/run_vyuha_agent.py cli                  # upstream rich UI
 
-Bare ``python scripts/run_tradingagents.py`` (no args) opens a
+Bare ``python scripts/run_vyuha_agent.py`` (no args) opens a
 guided flow: welcome banner → setup wizard (if needed) → main menu
 with single / portfolio / resolve / setup / cli / exit. Repeat
 actions until you choose Exit. Cron / piped callers should pass
@@ -29,9 +29,9 @@ configuring a provider key, the subcommand auto-launches the setup
 wizard (when stdin is a TTY) so you never see an opaque auth
 error. Pass ``--no-setup`` to skip the wizard for scripted runs.
 
-This script is the vyuha-side counterpart to TradingAgents' own
-``tradingagents`` command. The two coexist — ``cli`` lets you
-launch the upstream interactive shell directly without going through
+This script is the vyuha-side counterpart to Tauric Research's
+TradingAgents framework. The two coexist — ``cli`` lets you launch
+the upstream interactive shell directly without going through
 vyuha's settings/config.
 """
 import argparse
@@ -85,7 +85,7 @@ def _persist_summary(result) -> None:
             )
     except Exception:
         # Bridge already persists; this is a fallback for raw
-        # TradingAgentsResult instances returned without DB writes.
+        # VyuhaAgentResult instances returned without DB writes.
         pass
 
 
@@ -98,7 +98,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
 
 
 def cmd_single(args: argparse.Namespace) -> int:
-    from agents.llm_trader import LLMPipelineAgent
+    from agents.vyuha_agent import LLMPipelineAgent
 
     if not _maybe_setup_interactive():
         return 1
@@ -107,7 +107,7 @@ def cmd_single(args: argparse.Namespace) -> int:
     agent = LLMPipelineAgent()
     result = agent.evaluate_symbol(args.ticker, trade_date)
 
-    _print_section(f"TradingAgents Decision: {result.ticker} ({trade_date})")
+    _print_section(f"Vyuha Agent Decision: {result.ticker} ({trade_date})")
     print(f"Action (vyuha):  {result.action}")
     print(f"Raw signal:     {result.raw_signal}")
     print(f"Duration:       {result.duration_ms} ms")
@@ -145,7 +145,7 @@ def cmd_single(args: argparse.Namespace) -> int:
 
 
 def cmd_portfolio(args: argparse.Namespace) -> int:
-    from agents.llm_trader import run_cross_check
+    from agents.vyuha_agent import run_cross_check
 
     if not _maybe_setup_interactive():
         return 1
@@ -200,18 +200,18 @@ def cmd_portfolio(args: argparse.Namespace) -> int:
 
 
 def cmd_resolve(args: argparse.Namespace) -> int:
-    from agents.llm_trader import resolve_pending_outcomes
+    from agents.vyuha_agent import resolve_pending_outcomes
 
     if not _maybe_setup_interactive():
         return 1
 
     written = resolve_pending_outcomes(args.holding_days)
-    print(f"Wrote {written} TradingAgents outcome row(s).")
+    print(f"Wrote {written} Vyuha Agent outcome row(s).")
     return 0
 
 
 def cmd_cli_ux(args: argparse.Namespace) -> int:
-    """Delegate to the upstream TradingAgents interactive CLI."""
+    """Delegate to the upstream TradingAgents framework CLI (Tauric Research)."""
     import runpy
 
     try:
@@ -257,7 +257,7 @@ def _maybe_setup_interactive() -> bool:
             return True  # nothing to do
         print(
             f"[!] {env_var} not configured. Set it in .env or run "
-            f"`python scripts/run_tradingagents.py setup`.",
+            f"`python scripts/run_vyuha_agent.py setup`.",
             file=sys.stderr,
         )
         return False
@@ -271,7 +271,7 @@ _GLOBAL_FORCE_SETUP: bool = False
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run the TradingAgents LLM pipeline for Indian tickers.",
+        description="Run the Vyuha Agent LLM pipeline for Indian tickers.",
     )
     parser.add_argument(
         "--no-setup", action="store_true",
@@ -337,7 +337,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_resolve.set_defaults(func=cmd_resolve)
 
-    p_cli = sub.add_parser("cli", help="Launch the upstream TradingAgents interactive CLI.")
+    p_cli = sub.add_parser("cli", help="Launch the upstream TradingAgents framework interactive UI.")
     p_cli.add_argument(
         "--no-setup", action="store_true",
         help="Skip the auto-setup wizard (for CI / scripted runs)",
@@ -391,7 +391,7 @@ def main() -> int:
         and not (args.command == "setup")
     )
 
-    # When the user runs `run_tradingagents.py` with no subcommand and
+    # When the user runs `run_vyuha_agent.py` with no subcommand and
     # we already know we're on a TTY (handled above), launch the main
     # menu. Otherwise fall through to the help screen.
     if args.command is None and sys.stdin.isatty() and not _GLOBAL_FORCE_SETUP:

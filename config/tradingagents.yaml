@@ -1,6 +1,6 @@
 # TradingAgents configuration overlay for VYUHA.
 #
-# Loaded by `agents.llm_trader.config_builder.build_tradingagents_config`
+# Loaded by `agents.vyuha_agent.config_builder.build_vyuha_agent_config`
 # on every pipeline run. Keys here mirror the keys consumed by
 # `tradingagents.default_config.DEFAULT_CONFIG` so they can be applied
 # with `_apply_env_overrides`-style merging.

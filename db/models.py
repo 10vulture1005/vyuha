@@ -272,12 +272,16 @@ class AgentRunLog(Base):
 
 
 class TradingAgentsDecision(Base):
-    """Immutable record of every TradingAgents LLM pipeline run.
+    """Immutable record of every Vyuha Agent LLM pipeline run.
 
-    Each row corresponds to one `propagate(ticker, date)` invocation.
+    Each row corresponds to one ``propagate(ticker, date)`` invocation.
     Reports are stored as JSON blobs to keep the table column count low
     while preserving every agent's output verbatim — useful for
     debugging and backfilling the reflection log.
+
+    NB: the table name stays ``tradingagents_decisions`` for backwards
+    compatibility with existing DBs; the Python class name is kept as
+    ``TradingAgentsDecision`` to mirror the upstream framework.
     """
 
     __tablename__ = "tradingagents_decisions"
@@ -314,11 +318,11 @@ class TradingAgentsDecision(Base):
 
 
 class TradingAgentsOutcome(Base):
-    """Realized outcome for a TradingAgents decision, filled by the
+    """Realized outcome for a Vyuha Agent decision, filled by the
     reflection layer once the holding window has elapsed.
 
-    Mirrors the upstream `TradingMemoryLog` to keep all vyuha-side state
-    in the database (easier queries, joins with `trade_log`).
+    Mirrors the upstream ``TradingMemoryLog`` to keep all vyuha-side state
+    in the database (easier queries, joins with ``trade_log``).
     """
 
     __tablename__ = "tradingagents_outcomes"

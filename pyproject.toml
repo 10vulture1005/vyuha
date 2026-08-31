@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "vyuha-engine"
 version = "0.2.0"
-description = "High-Conviction Equity Accumulation Engine — Multi-Agent, NSE/BSE. With TradingAgents LLM integration."
+description = "High-Conviction Equity Accumulation Engine — Multi-Agent, NSE/BSE. With Vyuha Agent LLM integration."
 requires-python = ">=3.12"
 readme = "README.md"
 
@@ -26,7 +26,7 @@ dependencies = [
     # Logging
     "loguru>=0.7.2",
 
-    # TradingAgents LLM framework (vendored in tradingagents/)
+    # TradingAgents LLM framework (Tauric Research, vendored at tradingagents/)
     "langchain-core>=0.3.81",
     "langgraph>=0.4.8",
     "langgraph-checkpoint-sqlite>=2.0.0",
@@ -58,11 +58,12 @@ agents = [
     "langchain-openai",
     "litellm",
 ]
-tradingagents = [
-    # TradingAgents LLM framework — vendors a complete multi-agent
-    # LangGraph pipeline (4 analysts + bull/bear researchers + trader
-    # + 3 risk debators + portfolio manager). Restricted to Indian
-    # markets via config/tradingagents.yaml.
+vyuha_agent = [
+    # Vyuha Agent — multi-agent LangGraph pipeline (4 analysts +
+    # bull/bear researchers + trader + 3 risk debators + portfolio
+    # manager), driven by Tauric Research's TradingAgents framework
+    # vendored under tradingagents/. Pinned to Indian markets via
+    # config/tradingagents.yaml.
     "langchain-core>=0.3.81",
     "langgraph>=0.4.8",
     "langgraph-checkpoint-sqlite>=2.0.0",
@@ -99,7 +100,7 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["config*", "db*", "agents*", "crew*", "core*", "api*", "notifications*", "backtest*", "scripts*", "universe*", "data*", "tradingagents*", "cli_ta*", "agents.llm_trader*"]
+include = ["config*", "db*", "agents*", "crew*", "core*", "api*", "notifications*", "backtest*", "scripts*", "universe*", "data*", "tradingagents*", "cli_ta*", "agents.vyuha_agent*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

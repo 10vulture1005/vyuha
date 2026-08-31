@@ -93,7 +93,7 @@ def run_daily_flow(is_weekly: bool = False):
     
     logger.info(f"Crew execution finished. Final Output: {result}")
 
-    # Phase 7 — optional TradingAgents LLM cross-check. Runs after the
+    # Phase 7 — optional Vyuha Agent LLM cross-check. Runs after the
     # rule-based pipeline so we have fresh TechnicalSignal rows in the
     # DB to cross-reference. Never raises — failures are logged so the
     # rule-based pipeline's output remains intact.

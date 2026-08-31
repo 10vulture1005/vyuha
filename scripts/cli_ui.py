@@ -1,5 +1,5 @@
 # scripts/cli_ui.py
-"""Interactive prompt helpers for run_tradingagents.py.
+"""Interactive prompt helpers for run_vyuha_agent.py.
 
 Centralises every questionary call so the CLI can offer a guided
 setup-and-run experience even when the user doesn't pass any flags.
@@ -55,11 +55,11 @@ def _style_kwargs():
 
 
 def print_banner() -> None:
-    """Print the VYUHA × TradingAgents ASCII banner."""
+    """Print the VYUHA Agent ASCII banner."""
     print()
     print("╔══════════════════════════════════════════════════════════════════════╗")
     print("║                                                                      ║")
-    print("║   🔱  VYUHA × TradingAgents  —  LLM multi-agent research              ║")
+    print("║   🔱  VYUHA Agent  —  multi-agent LLM research                       ║")
     print("║                                                                      ║")
     print("║   Multi-agent LangGraph pipeline for Indian mid-cap equities.         ║")
     print("║   4 analysts → bull/bear debate → trader → risk → portfolio manager.  ║")
@@ -236,7 +236,7 @@ def prompt_main_menu() -> Optional[str]:
     """
     questionary, Choice = _q()
     choices = [
-        Choice("🔍  Run for a single ticker", value="single"),
+        Choice("🔍  Run pipeline for one ticker", value="single"),
         Choice("📊  Cross-check my watchlist (portfolio)", value="portfolio"),
         Choice("📈  Backfill realised outcomes (resolve)", value="resolve"),
         Choice("⚙   Change provider / API key (setup)", value="setup"),
@@ -287,20 +287,20 @@ def run_main_loop() -> int:
                 args = prompt_single_args()
                 if args is None:
                     continue
-                from scripts.run_tradingagents import cmd_single
+                from scripts.run_vyuha_agent import cmd_single
                 cmd_single(args)
             elif choice == "portfolio":
                 args = prompt_portfolio_args()
                 if args is None:
                     continue
-                from scripts.run_tradingagents import cmd_portfolio
+                from scripts.run_vyuha_agent import cmd_portfolio
                 cmd_portfolio(args)
             elif choice == "resolve":
-                from scripts.run_tradingagents import cmd_resolve
+                from scripts.run_vyuha_agent import cmd_resolve
                 args = argparse.Namespace(holding_days=None, no_setup=True, setup=False)
                 cmd_resolve(args)
             elif choice == "cli":
-                from scripts.run_tradingagents import cmd_cli_ux
+                from scripts.run_vyuha_agent import cmd_cli_ux
                 args = argparse.Namespace(no_setup=True, setup=False)
                 cmd_cli_ux(args)
         except KeyboardInterrupt:
@@ -324,7 +324,7 @@ def _print_dashboard() -> None:
 
     print_info(f"Project root:    {Path.cwd()}")
     print_info(f"Database:        {settings.DATABASE_URL}")
-    print_info(f"TradingAgents:   {'enabled' if settings.TRADINGAGENTS_ENABLED else 'disabled'}")
+    print_info(f"Vyuha Agent:     {'enabled' if settings.TRADINGAGENTS_ENABLED else 'disabled'}")
     if settings.TRADINGAGENTS_ENABLED:
         provider = settings.TRADINGAGENTS_LLM_PROVIDER
         env_key_set = not needs_api_key(provider)
@@ -355,7 +355,7 @@ def run_first_time_wizard() -> int:
     # Case A: TRADINGAGENTS is off entirely — offer to turn it on and
     # configure together.
     if not settings.TRADINGAGENTS_ENABLED:
-        print_warning("TradingAgents is disabled in your .env (TRADINGAGENTS_ENABLED=false).")
+        print_warning("Vyuha Agent is disabled in your .env (TRADINGAGENTS_ENABLED=false).")
         if prompt_yes_no("Enable it and run the setup wizard now?", default=True):
             from scripts.setup_wizard import _set_env_var, _find_env_path
             env_path = _find_env_path()

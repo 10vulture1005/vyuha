@@ -1,16 +1,16 @@
 # scripts/setup_wizard.py
-"""Interactive provider + API-key setup for the TradingAgents CLI.
+"""Interactive provider + API-key setup for the Vyuha Agent CLI.
 
-The wizard is launched automatically by ``scripts/run_tradingagents.py``
+The wizard is launched automatically by ``scripts/run_vyuha_agent.py``
 when ``TRADINGAGENTS_ENABLED=true`` but no provider key is present in the
 environment. It can also be invoked explicitly via
-``python scripts/run_tradingagents.py setup``.
+``python scripts/run_vyuha_agent.py setup``.
 
 What it does
 ------------
 1. Asks the user to pick an LLM provider from the canonical
-   TradingAgents registry (openai / anthropic / google / xai / groq /
-   deepseek / openrouter / qwen / glm / mistral / kimi / ollama /
+   TradingAgents provider registry (openai / anthropic / google / xai /
+   groq / deepseek / openrouter / qwen / glm / mistral / kimi / ollama /
    openai_compatible).
 2. Asks the matching ``deep_think_llm`` and ``quick_think_llm`` model
    names — with sensible defaults so a single Enter confirms both.
@@ -22,7 +22,7 @@ What it does
    the new keys without requiring a re-launch.
 
 Exposed as :func:`run_setup` so any entrypoint (the ``setup``
-subcommand, the auto-trigger inside ``run_tradingagents.py main``,
+subcommand, the auto-trigger inside ``run_vyuha_agent.py main``,
 or an explicit call from another script) gets the same flow.
 """
 from __future__ import annotations
@@ -342,7 +342,7 @@ def non_interactive_setup(
 
 def run_setup() -> dict:
     """Run the interactive wizard end-to-end. Returns the persisted config."""
-    _print_section("VYUHA × TradingAgents — LLM provider setup")
+    _print_section("VYUHA Agent — provider setup wizard")
 
     provider = _prompt_provider()
     print(f"\nSelected: {provider['name']}")
@@ -379,7 +379,7 @@ def run_setup() -> dict:
     elif env_var is None:
         print(f"  API key:        not required for {provider['name']}")
     print()
-    print("  Run `python scripts/run_tradingagents.py single RELIANCE --full` to try it.")
+    print("  Run `python scripts/run_vyuha_agent.py single RELIANCE --full` to try it.")
     print()
 
     return {
@@ -430,11 +430,11 @@ def maybe_run_setup(force: bool = False) -> Optional[dict]:
     if not sys.stdin.isatty():
         env_var = PROVIDER_ENV_VAR.get(provider) or "<unknown>"
         print(
-            f"\n[!] TRADINGAGENTS is enabled but {env_var} is not set, and stdin is\n"
+            f"\n[!] Vyuha Agent is enabled but {env_var} is not set, and stdin is\n"
             f"    not a TTY — cannot launch the interactive setup wizard.\n"
             f"    Either:\n"
             f"      • set {env_var}=... in .env and re-run, OR\n"
-            f"      • run `python scripts/run_tradingagents.py setup` from a terminal.",
+            f"      • run `python scripts/run_vyuha_agent.py setup` from a terminal.",
             file=sys.stderr,
         )
         return None

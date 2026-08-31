@@ -16,13 +16,13 @@ from agents.tools.ledger_tools import (
     run_sentiment_scan,
 )
 try:
-    # TradingAgents tools require the optional LLM extras. Import
+    # Vyuha Agent tools require the optional LLM extras. Import
     # lazily so the rule-based-only pipeline keeps working without
     # langgraph/langchain installed.
-    from agents.tools.tradingagents_tools import (
-        run_tradingagents_pipeline,
-        run_tradingagents_cross_check,
-        resolve_tradingagents_outcomes,
+    from agents.tools.vyuha_agent_tools import (
+        run_vyuha_agent_pipeline,
+        run_vyuha_agent_cross_check,
+        resolve_vyuha_agent_outcomes,
     )
     _TA_TOOLS_AVAILABLE = True
 except Exception:
@@ -92,10 +92,10 @@ def create_crew(is_weekly: bool = False) -> Crew:
     # 5. Portfolio Manager
     pm_tools = [run_capital_allocator]
     if _TA_TOOLS_AVAILABLE and settings.TRADINGAGENTS_ENABLED:
-        # Give the PM access to the TradingAgents cross-check tool when
+        # Give the PM access to the Vyuha Agent cross-check tool when
         # the LLM layer is enabled. The PM can invoke it as an
         # additional sanity check before allocating.
-        pm_tools.append(run_tradingagents_cross_check)
+        pm_tools.append(run_vyuha_agent_cross_check)
 
     portfolio_manager = Agent(
         role="Lead Portfolio Manager",

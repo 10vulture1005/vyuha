@@ -1,17 +1,17 @@
-# agents/tools/tradingagents_tools.py
-"""CrewAI tool wrappers around the TradingAgents LangGraph pipeline.
+# agents/tools/vyuha_agent_tools.py
+"""CrewAI tool wrappers around the Vyuha Agent LangGraph pipeline.
 
 These tools let vyuha's existing ``crew_definition`` Crew (which
 already orchestrates a CrewAI Fundamental/Sentiment/Technical/Risk/PM
-chain) call into the TradingAgents LangGraph state machine as
+chain) call into the Vyuha Agent LangGraph state machine as
 additional tools. Two integration patterns are supported:
 
-1. ``run_tradingagents_pipeline`` — invokes the full pipeline for a
+1. ``run_vyuha_agent_pipeline`` — invokes the full pipeline for a
    single ticker and returns a JSON-friendly action + rationale.
    Useful when the PM wants an independent LLM view on a specific
    watchlist candidate.
 
-2. ``run_tradingagents_cross_check`` — fans out across the current
+2. ``run_vyuha_agent_cross_check`` — fans out across the current
    ACTIVE watchlist, runs the pipeline for each symbol, and returns a
    summary of how many symbols the LLM agrees / disagrees with the
    rule-based signals.
@@ -22,7 +22,7 @@ kickoff. Errors are returned as ``{"error": "...", "action": "HOLD"}``
 so the surrounding agent sees a consistent JSON shape.
 
 Note: importing this module requires the ``crewai`` extras (and the
-underlying langgraph deps in ``pyproject.toml``'s ``[tradingagents]``
+underlying langgraph deps in ``pyproject.toml``'s ``[vyuha_agent]``
 group). It is not imported eagerly from ``agents/tools/__init__.py``
 to keep the rule-based-only path free of LLM deps.
 """
@@ -60,15 +60,15 @@ def _err(symbol: str, msg: str) -> str:
             "symbol": symbol,
             "action": "HOLD",
             "error": msg,
-            "rationale": f"TradingAgents pipeline unavailable: {msg}",
+            "rationale": f"Vyuha Agent pipeline unavailable: {msg}",
         },
         indent=2,
     )
 
 
-@tool("Run TradingAgents Pipeline")
-def run_tradingagents_pipeline(symbol: str, trade_date: str = "") -> str:
-    """Invoke the full TradingAgents LangGraph multi-agent pipeline (4 analysts + bull/bear researchers + trader + 3 risk debators + portfolio manager) for one Indian ticker.
+@tool("Run Vyuha Agent Pipeline")
+def run_vyuha_agent_pipeline(symbol: str, trade_date: str = "") -> str:
+    """Invoke the full Vyuha Agent multi-agent pipeline (4 analysts + bull/bear researchers + trader + 3 risk debators + portfolio manager) for one Indian ticker.
 
     Args:
         symbol: NSE/BSE ticker symbol (bare ``RELIANCE`` or suffixed
@@ -77,13 +77,13 @@ def run_tradingagents_pipeline(symbol: str, trade_date: str = "") -> str:
 
     Returns:
         JSON object with keys ``action`` (BUY / HOLD / SELL),
-        ``raw_signal`` (TradingAgents 5-tier rating),
+        ``raw_signal`` (Vyuha Agent 5-tier rating),
         ``rationale`` (Portfolio Manager prose), and
         ``confirmed_by_rules`` (set later by the cross-check tool).
         Errors come back as ``{"action": "HOLD", "error": "..."}``.
     """
     try:
-        from agents.llm_trader import LLMPipelineAgent, normalise_indian_ticker
+        from agents.vyuha_agent import LLMPipelineAgent, normalise_indian_ticker
     except Exception as exc:
         return _err(symbol, f"bridge import failed: {exc}")
 
@@ -91,7 +91,7 @@ def run_tradingagents_pipeline(symbol: str, trade_date: str = "") -> str:
         agent = LLMPipelineAgent()
         result = agent.evaluate_symbol(symbol, trade_date or None)
     except Exception as exc:
-        logger.exception("TradingAgents pipeline failed for %s", symbol)
+        logger.exception("Vyuha Agent pipeline failed for %s", symbol)
         return _err(symbol, f"pipeline failed: {exc}")
 
     payload = {
@@ -108,9 +108,9 @@ def run_tradingagents_pipeline(symbol: str, trade_date: str = "") -> str:
     return _to_json(payload)
 
 
-@tool("Run TradingAgents Cross-Check")
-def run_tradingagents_cross_check(symbols_json: str) -> str:
-    """Run the TradingAgents pipeline for every symbol in a JSON array and compare with the rule-based pipeline.
+@tool("Run Vyuha Agent Cross-Check")
+def run_vyuha_agent_cross_check(symbols_json: str) -> str:
+    """Run the Vyuha Agent pipeline for every symbol in a JSON array and compare with the rule-based pipeline.
 
     Args:
         symbols_json: JSON string of the form ``["RELIANCE","TCS","INFY"]``.
@@ -124,7 +124,7 @@ def run_tradingagents_cross_check(symbols_json: str) -> str:
         an advisory input.
     """
     try:
-        from agents.llm_trader import run_cross_check
+        from agents.vyuha_agent import run_cross_check
         from db.session import get_session
         from db.models import Watchlist, WatchlistStatus, TechnicalSignal
         from datetime import date
@@ -167,7 +167,7 @@ def run_tradingagents_cross_check(symbols_json: str) -> str:
     try:
         results = run_cross_check(symbols, rule_based_actions)
     except Exception as exc:
-        logger.exception("TradingAgents cross-check failed")
+        logger.exception("Vyuha Agent cross-check failed")
         return _err("[]", f"cross-check failed: {exc}")
 
     payload_results = []
@@ -203,9 +203,9 @@ def run_tradingagents_cross_check(symbols_json: str) -> str:
     )
 
 
-@tool("Resolve TradingAgents Outcomes")
-def resolve_tradingagents_outcomes(holding_days: str = "") -> str:
-    """Backfill realised PnL for past TradingAgents runs whose holding window has elapsed.
+@tool("Resolve Vyuha Agent Outcomes")
+def resolve_vyuha_agent_outcomes(holding_days: str = "") -> str:
+    """Backfill realised PnL for past Vyuha Agent runs whose holding window has elapsed.
 
     Args:
         holding_days: optional positive integer. When blank, uses the
@@ -215,14 +215,14 @@ def resolve_tradingagents_outcomes(holding_days: str = "") -> str:
         JSON object with ``written`` (count of new outcome rows).
     """
     try:
-        from agents.llm_trader import resolve_pending_outcomes
+        from agents.vyuha_agent import resolve_pending_outcomes
     except Exception as exc:
         return _err("*", f"import failed: {exc}")
 
     try:
         n = resolve_pending_outcomes(int(holding_days)) if holding_days else resolve_pending_outcomes()
     except Exception as exc:
-        logger.exception("TradingAgents outcome resolution failed")
+        logger.exception("Vyuha Agent outcome resolution failed")
         return _err("*", f"resolution failed: {exc}")
 
     return json.dumps({"written": n}, indent=2)

@@ -1,7 +1,7 @@
 # agents/llm_crosscheck_agent.py
-"""Phase 7 — TradingAgents LLM Cross-Check Agent.
+"""Phase 7 — Vyuha Agent LLM Cross-Check.
 
-Runs the TradingAgents LangGraph pipeline for each ACTIVE watchlist
+Runs the Vyuha Agent LangGraph pipeline for each ACTIVE watchlist
 symbol that has a fresh technical signal today, then compares the
 LLM's BUY/HOLD/SELL verdict with the rule-based pipeline.
 
@@ -82,7 +82,7 @@ def _rule_based_actions(symbols: List[str], today: date | None = None) -> dict[s
 
 
 def run_cross_check_execution(today: date | None = None) -> List[str]:
-    """Run the TradingAgents LLM cross-check for today's setup candidates.
+    """Run the Vyuha Agent LLM cross-check for today's setup candidates.
 
     Returns the list of symbols where the LLM and the rule-based
     pipeline agree on BUY. The caller (typically the daily pipeline)
@@ -108,9 +108,9 @@ def run_cross_check_execution(today: date | None = None) -> List[str]:
     # Lazy import — keeps the rule-based path free of LLM deps when
     # TRADINGAGENTS_ENABLED is False.
     try:
-        from agents.llm_trader import run_cross_check
+        from agents.vyuha_agent import run_cross_check
     except Exception as exc:
-        logger.exception("Could not import TradingAgents bridge; falling back to rule-based.")
+        logger.exception("Could not import Vyuha Agent bridge; falling back to rule-based.")
         return symbols
 
     rule_based = _rule_based_actions(symbols, today)

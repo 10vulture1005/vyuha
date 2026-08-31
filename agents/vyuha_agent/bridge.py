@@ -1,16 +1,16 @@
-# agents/llm_trader/bridge.py
-"""Bridge between the VYUHA pipeline and the vendored TradingAgents graph.
+# agents/vyuha_agent/bridge.py
+"""Bridge between the VYUHA pipeline and the vendored TradingAgents framework (Tauric Research).
 
-The TradingAgents framework is a LangGraph state machine that runs
+The TradingAgents framework (vendored at ``tradingagents/``) is a LangGraph state machine that runs
 four analysts, two researchers, a trader, three risk debators, and a
 portfolio manager to reach a BUY / HOLD / SELL decision. We expose it
 as a vyuha-friendly ``LLMPipelineAgent`` so the existing daily
 pipeline can call it either as a cross-check (``Phase 7``) or as a
-standalone CLI entrypoint (``scripts/run_tradingagents.py``).
+standalone CLI entrypoint (``scripts/run_vyuha_agent.py``).
 
 Usage
 -----
-    from agents.llm_trader import LLMPipelineAgent
+    from agents.vyuha_agent import LLMPipelineAgent
 
     agent = LLMPipelineAgent()
     decision = agent.evaluate_symbol("RELIANCE", "2026-01-15")
@@ -41,7 +41,7 @@ from db.models import (
 )
 from db.session import get_session
 
-from .config_builder import build_tradingagents_config
+from .config_builder import build_vyuha_agent_config
 
 logger = logging.getLogger(__name__)
 
@@ -49,15 +49,15 @@ logger = logging.getLogger(__name__)
 # ─── Errors ──────────────────────────────────────────────────────────────────
 
 
-class TradingAgentsBridgeError(RuntimeError):
-    """Raised when the TradingAgents pipeline can't run or its output
+class VyuhaAgentBridgeError(RuntimeError):
+    """Raised when the Vyuha Agent pipeline cannot run or its output
     can't be mapped back to vyuha's vocabulary."""
 
 
 # ─── Translation helpers ─────────────────────────────────────────────────────
 
 
-# 5-tier TradingAgents rating → vyuha action. The LLM emits one of the
+# 5-tier framework rating (Buy/Overweight/Hold/Underweight/Sell) → vyuha action. The LLM emits one of the
 # canonical ratings (Buy / Overweight / Hold / Underweight / Sell) plus
 # a REVIEW sentinel when no rating is parseable. We collapse to vyuha's
 # 3-action vocabulary so the rest of the pipeline keeps its existing
@@ -75,7 +75,7 @@ _RATING_TO_ACTION: dict[str, str] = {
 def normalise_indian_ticker(symbol: str) -> str:
     """Append a Yahoo Finance suffix if the symbol is bare.
 
-    TradingAgents' data vendors query yfinance, which expects
+    The framework's data vendors query yfinance, which expects
     ``RELIANCE.NS`` / ``TATASTEEL.BO`` for Indian tickers. Vyuha's
     universe sometimes carries the bare symbol (e.g. ``RELIANCE``) so
     we add the NSE suffix as the default fallback.
@@ -84,7 +84,7 @@ def normalise_indian_ticker(symbol: str) -> str:
     pass through untouched; everything else (US, etc.) is left as-is.
     """
     if not symbol:
-        raise TradingAgentsBridgeError("Ticker symbol is empty")
+        raise VyuhaAgentBridgeError("Ticker symbol is empty")
     upper = symbol.strip().upper()
     if "." in upper:
         return upper
@@ -92,7 +92,7 @@ def normalise_indian_ticker(symbol: str) -> str:
 
 
 def signal_to_vyuha_action(signal: str) -> str:
-    """Map a TradingAgents rating/signal to vyuha's BUY/HOLD/SELL vocabulary."""
+    """Map a framework rating/signal to vyuha's BUY/HOLD/SELL vocabulary."""
     if signal is None:
         return "HOLD"
     cleaned = signal.strip()
@@ -105,13 +105,13 @@ def signal_to_vyuha_action(signal: str) -> str:
 
 
 @dataclass
-class TradingAgentsResult:
-    """Typed view of a completed TradingAgents pipeline run."""
+class VyuhaAgentResult:
+    """Typed view of a completed Vyuha Agent pipeline run."""
 
     ticker: str
     trade_date: date
     action: str                           # BUY / HOLD / SELL (vyuha vocabulary)
-    raw_signal: str                       # TradingAgents 5-tier rating or REVIEW
+    raw_signal: str                       # Framework 5-tier rating (Buy/Overweight/Hold/Underweight/Sell) or REVIEW
     final_decision_text: str = ""         # Portfolio Manager's prose
     trader_plan: str = ""
     market_report: str = ""
@@ -148,7 +148,7 @@ class TradingAgentsResult:
 
 
 class LLMPipelineAgent:
-    """High-level wrapper that runs the TradingAgents graph for one symbol.
+    """High-level wrapper that runs the framework's LangGraph graph for one symbol.
 
     The class is cheap to instantiate — the expensive parts (LLM
     construction, graph compilation) are cached on the
@@ -159,20 +159,20 @@ class LLMPipelineAgent:
     """
 
     def __init__(self, config: dict[str, Any] | None = None):
-        # Lazy import: ``tradingagents`` pulls in langgraph/langchain,
+        # Lazy import: ``tradingagents`` (the framework package) pulls in langgraph/langchain,
         # which can take several seconds to import. Doing it lazily lets
         # the rest of vyuha (rule-based agents, dashboard, CLI) keep
-        # working when TradingAgents deps are absent.
+        # working when the framework's LLM deps are absent.
         from tradingagents.graph.trading_graph import TradingAgentsGraph
 
-        self._config = config or build_tradingagents_config()
+        self._config = config or build_vyuha_agent_config()
         self._selected_analysts = tuple(self._config.pop("_vyuha_selected_analysts", ()))
 
         # ``debug=False`` keeps stdout quiet — vyuha uses loguru and
         # doesn't need the LangGraph trace pretty-printer. Pass
         # debug=True from the standalone CLI when humans are watching.
         logger.info(
-            "Initialising TradingAgents graph: provider=%s deep=%s quick=%s",
+            "Initialising Vyuha Agent framework graph: provider=%s deep=%s quick=%s",
             self._config["llm_provider"],
             self._config["deep_think_llm"],
             self._config["quick_think_llm"],
@@ -184,7 +184,7 @@ class LLMPipelineAgent:
             config=self._config,
         )
 
-    def evaluate_symbol(self, symbol: str, trade_date: date | str | None = None) -> TradingAgentsResult:
+    def evaluate_symbol(self, symbol: str, trade_date: date | str | None = None) -> VyuhaAgentResult:
         """Run the full pipeline for ``symbol`` on ``trade_date``.
 
         ``trade_date`` defaults to today. Strings are accepted for
@@ -203,8 +203,8 @@ class LLMPipelineAgent:
             final_state, signal = self._graph.propagate(normalised, trade_date.isoformat())
             duration_ms = int((time.perf_counter() - start) * 1000)
         except Exception as exc:
-            logger.exception("TradingAgents pipeline failed for %s", normalised)
-            return TradingAgentsResult(
+            logger.exception("Vyuha Agent pipeline failed for %s", normalised)
+            return VyuhaAgentResult(
                 ticker=normalised,
                 trade_date=trade_date,
                 action="HOLD",
@@ -226,12 +226,12 @@ class LLMPipelineAgent:
         trade_date: date,
         final_state: dict[str, Any],
         signal: str,
-    ) -> TradingAgentsResult:
-        """Translate the raw graph state into a typed ``TradingAgentsResult``."""
+    ) -> VyuhaAgentResult:
+        """Translate the raw graph state into a typed ``VyuhaAgentResult``."""
         debate = final_state.get("investment_debate_state", {}) or {}
         risk = final_state.get("risk_debate_state", {}) or {}
 
-        return TradingAgentsResult(
+        return VyuhaAgentResult(
             ticker=ticker,
             trade_date=trade_date,
             action=signal_to_vyuha_action(signal),
@@ -257,7 +257,7 @@ class LLMPipelineAgent:
         )
 
     @staticmethod
-    def _persist(result: TradingAgentsResult) -> None:
+    def _persist(result: VyuhaAgentResult) -> None:
         """Write a completed run to ``tradingagents_decisions``.
 
         Errors are logged but never raised — persistence is best-effort.
@@ -291,7 +291,7 @@ class LLMPipelineAgent:
                     )
                 )
         except Exception:
-            logger.exception("Failed to persist TradingAgents run for %s", result.ticker)
+            logger.exception("Failed to persist Vyuha Agent run for %s", result.ticker)
 
 
 # ─── Cross-check helpers ─────────────────────────────────────────────────────
@@ -301,7 +301,7 @@ def run_cross_check(
     symbols: Iterable[str],
     rule_based_actions: dict[str, str] | None = None,
     trade_date: date | None = None,
-) -> list[TradingAgentsResult]:
+) -> list[VyuhaAgentResult]:
     """Run TradingAgents for each symbol and flag agreement with the rule-based pipeline.
 
     Args:
@@ -312,7 +312,7 @@ def run_cross_check(
         trade_date: passed through to ``evaluate_symbol``.
 
     Returns:
-        List of ``TradingAgentsResult`` objects, in the same order as
+        List of ``VyuhaAgentResult`` objects, in the same order as
         ``symbols``. Caller decides whether to act on the LLM signal —
         when ``Settings.TRADINGAGENTS_REQUIRE_CONFIRMATION`` is True
         and rule-based disagrees, the result is treated as advisory
@@ -326,7 +326,7 @@ def run_cross_check(
         trade_date = date.today()
 
     rule_based_actions = rule_based_actions or {}
-    results: list[TradingAgentsResult] = []
+    results: list[VyuhaAgentResult] = []
 
     # Instantiate the agent once and reuse across all symbols. The
     # TradingAgentsGraph's internal state isn't ticker-specific (it's
@@ -334,10 +334,10 @@ def run_cross_check(
     try:
         agent = LLMPipelineAgent()
     except Exception as exc:
-        logger.exception("Could not initialise TradingAgents agent")
+        logger.exception("Could not initialise Vyuha Agent")
         # Return one error result per symbol so the caller's loop is uniform.
         return [
-            TradingAgentsResult(
+            VyuhaAgentResult(
                 ticker=normalise_indian_ticker(s),
                 trade_date=trade_date,
                 action="HOLD",
@@ -351,8 +351,8 @@ def run_cross_check(
         try:
             result = agent.evaluate_symbol(symbol, trade_date)
         except Exception as exc:
-            logger.exception("TradingAgents cross-check failed for %s", symbol)
-            result = TradingAgentsResult(
+            logger.exception("Vyuha Agent cross-check failed for %s", symbol)
+            result = VyuhaAgentResult(
                 ticker=normalise_indian_ticker(symbol),
                 trade_date=trade_date,
                 action="HOLD",
@@ -377,7 +377,7 @@ def run_cross_check(
 def resolve_pending_outcomes(holding_days: int | None = None) -> int:
     """Fill in ``tradingagents_outcomes`` for past runs whose holding window has elapsed.
 
-    Mirrors TradingAgents' upstream ``Reflector`` flow but writes
+    Mirrors Tauric Research's upstream ``Reflector`` flow but writes
     outcomes to vyuha's DB instead of (or in addition to) the
     on-disk markdown memory log. Returns the number of outcomes
     recorded.
@@ -389,7 +389,7 @@ def resolve_pending_outcomes(holding_days: int | None = None) -> int:
     if holding_days is None:
         holding_days = settings.TRADINGAGENTS_HOLDING_DAYS
 
-    cfg = build_tradingagents_config()
+    cfg = build_vyuha_agent_config()
     memory = TradingMemoryLog(cfg)
     graph = TradingAgentsGraph(config=cfg)
 

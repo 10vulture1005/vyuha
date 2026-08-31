@@ -7,16 +7,45 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![FinBERT](https://img.shields.io/badge/NLP-ProsusAI%2FFinBERT-orange.svg)](https://huggingface.co/ProsusAI/finbert)
-[![TradingAgents](https://img.shields.io/badge/LLM-TradingAgents-blueviolet.svg)](https://arxiv.org/abs/2412.20138)
+[![Vyuha Agent](https://img.shields.io/badge/LLM-Vyuha%20Agent-blueviolet.svg)](https://arxiv.org/abs/2412.20138)
 [![SQLAlchemy 2.0](https://img.shields.io/badge/ORM-SQLAlchemy%202.0-red.svg)](https://www.sqlalchemy.org/)
 
 **A multi-agent, event-driven equity accumulation system targeting 20-25% CAGR on NSE/BSE mid-cap stocks with institutional-grade risk controls.**
 
 *Vyuha (व्यूह) — Sanskrit for "strategic formation", inspired by the Chakravyuha battle array from the Mahabharata.*
 
-Now integrated with **[TradingAgents](https://arxiv.org/abs/2412.20138)** — the LLM multi-agent research framework from Tauric Research — as an optional **Phase 7 LLM Cross-Check** that runs the full analyst → researcher → trader → risk → portfolio-manager pipeline alongside vyuha's deterministic rule-based pipeline. The framework is vendored unmodified at `tradingagents/` (v0.4.0) and pinned to Indian markets via `config/tradingagents.yaml`.
+Vyuha ships with an optional **LLM-powered agent** ("Vyuha Agent") that wraps the [TradingAgents](https://arxiv.org/abs/2412.20138) multi-agent research framework from Tauric Research as a **Phase 7 LLM Cross-Check**. The framework is vendored unmodified at `tradingagents/` (v0.4.0) and pinned to Indian markets via `config/tradingagents.yaml`.
 
 </div>
+
+---
+
+## 🚀 Install & Launch
+
+```bash
+# One-time install — copies the `vyuha` launcher to ~/.local/bin
+bash scripts/install_cli.sh
+
+# Pick any LLM provider (Anthropic / OpenAI / OpenRouter / Groq / Google /
+# xAI / DeepSeek / Mistral / Ollama / OpenAI-compatible) and paste your key:
+vyuha setup
+
+# Run interactively (banner + main menu):
+vyuha
+
+# Run a single ticker:
+vyuha single RELIANCE --full
+
+# Cross-check every watchlist symbol:
+vyuha portfolio
+
+# Backfill realised outcomes:
+vyuha resolve
+
+# Embedded in the vyuha daily pipeline:
+python scripts/run_daily_pipeline.py        # daily
+python scripts/run_daily_pipeline.py --weekly
+```
 
 ---
 
@@ -138,13 +167,13 @@ The governance veto layer uses **ProsusAI/FinBERT** (400MB BERT model fine-tuned
 
 ---
 
-## 🤖 TradingAgents LLM Cross-Check (Phase 7)
+## 🤖 Vyuha Agent LLM Cross-Check (Phase 7)
 
-Vyuha optionally runs the full **[TradingAgents](https://arxiv.org/abs/2412.20138)** LangGraph pipeline as a **Phase 7 LLM Cross-Check** on top of its deterministic rule-based agents. The framework is vendored unmodified at `tradingagents/` (v0.4.0) — every analyst, researcher, trader, risk debator, and portfolio manager node runs exactly as upstream ships it, then vyuha's thin bridge layer (`agents/llm_trader/`) translates the resulting 5-tier rating back into vyuha's BUY/HOLD/SELL vocabulary and persists it for audit.
+Vyuha optionally runs the full **[TradingAgents](https://arxiv.org/abs/2412.20138)** LangGraph pipeline as a **Phase 7 LLM Cross-Check** on top of its deterministic rule-based agents. The framework is vendored unmodified at `tradingagents/` (v0.4.0) — every analyst, researcher, trader, risk debator, and portfolio manager node runs exactly as upstream ships it, then vyuha's thin bridge layer (`agents/vyuha_agent/`) translates the resulting 5-tier rating back into vyuha's BUY/HOLD/SELL vocabulary and persists it for audit.
 
 ```mermaid
 flowchart LR
-    subgraph "TradingAgents LangGraph (vendored)"
+    subgraph "TradingAgents LangGraph (vendored upstream)"
         M[Market Analyst<br/>MACD, RSI, BB] --> R1[Research Manager]
         F[Fundamentals Analyst<br/>Balance Sheet, P&L] --> R1
         N[News Analyst<br/>RBI / global] --> R1
@@ -155,7 +184,7 @@ flowchart LR
         T --> |risk debate| Neu[Neutral]
         A & C & Neu --> PM[Portfolio Manager<br/>FINAL BUY/HOLD/SELL]
     end
-    PM --> B[agents/llm_trader/bridge.py]
+    PM --> B[agents/vyuha_agent/bridge.py]
     B --> DB[(tradingagents_decisions<br/>+ tradingagents_outcomes)]
     B --> Cross[Phase 7 Confirmation]
     Cross -->|agree with rules| Alloc[vyuha Capital Allocator]
@@ -210,12 +239,12 @@ ANTHROPIC_API_KEY=sk-ant-...                     # Required for anthropic provid
 
 `config/tradingagents.yaml` overrides the above per-deployment (Indian macro queries, benchmark map, social-analyst policy, etc.).
 
-### `scripts/run_tradingagents.py` — full reference
+### `scripts/run_vyuha_agent.py` — full reference
 
 The standalone CLI has four subcommands, plus bare-flag shortcuts for backwards compatibility. Every run persists to `tradingagents_decisions`; `--full` prints every agent's report verbatim.
 
 ```text
-usage: run_tradingagents.py [-h] [--portfolio] [--resolve-outcomes] [--cli-ux]
+usage: run_vyuha_agent.py [-h] [--portfolio] [--resolve-outcomes] [--cli-ux]
                             [--date DATE] [--full]
                             [--holding-days HOLDING_DAYS] [--trade-date-only]
                             {single,portfolio,resolve,cli} ...
@@ -225,16 +254,16 @@ usage: run_tradingagents.py [-h] [--portfolio] [--resolve-outcomes] [--cli-ux]
 
 ```bash
 # Bare ticker (auto-appends .NS)
-python scripts/run_tradingagents.py single RELIANCE --full
+python scripts/run_vyuha_agent.py single RELIANCE --full
 
 # Pre-suffixed ticker (NSE or BSE)
-python scripts/run_tradingagents.py single TATASTEEL.BO
+python scripts/run_vyuha_agent.py single TATASTEEL.BO
 
 # Pin the analysis date (default: today)
-python scripts/run_tradingagents.py single INFY --date 2026-01-15
+python scripts/run_vyuha_agent.py single INFY --date 2026-01-15
 
 # --full prints every agent's report, not just the PM's final decision
-python scripts/run_tradingagents.py single RELIANCE --full
+python scripts/run_vyuha_agent.py single RELIANCE --full
 ```
 
 Output sections printed (without `--full`):
@@ -296,13 +325,13 @@ Portfolio Manager (Final)
 
 ```bash
 # Every ACTIVE watchlist symbol, regardless of fresh signal
-python scripts/run_tradingagents.py portfolio
+python scripts/run_vyuha_agent.py portfolio
 
 # Only symbols with fresh TechnicalSignals today
-python scripts/run_tradingagents.py portfolio --trade-date-only
+python scripts/run_vyuha_agent.py portfolio --trade-date-only
 
 # Pin a specific date
-python scripts/run_tradingagents.py portfolio --date 2026-01-15
+python scripts/run_vyuha_agent.py portfolio --date 2026-01-15
 ```
 
 Output (one row per symbol):
@@ -324,10 +353,10 @@ The LLM/rule disagreement rows are the most useful output of this mode — they'
 
 ```bash
 # Use Settings.TRADINGAGENTS_HOLDING_DAYS (default 5)
-python scripts/run_tradingagents.py resolve
+python scripts/run_vyuha_agent.py resolve
 
 # Override the holding window
-python scripts/run_tradingagents.py resolve --holding-days 10
+python scripts/run_vyuha_agent.py resolve --holding-days 10
 ```
 
 This walks every pending entry in TradingAgents' `~/.tradingagents/memory/trading_memory.md`, fetches the realised NSEI-relative return, generates an LLM reflection paragraph, and writes both to the `tradingagents_outcomes` table. The reflection also feeds back into `TradingMemoryLog` so the next PM prompt for the same ticker carries the lesson forward.
@@ -335,7 +364,7 @@ This walks every pending entry in TradingAgents' `~/.tradingagents/memory/tradin
 #### `cli` — launch the upstream interactive UI
 
 ```bash
-python scripts/run_tradingagents.py cli
+python scripts/run_vyuha_agent.py cli
 ```
 
 Delegates to the vendored `cli_ta/main.py` — the original TradingAgents rich interactive shell with ticker picker, LLM provider selector, debate-round slider, and live LangGraph trace pretty-printer. Useful when you want to study a single ticker end-to-end with the full upstream UI rather than vyuha's narrower `single` mode.
@@ -345,29 +374,29 @@ Delegates to the vendored `cli_ta/main.py` — the original TradingAgents rich i
 For cron jobs and `for`-loops, the top-level flags are equivalent to the subcommands:
 
 ```bash
-python scripts/run_tradingagents.py RELIANCE              # → single RELIANCE
-python scripts/run_tradingagents.py --portfolio           # → portfolio
-python scripts/run_tradingagents.py --resolve-outcomes    # → resolve
-python scripts/run_tradingagents.py --cli-ux              # → cli
+python scripts/run_vyuha_agent.py RELIANCE              # → single RELIANCE
+python scripts/run_vyuha_agent.py --portfolio           # → portfolio
+python scripts/run_vyuha_agent.py --resolve-outcomes    # → resolve
+python scripts/run_vyuha_agent.py --cli-ux              # → cli
 
 # Date and full flags work with bare-flag mode too
-python scripts/run_tradingagents.py TATASTEEL --date 2026-01-15 --full
-python scripts/run_tradingagents.py --portfolio --trade-date-only
-python scripts/run_tradingagents.py --resolve-outcomes --holding-days 10
+python scripts/run_vyuha_agent.py TATASTEEL --date 2026-01-15 --full
+python scripts/run_vyuha_agent.py --portfolio --trade-date-only
+python scripts/run_vyuha_agent.py --resolve-outcomes --holding-days 10
 ```
 
 ### Two integration modes (recap)
 
 | Mode | When to use | Entry point |
 |------|-------------|-------------|
-| **Mode 1 — Standalone CLI** | One-off deep dive, portfolio cross-check, reflection backfill, interactive LangSmith-style trace | `python scripts/run_tradingagents.py {single,portfolio,resolve,cli}` |
+| **Mode 1 — Standalone CLI** | One-off deep dive, portfolio cross-check, reflection backfill, interactive LangSmith-style trace | `python scripts/run_vyuha_agent.py {single,portfolio,resolve,cli}` |
 | **Mode 2 — Embedded in vyuha's daily pipeline** | Live forward-testing with the LLM as a guardrail alongside the rule-based crew | `python scripts/run_daily_pipeline.py` with `TRADINGAGENTS_ENABLED=true` |
 
 `run_daily_pipeline.py` runs the rule-based crew first (Fundamental → Sentiment → Technical → Risk → Capital Allocator), then **Phase 7** fans the LLM pipeline across every ACTIVE watchlist symbol with a fresh technical signal today. When `TRADINGAGENTS_REQUIRE_CONFIRMATION=true` (the default), the LLM is treated as advisory — only rule-based BUY candidates that the LLM also votes BUY get executed. Every cross-check result, regardless of action, is persisted to `tradingagents_decisions` for post-hoc analysis.
 
 ### Reflection & learning
 
-Once the configured holding window elapses, `scripts/run_tradingagents.py resolve` backfills `tradingagents_outcomes` with realised return, alpha vs the Nifty 50 benchmark, and an LLM-generated reflection paragraph ("What went wrong?", "What went right?"). Reflections feed the next PM prompt via `TradingMemoryLog`, so each run carries forward the lessons of prior calls on the same ticker.
+Once the configured holding window elapses, `scripts/run_vyuha_agent.py resolve` backfills `tradingagents_outcomes` with realised return, alpha vs the Nifty 50 benchmark, and an LLM-generated reflection paragraph ("What went wrong?", "What went right?"). Reflections feed the next PM prompt via `TradingMemoryLog`, so each run carries forward the lessons of prior calls on the same ticker.
 
 ---
 
@@ -509,7 +538,7 @@ vyuha-engine/
 │   ├── technical_agent.py           # Phase 4: W-Bottom, BB Squeeze pattern detection
 │   ├── risk_exit_agent.py           # Phase 6: ATR trailing stop + time stop + profit tiers
 │   ├── llm_crosscheck_agent.py      # Phase 7: TradingAgents LLM cross-check
-│   ├── llm_trader/                  # TradingAgents ↔ vyuha bridge
+│   ├── vyuha_agent/                  # Vyuha Agent ↔ TradingAgents bridge
 │   │   ├── bridge.py                # LLMPipelineAgent + signal/action mapping
 │   │   └── config_builder.py        # Merges vendor + YAML + Settings
 │   └── tools/                       # Agent toolkits
@@ -520,7 +549,7 @@ vyuha-engine/
 │       ├── cross_sectional.py       # Cross-Sectional Alpha (momentum + value + quality)
 │       ├── scraping_tools.py        # Resilient web scraper with retry logic
 │       ├── ledger_tools.py          # Capital ledger query utilities
-│       └── tradingagents_tools.py   # CrewAI tool wrappers for TradingAgents pipeline
+│       └── vyuha_agent_tools.py     # CrewAI tool wrappers for Vyuha Agent pipeline
 │
 ├── core/                            # Engine Core
 │   ├── capital_allocator.py         # Buy/Sell execution with friction modeling
@@ -574,7 +603,7 @@ vyuha-engine/
 │   ├── refresh_fundamentals.py      # Fundamental snapshot refresh
 │   ├── credit_sip.py                # Manual SIP credit script
 │   ├── test_finbert.py              # FinBERT model validation test
-│   └── run_tradingagents.py         # TradingAgents CLI (single/portfolio/resolve)
+│   └── run_vyuha_agent.py         # Vyuha Agent CLI (single/portfolio/resolve)
 │
 ├── config/thresholds.yaml           # Strategy tuning parameters
 ├── pyproject.toml                   # Project metadata & dependencies
@@ -692,10 +721,10 @@ echo "TRADINGAGENTS_LLM_PROVIDER=anthropic" >> .env
 echo "ANTHROPIC_API_KEY=sk-ant-..." >> .env
 
 # Smoke-test the framework on one ticker
-python scripts/run_tradingagents.py single RELIANCE --date 2026-01-15 --full
+python scripts/run_vyuha_agent.py single RELIANCE --date 2026-01-15 --full
 
 # Cross-check the whole watchlist
-python scripts/run_tradingagents.py portfolio
+python scripts/run_vyuha_agent.py portfolio
 
 # The next `run_daily_pipeline.py` will now run Phase 7 alongside the
 # rule-based crew. LLM BUY signals only execute when they agree with

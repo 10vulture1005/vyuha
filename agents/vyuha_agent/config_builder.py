@@ -1,5 +1,5 @@
-# agents/llm_trader/config_builder.py
-"""Build a TradingAgents config dict from vyuha's settings + YAML.
+# agents/vyuha_agent/config_builder.py
+"""Build a Vyuha Agent config dict from vyuha's settings + YAML.
 
 The actual TradingAgents default config lives in
 ``tradingagents.default_config.DEFAULT_CONFIG``. We copy that, overlay
@@ -154,7 +154,7 @@ def _apply_settings_overrides(config: dict[str, Any]) -> dict[str, Any]:
     return config
 
 
-def build_tradingagents_config() -> dict[str, Any]:
+def build_vyuha_agent_config() -> dict[str, Any]:
     """Return a fully-merged config dict ready for ``TradingAgentsGraph``.
 
     Layering order (later wins):
@@ -166,7 +166,7 @@ def build_tradingagents_config() -> dict[str, Any]:
     config = _apply_yaml_overlay(config, tradingagents_config)
     config = _apply_settings_overrides(config)
 
-    # Selected analyst team lives outside the TradingAgents config dict
+    # Selected analyst team lives outside the framework config dict
     # (it's passed to TradingAgentsGraph.__init__ directly). Stash the
     # VYUHA default so the bridge can use it without re-reading YAML.
     #
