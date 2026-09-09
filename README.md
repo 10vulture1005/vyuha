@@ -52,16 +52,16 @@ python scripts/run_daily_pipeline.py --weekly
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-09-08` | **Total Value:** `₹97,700.85` | **Cash:** `₹43,929.60`
+> **Last Updated:** `2026-09-09` | **Total Value:** `₹97,135.00` | **Cash:** `₹43,929.60`
 
 <div align="center">
 
 | Metric | Value | Graphic |
 |---|---|---|
-| **Net PnL** | 🔴 ₹-3,299.15 (-3.27%) | - |
+| **Net PnL** | 🔴 ₹-3,865.00 (-3.83%) | - |
 | **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
-| **Max Drawdown** | -2.30% | ██░░░░░░░░░░░░░ |
-| **Portfolio Heat** | 4.82% / 6.00% | ████████████░░░ |
+| **Max Drawdown** | -2.87% | ██░░░░░░░░░░░░░ |
+| **Portfolio Heat** | 4.85% / 6.00% | ████████████░░░ |
 
 </div>
 
@@ -71,7 +71,7 @@ python scripts/run_daily_pipeline.py --weekly
 |---|---|---|---|---|---|
 | **SCHNEIDER** | 19 | ₹1,268.07 | ₹1,117.01 | ₹159.39 | `W_BOTTOM` |
 | **TRENT** | 8 | ₹2,814.50 | ₹2,720.80 | ₹93.70 | `W_BOTTOM` |
-| **GRANULES** | 9 | ₹895.35 | ₹791.84 | ₹103.51 | `W_BOTTOM` |
+| **GRANULES** | 9 | ₹895.35 | ₹824.01 | ₹103.51 | `W_BOTTOM` |
 <!-- LIVE_STATS_END -->
 
 ---
