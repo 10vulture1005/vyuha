@@ -78,6 +78,29 @@ python scripts/run_daily_pipeline.py --weekly
 
 > **Net PnL under the fixed rules: -₹1,379.37 (-1.37%)** vs actual -₹3,154.50 (-3.12%). The fixes cut the loss by **₹1,775.13 (56%)**.
 
+**Fixed-strategy version of the live table above** (same Sep 11 snapshot, pyramiding removed, SCHNEIDER marked at cost):
+
+> **Last Updated:** `2026-09-11 (counterfactual)` | **Total Value:** `₹99,620.63` | **Cash:** `₹62,139.73`
+>
+> <div align="center">
+>
+> | Metric | Value | Graphic |
+> |---|---|---|
+> | **Net PnL** | 🔴 ₹-1,379.37 (-1.37%) | - |
+> | **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
+> | **Max Drawdown** | — (needs equity-curve replay; actual -2.15%) | — |
+> | **Portfolio Heat** | ~2.65% / 6.00% | ███████░░░░░░░░ |
+>
+> </div>
+>
+> ### 💼 Fixed-Strategy Open Positions (3 / 8)
+>
+> | Symbol | Qty | Avg Buy | Trailing Stop | Risk/Share | Pattern |
+> |---|---|---|---|---|---|
+> | **SCHNEIDER** | 6 | ₹1,276.40 | ₹1,117.01 | ₹159.39 | `W_BOTTOM` |
+> | **TRENT** | 8 | ₹2,814.50 | ₹2,720.80 | ₹93.70 | `W_BOTTOM` |
+> | **GRANULES** | 9 | ₹895.35 | ₹844.24 | ₹103.51 | `W_BOTTOM` |
+
 Replaying the **actual logged fills** (`trade_log`, Sep 11 snapshot) through the fixed rules. The -₹3,154.50 decomposes exactly as **realized -₹2,304.96 + unrealized -₹751.65 + buy friction -₹97.89**:
 
 | What changed | Old code (actual) | Fixed rules | Delta |
