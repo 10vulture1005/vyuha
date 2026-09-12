@@ -80,9 +80,16 @@ class ForwardTestEngine:
                 raise ValueError(f"No price history returned for {ticker_sym}")
 
             latest_close = Decimal(str(round(df["Close"].iloc[-1], 2)))
-            # Approximate ATR(14) from recent daily high-low ranges
-            df["tr"] = df["High"] - df["Low"]
-            atr_val = Decimal(str(round(df["tr"].tail(14).mean(), 2)))
+            # FIX: full 3-component True Range (was High-Low only, which
+            # understated ATR, tightened stops, and caused premature stop-outs).
+            # Matches ta_tools.get_atr and backtest/engine.py:243-247.
+            import pandas as _pd
+            tr = _pd.concat([
+                df["High"] - df["Low"],
+                (df["High"] - df["Close"].shift()).abs(),
+                (df["Low"] - df["Close"].shift()).abs()
+            ], axis=1).max(axis=1)
+            atr_val = Decimal(str(round(tr.tail(14).mean(), 2)))
             return latest_close, atr_val
         except Exception as e:
             logger.error(
@@ -176,6 +183,9 @@ class ForwardTestEngine:
                     invested_val += close_price * Decimal(str(h.qty))
                 except Exception:
                     # Fall back to avg buy price if live price unavailable
+                    # FIX: loud warning — silent fallback previously masked real
+                    # drawdowns as 0 when the feed failed.
+                    logger.warning(f"Price feed failed for {h.symbol}: valuing at cost, drawdown understated.")
                     invested_val += h.avg_buy_price * Decimal(str(h.qty))
 
             total_val = cash + invested_val
@@ -239,9 +249,67 @@ class ForwardTestEngine:
             return None
 
     def _evaluate_full_exits(self, session, holding: PortfolioHolding, current_close: Decimal):
-        """Placeholder for time-stops and partial profit taking (mode 'full')."""
-        # In a real setup, this would mirror the backtest logic exactly. 
-        # For now, it's explicitly gated to prevent unintended execution when we want trailing_stop_only.
-        logger.debug(f"Full exits (time-stops/profits) evaluated for {holding.symbol}")
-        pass
+        """Time-stops and partial profit-taking for EXIT_MODE='full'.
+
+        FIX: previously a `pass` no-op, so forward-test holdings never
+        time-stopped (SCHNEIDER held 24d past the 12d stop) and never trailed
+        to breakeven — diverging from both risk_exit_agent and the backtest.
+        Mirrors backtest/engine.py:269-311: 12d stagnant band -0.5R..+0.5R,
+        one profit tier per day, breakeven ratchet on first hit.
+        """
+        from core.capital_allocator import execute_sell, execute_partial_sell
+        risk = thresholds.get("risk", {}) or {}
+        # — Time stop (weekend-safe trading-day count) —
+        try:
+            import yfinance as _yf
+            import pandas as _pd
+            ticker_sym = f"{holding.symbol}.NS" if not holding.symbol.endswith(".NS") else holding.symbol
+            df = _yf.Ticker(ticker_sym).history(period="3mo")
+            if df is not None and not df.empty:
+                buy_ts = _pd.Timestamp(holding.first_buy_date)
+                try:
+                    idx = df.index.searchsorted(buy_ts)
+                    bars_since = len(df) - int(idx)
+                except Exception:
+                    bars_since = 0
+                if bars_since >= int(risk.get("time_stop_days", 12)):
+                    denom = holding.initial_risk if holding.initial_risk and holding.initial_risk > 0 else None
+                    r_mult = (current_close - holding.avg_buy_price) / denom if denom else Decimal("0")
+                    if Decimal("-0.5") <= r_mult <= Decimal("0.5"):
+                        execute_sell(session, holding.symbol, holding.qty, current_close,
+                                     f"Time stop: {bars_since} trading days stagnant at {r_mult:.2f}R")
+                        return
+        except Exception as e:
+            logger.debug(f"Paper time-stop unavailable for {holding.symbol}: {e}")
+        # — Profit tiers (both key spellings) + breakeven ratchet —
+        try:
+            tiers = risk.get("profit_tiers", []) or risk.get("profit_taking", {}).get("tiers", [])
+            breakeven_cfg = bool(risk.get("profit_taking", {}).get("trail_to_breakeven_on_first_target", True))
+            hit_list = list(holding.tiers_hit) if holding.tiers_hit else []
+            for tier_idx, tier in enumerate(tiers):
+                if tier_idx in hit_list:
+                    continue
+                r_target = Decimal(str(tier.get("r_multiple", 3.0)))
+                if not holding.initial_risk or holding.initial_risk <= 0:
+                    break
+                target = holding.avg_buy_price + r_target * holding.initial_risk
+                if current_close >= target:
+                    frac_raw = tier.get("sell_fraction", tier.get("sell_pct", 33.0))
+                    frac = Decimal(str(frac_raw))
+                    if frac > 1:
+                        frac = frac / Decimal("100")
+                    qty_to_sell = int(holding.initial_qty * frac)
+                    if qty_to_sell > holding.qty:
+                        qty_to_sell = holding.qty
+                    if qty_to_sell > 0:
+                        execute_partial_sell(session, holding.symbol, qty_to_sell, current_close,
+                                             f"Paper profit target {r_target}R hit")
+                        hit_list.append(tier_idx)
+                        holding.tiers_hit = list(hit_list)
+                        if tier_idx == 0 and breakeven_cfg:
+                            holding.trailing_stop_price = max(holding.trailing_stop_price, holding.avg_buy_price)
+                        session.add(holding)
+                    break  # one tier per day
+        except Exception as e:
+            logger.debug(f"Paper profit-tier evaluation failed for {holding.symbol}: {e}")
 

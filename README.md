@@ -74,6 +74,21 @@ python scripts/run_daily_pipeline.py --weekly
 | **GRANULES** | 9 | ₹895.35 | ₹844.24 | ₹103.51 | `W_BOTTOM` |
 <!-- LIVE_STATS_END -->
 
+### 🔧 Fixed-Strategy Counterfactual (same fills, no invented prices)
+
+Replaying the **actual logged fills** (`trade_log`, Sep 11 snapshot) through the fixed rules. The -₹3,154.50 decomposes exactly as **realized -₹2,304.96 + unrealized -₹751.65 + buy friction -₹97.89**:
+
+| What changed | Old code (actual) | Fixed rules | Delta |
+|---|---|---|---|
+| **PREMIERENE realized** (38 sh pyramided, stopped @ ₹990) | -₹2,346.24 (honest, incl. ₹41.28 buy friction; logged as -₹2,304.96) | **-₹588.13** (first-buy 11 sh only: 11×₹1,040 → 11×₹990, net of ₹11.85 buy + ₹11.28 sell friction + ₹15 DP) | **+₹1,758.11** |
+| **SCHNEIDER capital at risk** (3 adds into falling price) | ₹24,093.40 (19 sh) | **₹7,658.40** (6 sh, pyramiding blocked) | **-₹16,435.00** exposure |
+| **Wasted friction on add-on buys** | ₹46.45 (5 extra fills) | ₹0.00 | **+₹46.45** |
+| Open unrealized (cost ₹54,667.55 vs MTM ₹53,915.90) | -₹751.65, scaled on 3× exposure | scales with ~1/3 the exposure | narrows proportionally |
+
+> **Method:** counterfactual reuses only logged fill prices — no invented entries/exits. It is conservative: it assumes the first entries still fired. Under the fixed W-Bottom (two-trough + neckline-break confirmation), these dip entries would likely not have fired at all, avoiding the losses entirely.
+>
+> **Honest-accounting note:** the old `realized_pnl` excluded buy-side friction, overstating every closed trade by ~0.1%. Fixed PnL = net proceeds − cost − buy friction (see `core/capital_allocator.py`).
+
 ---
 
 ## 📊 Backtest Results
