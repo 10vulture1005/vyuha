@@ -88,12 +88,26 @@ def _total_buy_friction(session: Session, symbol: str) -> Decimal:
         return sum((r.friction_charge or Decimal("0")) for r in rows) if rows else Decimal("0")
     except Exception:
         return Decimal("0")
-    """Credits monthly SIP capital into the ledger. Called via monthly cron."""
+
+
+def credit_monthly_sip_execution(amount: Optional[int] = None) -> Decimal:
+    """Credits monthly SIP capital into the ledger. Called via monthly cron.
+
+    Args:
+        amount: SIP amount in INR. Defaults to settings.MONTHLY_SIP_AMOUNT
+            when omitted so zero-arg callers (e.g. scripts/credit_sip.py)
+            keep working.
+
+    Returns:
+        The new running ledger balance after the credit.
+    """
+    if amount is None:
+        amount = settings.MONTHLY_SIP_AMOUNT
     with get_session() as session:
         latest = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).first()
         current_balance = latest.running_balance if latest else Decimal("0")
         new_balance = current_balance + Decimal(str(amount))
-        
+
         session.add(CapitalLedger(
             txn_date=datetime.now(timezone.utc),
             amount=Decimal(str(amount)),
@@ -102,6 +116,7 @@ def _total_buy_friction(session: Session, symbol: str) -> Decimal:
         ))
         session.flush()
         logger.info(f"Credited monthly SIP: ₹{amount}. New Ledger Balance: ₹{new_balance}")
+        return new_balance
 
 def get_current_cash(session: Session) -> Decimal:
     latest = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).first()
