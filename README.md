@@ -52,15 +52,15 @@ python scripts/run_daily_pipeline.py --weekly
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-09-29` | **Total Value:** `₹95,954.28` | **Cash:** `₹65,492.23`
+> **Last Updated:** `2026-09-30` | **Total Value:** `₹95,975.78` | **Cash:** `₹65,492.23`
 
 <div align="center">
 
 | Metric | Value | Graphic |
 |---|---|---|
-| **Net PnL** | 🔴 ₹-5,045.72 (-5.00%) | - |
+| **Net PnL** | 🔴 ₹-5,024.22 (-4.97%) | - |
 | **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
-| **Max Drawdown** | -4.05% | ███░░░░░░░░░░░░ |
+| **Max Drawdown** | -4.02% | ███░░░░░░░░░░░░ |
 | **Portfolio Heat** | 4.13% / 6.00% | ██████████░░░░░ |
 
 </div>
