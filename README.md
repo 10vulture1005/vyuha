@@ -52,24 +52,22 @@ python scripts/run_daily_pipeline.py --weekly
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-10-07` | **Total Value:** `₹97,733.12` | **Cash:** `₹73,865.32`
+> **Last Updated:** `2026-10-08` | **Total Value:** `₹96,463.48` | **Cash:** `₹96,463.48`
 
 <div align="center">
 
 | Metric | Value | Graphic |
 |---|---|---|
-| **Net PnL** | 🔴 ₹-4,266.88 (-4.18%) | - |
+| **Net PnL** | 🔴 ₹-5,536.52 (-5.43%) | - |
 | **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
-| **Max Drawdown** | -2.27% | ██░░░░░░░░░░░░░ |
-| **Portfolio Heat** | 3.10% / 6.00% | ████████░░░░░░░ |
+| **Max Drawdown** | -3.54% | ███░░░░░░░░░░░░ |
+| **Portfolio Heat** | 0.00% / 6.00% | ░░░░░░░░░░░░░░░ |
 
 </div>
 
-### 💼 Current Open Positions (1 / 8)
+### 💼 Current Open Positions (0 / 8)
 
-| Symbol | Qty | Avg Buy | Trailing Stop | Risk/Share | Pattern |
-|---|---|---|---|---|---|
-| **SCHNEIDER** | 19 | ₹1,268.07 | ₹1,213.35 | ₹159.39 | `W_BOTTOM` |
+*Holding 100% Cash.*
 <!-- LIVE_STATS_END -->
 
 ### 🔧 Fixed-Strategy Counterfactual (same fills, no invented prices)
