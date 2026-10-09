@@ -52,7 +52,7 @@ python scripts/run_daily_pipeline.py --weekly
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-10-08` | **Total Value:** `₹96,463.48` | **Cash:** `₹96,463.48`
+> **Last Updated:** `2026-10-09` | **Total Value:** `₹96,463.48` | **Cash:** `₹96,463.48`
 
 <div align="center">
 
