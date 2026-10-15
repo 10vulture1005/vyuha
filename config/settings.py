@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     XAI_API_KEY: Optional[SecretStr] = Field(
         default=None, description="xAI API Key for Grok models"
     )
+    HF_API_TOKEN: Optional[SecretStr] = Field(
+        default=None, description="Hugging Face API token for hosted FinBERT inference"
+    )
+    INDIAN_API_KEY: Optional[SecretStr] = Field(
+        default=None, description="IndianAPI.in stock market API key"
+    )
     GROQ_API_KEY: Optional[SecretStr] = Field(
         default=None, description="Groq API Key for LPU models"
     )
@@ -53,21 +59,45 @@ class Settings(BaseSettings):
         description="Default model for CrewAI reasoning",
     )
 
+    # ─── LLM Provider Routing ─────────────────────────────────────────────────
+    # OpenRouter is the primary source of LLM calls for decisions; Groq is the
+    # fallback. Both the CrewAI chain (crew/crew_definition.py) and the Vyuha
+    # Agent (agents/vyuha_agent/config_builder.py) read these four keys, so
+    # flipping the primary provider is a one-line .env edit rather than a code
+    # change. The fallback stays INERT while its API key is unset — see
+    # config/llm_routing.py for the shared resolution helper.
+    LLM_PROVIDER: str = Field(
+        default="openrouter",
+        description="Primary LLM provider for decisions: openrouter|groq|openai|anthropic|...",
+    )
+    LLM_MODEL: str = Field(
+        default="nvidia/nemotron-3-ultra-550b-a55b:free",
+        description="Primary model ID. On OpenRouter this is the namespaced form (vendor/model:variant).",
+    )
+    LLM_FALLBACK_PROVIDER: str = Field(
+        default="groq",
+        description="Fallback provider used when the primary call fails for any reason. Empty string disables fallback.",
+    )
+    LLM_FALLBACK_MODEL: str = Field(
+        default="openai/gpt-oss-20b",
+        description="Fallback model ID, interpreted by LLM_FALLBACK_PROVIDER's naming scheme",
+    )
+
     # ─── TradingAgents LLM Pipeline ──────────────────────────────────────────
     TRADINGAGENTS_ENABLED: bool = Field(
         default=False,
         description="Master switch: when True, TradingAgents LLM pipeline runs as a cross-check alongside rule-based agents",
     )
     TRADINGAGENTS_LLM_PROVIDER: str = Field(
-        default="anthropic",
-        description="LLM provider for TradingAgents: openai|anthropic|google|deepseek|openrouter|ollama|openai_compatible",
+        default="openrouter",
+        description="LLM provider for TradingAgents: openai|anthropic|google|deepseek|openrouter|groq|ollama|openai_compatible",
     )
     TRADINGAGENTS_DEEP_THINK_LLM: str = Field(
-        default="claude-sonnet-4-6",
+        default="nvidia/nemotron-3-ultra-550b-a55b:free",
         description="Model used for complex reasoning nodes (portfolio manager, researcher judge)",
     )
     TRADINGAGENTS_QUICK_THINK_LLM: str = Field(
-        default="claude-haiku-4-5",
+        default="nvidia/nemotron-3-ultra-550b-a55b:free",
         description="Model used for fast tool-calling nodes (analysts)",
     )
     TRADINGAGENTS_MAX_DEBATE_ROUNDS: int = Field(
@@ -142,6 +172,10 @@ class Settings(BaseSettings):
         default=15.0, ge=0.0,
         description="Flat DP charge debited per sell transaction",
     )
+    INCLUDE_FRICTION: bool = Field(
+        default=True,
+        description="When False, backtests run gross: no STT/exchange/SEBI/DP/slippage",
+    )
     STT_PCT: float = Field(
         default=0.1,
         description="Securities Transaction Tax (STT) percentage (0.1%)",
@@ -165,6 +199,45 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = Field(
         default="INFO", description="Loguru logging level"
     )
+
+    # ─── Strategy Mode ───────────────────────────────────────────────────────
+    STRATEGY_MODE: str = Field(
+        default="swing",
+        description=(
+            "Active strategy profile: 'swing' (default W-Bottom/BB-Squeeze "
+            "swing engine, unchanged) or 'investor' (long-horizon portfolio "
+            "profile driven by the `investor:` section of thresholds.yaml)."
+        ),
+    )
+    INVESTOR_MAX_HOLDINGS: int = Field(
+        default=30, ge=5, le=100,
+        description="Hard ceiling on concurrent Investor Mode holdings",
+    )
+    INVESTOR_DEFENSIVE_SYMBOLS: str = Field(
+        default="LIQUIDBEES,GOLDBEES",
+        description="Comma-separated defensive-sleeve instruments used when equity exposure is cut",
+    )
+
+    @field_validator("STRATEGY_MODE")
+    @classmethod
+    def validate_strategy_mode(cls, v: str) -> str:
+        """Accepts only the two known profiles.
+
+        A BLANK value falls back to 'swing' rather than raising: `STRATEGY_MODE=`
+        left in a .env file is a common accident, and refusing to boot the whole
+        engine over it would be worse than defaulting safely. Any other
+        unrecognised value DOES raise — a typo like 'invest' must not silently
+        select a different strategy than the user asked for.
+        """
+        allowed = {"swing", "investor"}
+        mode = (v or "").strip().lower()
+        if not mode:
+            return "swing"
+        if mode not in allowed:
+            raise ValueError(
+                f"STRATEGY_MODE must be one of {sorted(allowed)}, got {v!r}"
+            )
+        return mode
 
     @field_validator("DATABASE_URL")
     @classmethod

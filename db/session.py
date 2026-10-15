@@ -7,12 +7,14 @@ Provides:
     - Context managers: get_session() and get_async_session()
 """
 from contextlib import contextmanager
+import threading
 from typing import Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from config.settings import settings
+_SESSION_LOCK = threading.RLock()
 
 
 def _build_sync_engine():
@@ -43,15 +45,16 @@ def get_session() -> Generator[Session, None, None]:
             session.add(some_row)
             # auto-committed on clean exit, auto-rolled-back on exception
     """
-    session = SyncSessionLocal()
-    try:
-        yield session
-        session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+    with _SESSION_LOCK:
+        session = SyncSessionLocal()
+        try:
+            yield session
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
 
 def get_session_dependency() -> Generator[Session, None, None]:

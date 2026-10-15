@@ -199,13 +199,16 @@ def select_research_depth() -> int:
 # Mainstream OpenRouter chat-LLM provider namespaces. We surface the newest
 # models from these rather than the universal-newest, which is dominated by
 # niche/experimental releases. These are the general-purpose chat providers;
-# more enterprise/specialised namespaces (nvidia, cohere, amazon, ...) tend to
-# ship research/safety variants as their newest, so they're left out of the
-# shortlist. Provider names are stable (unlike model IDs), so this rarely needs
-# touching; anything not here is still reachable via Custom ID.
+# more enterprise/specialised namespaces (cohere, amazon, ...) tend to ship
+# research/safety variants as their newest, so they're left out of the
+# shortlist. ``nvidia`` and ``poolside`` are included deliberately: vyuha's
+# default route is OpenRouter's ``nvidia/nemotron-3-ultra-550b-a55b:free``,
+# and both namespaces also publish strong general-purpose chat models. Provider
+# names are stable (unlike model IDs), so this rarely needs touching; anything
+# not here is still reachable via Custom ID.
 _OPENROUTER_MAINSTREAM = {
     "openai", "anthropic", "google", "deepseek", "qwen", "mistralai",
-    "meta-llama", "x-ai", "z-ai", "minimax", "moonshotai",
+    "meta-llama", "x-ai", "z-ai", "minimax", "moonshotai", "nvidia", "poolside",
 }
 
 

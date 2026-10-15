@@ -25,7 +25,21 @@ class PointInTimeUniverse:
         if symbol not in self.df_cache:
             path = self.ohlc_dir / f"{symbol}.csv"
             if path.exists():
-                self.df_cache[symbol] = pd.read_csv(path, parse_dates=["Date"], index_col="Date")
+                try:
+                    df = pd.read_csv(path, parse_dates=["Date"], index_col="Date")
+                    idx = pd.to_datetime(df.index, errors='coerce', utc=True)
+                    try:
+                        idx = idx.tz_convert(None)
+                    except Exception:
+                        try:
+                            idx = idx.tz_localize(None)
+                        except Exception:
+                            pass
+                    df.index = idx
+                    df = df[~df.index.isna()].sort_index()
+                    self.df_cache[symbol] = df
+                except Exception:
+                    self.df_cache[symbol] = pd.DataFrame()
             else:
                 self.df_cache[symbol] = pd.DataFrame()
         return self.df_cache[symbol]
@@ -60,19 +74,19 @@ class PointInTimeUniverse:
                 continue
                 
             # Ensure the stock traded recently relative to current_date (within 21 days to handle weekends/holidays/delays)
-            slice_df = df.loc[:current_date]
-            if slice_df.empty or (pd.Timestamp(current_date) - slice_df.index[-1]).days > 21:
+            slice_df = df[df.index <= pd.Timestamp(current_date)]
+            if slice_df.empty or (pd.Timestamp(current_date) - pd.Timestamp(slice_df.index[-1])).days > 21:
                 continue
                 
             # Get trailing 20d traded value
-            slice_df = df.loc[:current_date].tail(20)
+            slice_df = df[df.index <= pd.Timestamp(current_date)].tail(20)
             if len(slice_df) > 0:
                 avg_val = (slice_df["Close"] * slice_df["Volume"]).mean()
                 # Compute 6-month momentum as secondary sort
                 momentum = 0.0
                 if len(df.loc[:current_date]) >= 126:
-                    past_close = df.loc[:current_date].iloc[-126]["Close"]
-                    curr_close = df.loc[:current_date].iloc[-1]["Close"]
+                    past_close = df[df.index <= pd.Timestamp(current_date)].iloc[-126]["Close"]
+                    curr_close = df[df.index <= pd.Timestamp(current_date)].iloc[-1]["Close"]
                     momentum = (curr_close / past_close) - 1.0
                 
                 liquidities.append({

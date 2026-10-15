@@ -1,0 +1,22 @@
+# VYUHA Docker build exclusions
+.env
+.env.*
+.git
+.venv
+logs/
+vyuha.db
+*.db
+*.pyc
+__pycache__/
+.pytest_cache/
+tests/
+docs/
+scratch/
+data/raw/
+data/cache/
+*.ipynb
+stats.html
+RaynerTeo_BollingerBand_01.ipynb
+TradingBotOanda.ipynb
+future ideas.md
+" 

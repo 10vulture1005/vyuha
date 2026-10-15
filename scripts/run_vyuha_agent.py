@@ -269,9 +269,39 @@ _GLOBAL_NO_SETUP: bool = False
 _GLOBAL_FORCE_SETUP: bool = False
 
 
+def cmd_invest(argv: list[str]) -> int:
+    """Forwards `vyuha invest <...>` to the Investor Mode CLI.
+
+    Handled before argparse runs rather than as a subparser: argparse.REMAINDER
+    mangles `--help` and nested sub-subcommands, and the Investor CLI has its
+    own parser that produces better help text anyway.
+
+    Exits with the child's code so a cron job or CI step sees the real
+    pass/fail rather than always zero.
+    """
+    forwarded = list(argv or [])
+    if forwarded and forwarded[0] == "--":
+        forwarded = forwarded[1:]
+    if not forwarded:
+        forwarded = ["--help"]
+    try:
+        from scripts.invest_cli import main as invest_main
+    except Exception as exc:  # pragma: no cover - import guard
+        print(f"Investor Mode CLI unavailable: {exc}", file=sys.stderr)
+        return 1
+    return invest_main(forwarded)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Run the Vyuha Agent LLM pipeline for Indian tickers.",
+        epilog=(
+            "Investor Mode (long-horizon portfolio profile) is a separate\n"
+            "command group dispatched before this parser:\n"
+            "    vyuha invest daily | backtest | status | news\n"
+            "Requires STRATEGY_MODE=investor; see `vyuha invest --help`."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "--no-setup", action="store_true",
@@ -366,6 +396,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     global _GLOBAL_NO_SETUP, _GLOBAL_FORCE_SETUP
+
+    # Investor Mode is dispatched before argparse: it owns its own parser and
+    # has nothing to do with the LLM setup wizard the rest of this CLI drives.
+    if len(sys.argv) > 1 and sys.argv[1] == "invest":
+        return cmd_invest(sys.argv[2:])
 
     # Detect "--help" before argparse eats it; we want the bare-CLI
     # interactive loop to handle that case specially (show a friendly

@@ -24,10 +24,10 @@ async def compute_live_portfolio_metrics(session: AsyncSession) -> dict:
 
     # Stubs for historical metrics as this requires historical equity curve
     return {
-        "cagr_pct": 0.0,
-        "sharpe_ratio": 0.0,
-        "sortino_ratio": 0.0,
-        "max_drawdown_pct": 0.0,
+        "cagr_pct": None,
+        "sharpe_ratio": None,
+        "sortino_ratio": None,
+        "max_drawdown_pct": None,
         "total_value_inr": total_value,
         "cash_balance_inr": cash_balance
     }

@@ -5,6 +5,7 @@ Exports:
     settings  — pydantic-settings singleton (env vars / .env)
     thresholds — dict parsed from thresholds.yaml (strategy knobs)
     tradingagents_config — dict parsed from tradingagents.yaml (LLM knobs)
+    primary_route / fallback_route — resolved LLM provider+model routing
     BASE_DIR  — project root Path
 """
 import yaml
@@ -12,6 +13,12 @@ from pathlib import Path
 from typing import Any, Dict
 
 from .settings import settings, BASE_DIR
+from .llm_routing import (
+    Route,
+    primary_route,
+    fallback_route,
+    describe as describe_llm_routing,
+)
 
 
 def load_thresholds() -> Dict[str, Any]:
@@ -40,4 +47,13 @@ def load_tradingagents_yaml() -> Dict[str, Any]:
 thresholds = load_thresholds()
 tradingagents_config = load_tradingagents_yaml()
 
-__all__ = ["settings", "thresholds", "tradingagents_config", "BASE_DIR"]
+__all__ = [
+    "settings",
+    "thresholds",
+    "tradingagents_config",
+    "BASE_DIR",
+    "Route",
+    "primary_route",
+    "fallback_route",
+    "describe_llm_routing",
+]

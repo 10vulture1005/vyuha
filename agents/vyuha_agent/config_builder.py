@@ -25,6 +25,7 @@ import logging
 from typing import Any
 
 from config import settings, tradingagents_config
+from config.llm_routing import fallback_route
 from tradingagents.default_config import DEFAULT_CONFIG
 
 logger = logging.getLogger(__name__)
@@ -118,6 +119,44 @@ def _apply_yaml_overlay(config: dict[str, Any], yaml_cfg: dict[str, Any]) -> dic
     return config
 
 
+def _apply_fallback_overrides(config: dict[str, Any]) -> dict[str, Any]:
+    """Populate the backup-provider keys the graph reads on startup.
+
+    The primary provider comes from the ``TRADINGAGENTS_LLM_*`` trio; its
+    backup comes from the provider-neutral ``LLM_FALLBACK_*`` settings, so a
+    fallback is configured once for the whole project rather than per
+    subsystem.
+
+    ``fallback_route()`` returns None when the backup is switched off, has no
+    key, or is not an OpenAI-compatible endpoint. In that case the keys are
+    written as None, which ``TradingAgentsGraph`` treats as "no fallback" and
+    simply builds an unwrapped client — the pipeline runs primary-only rather
+    than failing to start.
+    """
+    route = fallback_route()
+    if route is None:
+        logger.debug(
+            "No usable LLM fallback configured; Vyuha Agent will run on the "
+            "primary provider alone."
+        )
+        config["fallback_llm_provider"] = None
+        config["fallback_llm_model"] = None
+        config["fallback_base_url"] = None
+        config["fallback_api_key"] = None
+        return config
+
+    logger.info(
+        "Vyuha Agent LLM fallback active: %s/%s (primary: %s/%s)",
+        route.provider, route.model,
+        config.get("llm_provider"), config.get("deep_think_llm"),
+    )
+    config["fallback_llm_provider"] = route.provider
+    config["fallback_llm_model"] = route.model
+    config["fallback_base_url"] = route.base_url
+    config["fallback_api_key"] = route.api_key
+    return config
+
+
 def _apply_settings_overrides(config: dict[str, Any]) -> dict[str, Any]:
     """Apply operator-level overrides from the pydantic Settings object."""
     logger.debug(
@@ -134,6 +173,8 @@ def _apply_settings_overrides(config: dict[str, Any]) -> dict[str, Any]:
     config["max_risk_discuss_rounds"] = settings.TRADINGAGENTS_MAX_RISK_ROUNDS
     config["output_language"] = settings.TRADINGAGENTS_OUTPUT_LANGUAGE
     config["checkpoint_enabled"] = settings.TRADINGAGENTS_CHECKPOINT_ENABLED
+
+    _apply_fallback_overrides(config)
 
     if settings.TRADINGAGENTS_DATA_VENDORS:
         # Comma-separated string from .env; split into a single fallback

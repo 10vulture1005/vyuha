@@ -66,8 +66,8 @@ PROVIDERS: list[dict] = [
     {
         "key": "openrouter",
         "name": "OpenRouter (any model, one key)",
-        "deep": "anthropic/claude-sonnet-4-6",
-        "quick": "anthropic/claude-haiku-4-5",
+        "deep": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "quick": "nvidia/nemotron-3-ultra-550b-a55b:free",
         "needs_key": True,
         "help": "https://openrouter.ai/keys",
     },

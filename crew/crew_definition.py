@@ -8,6 +8,7 @@ if hasattr(_crewai_llm, "cache"):
 
 from crewai import Agent, Crew, Process, LLM
 from config.settings import settings
+from config.llm_routing import primary_route, fallback_route
 from agents.tools.ledger_tools import (
     run_capital_allocator,
     run_risk_review,
@@ -30,20 +31,57 @@ except Exception:
 
 from crew.tasks import get_tasks
 
+def _route_model_string(route) -> str:
+    """Render a :class:`~config.llm_routing.Route` as a CrewAI/LiteLLM model string.
+
+    We deliberately use the ``openai/<model>`` form plus an explicit
+    ``base_url`` rather than LiteLLM's ``openrouter/<model>`` prefix
+    convention: the OpenRouter IDs vyuha uses carry a ``:free`` variant
+    suffix, and provider-prefix parsing in LiteLLM is not reliably
+    transparent to colons in the model segment. Spelling out the endpoint
+    sidesteps that entirely and matches how
+    ``tradingagents/llm_clients/openai_client.py`` already talks to
+    OpenRouter.
+    """
+    return f"openai/{route.model}"
+
+
+def _build_llm(route) -> LLM:
+    """Construct a CrewAI ``LLM`` for a resolved route."""
+    return LLM(
+        model=_route_model_string(route),
+        base_url=route.base_url,
+        api_key=route.api_key or "",
+    )
+
+
 def create_crew(is_weekly: bool = False) -> Crew:
     """Creates the CrewAI orchestration pipeline.
-    
+
     If is_weekly is True, the full fundamental -> sentiment -> technical -> risk -> decision chain runs.
     If False, it skips fundamental and sentiment, running only daily timing and risk scans.
+
+    The crew's reasoning LLM comes from ``LLM_PROVIDER``/``LLM_MODEL``
+    (OpenRouter by default). ``LLM_FALLBACK_PROVIDER``/``LLM_FALLBACK_MODEL``
+    describe the backup used when a primary call fails; the fallback itself is
+    wired in at the transport layer by ``crew/flow_runner.py``, since CrewAI
+    hands every call to LiteLLM.
     """
-    
-    groq_key = settings.GROQ_API_KEY.get_secret_value() if settings.GROQ_API_KEY else ""
-    
-    # Use CrewAI's native LLM wrapper (powered by LiteLLM)
-    groq_llm = LLM(
-        model="groq/openai/gpt-oss-20b",
-        api_key=groq_key,
-    )
+
+    route = primary_route()
+    if not route.is_usable:
+        print(
+            f"[VYUHA] WARNING: no API key for primary provider '{route.provider}'. "
+            "Set the matching key in .env — the crew cannot reach the LLM without it."
+        )
+
+    primary_llm = _build_llm(route)
+
+    fallback = fallback_route()
+    if fallback is not None:
+        print(f"[VYUHA] LLM routing: {route.provider}/{route.model} (fallback: {fallback.provider}/{fallback.model})")
+    else:
+        print(f"[VYUHA] LLM routing: {route.provider}/{route.model} (no usable fallback configured)")
     
     # 1. Fundamental Analyst
     fundamental_analyst = Agent(
@@ -53,7 +91,7 @@ def create_crew(is_weekly: bool = False) -> Crew:
         tools=[run_fundamental_scan],
         verbose=True,
         allow_delegation=False,
-        llm=groq_llm,
+        llm=primary_llm,
     )
     
     # 2. Sentiment Analyst
@@ -64,7 +102,7 @@ def create_crew(is_weekly: bool = False) -> Crew:
         tools=[run_sentiment_scan],
         verbose=True,
         allow_delegation=False,
-        llm=groq_llm,
+        llm=primary_llm,
     )
     
     # 3. Technical Analyst
@@ -75,7 +113,7 @@ def create_crew(is_weekly: bool = False) -> Crew:
         tools=[run_technical_scan],
         verbose=True,
         allow_delegation=False,
-        llm=groq_llm,
+        llm=primary_llm,
     )
     
     # 4. Risk Manager
@@ -86,7 +124,7 @@ def create_crew(is_weekly: bool = False) -> Crew:
         tools=[run_risk_review],
         verbose=True,
         allow_delegation=False,
-        llm=groq_llm,
+        llm=primary_llm,
     )
     
     # 5. Portfolio Manager
@@ -104,7 +142,7 @@ def create_crew(is_weekly: bool = False) -> Crew:
         tools=pm_tools,
         verbose=True,
         allow_delegation=False,
-        llm=groq_llm,
+        llm=primary_llm,
     )
     
     agents = [technical_analyst, risk_manager, portfolio_manager]

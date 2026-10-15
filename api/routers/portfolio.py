@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
 from db.session import get_async_session
@@ -19,14 +19,14 @@ async def get_open_holdings(session: AsyncSession = Depends(get_async_session)):
     return result.scalars().all()
 
 @router.get("/ledger", response_model=List[LedgerResponse])
-async def get_ledger_history(limit: int = 50, session: AsyncSession = Depends(get_async_session)):
+async def get_ledger_history(limit: int = Query(50, ge=1, le=500), session: AsyncSession = Depends(get_async_session)):
     """Returns the trailing history of SIP credits, buy debits, and sell credits."""
     stmt = select(CapitalLedger).order_by(desc(CapitalLedger.id)).limit(limit)
     result = await session.execute(stmt)
     return result.scalars().all()
 
 @router.get("/trades", response_model=List[TradeLogResponse])
-async def get_trade_log(limit: int = 50, session: AsyncSession = Depends(get_async_session)):
+async def get_trade_log(limit: int = Query(50, ge=1, le=500), session: AsyncSession = Depends(get_async_session)):
     """Returns the immutable audit trail of executed BUY and SELL orders."""
     stmt = select(TradeLog).order_by(desc(TradeLog.txn_date)).limit(limit)
     result = await session.execute(stmt)

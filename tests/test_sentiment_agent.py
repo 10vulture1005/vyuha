@@ -16,7 +16,6 @@ from agents.tools.news_tools import (
     HeadlineSchema,
     ClassificationResult,
     classify_red_flags,
-    TIER1_REGEX,
 )
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"

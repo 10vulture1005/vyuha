@@ -32,3 +32,163 @@ risk:
       - { r_multiple: 5.0, sell_pct: 50.0 }
       - { r_multiple: 10.0, sell_pct: 100.0 }
     trail_to_breakeven_on_first_target: true
+
+# ─── Investor Mode (STRATEGY_MODE=investor) ─────────────────────────────────
+# Long-horizon portfolio profile: 20-30 holdings, monthly rebalance, daily
+# close signals executed at the next open. Activated only when
+# settings.STRATEGY_MODE == "investor"; the swing sections above are
+# untouched and remain the default.
+investor:
+  # ── Layer 0: Regime & exposure ────────────────────────────────────────────
+  regime:
+    nifty_proxy: INDEX_NIFTY500
+    vix_symbol: INDEX_INDIAVIX
+    trend_ma_days: 200
+    vix_lookback_days: 252
+    vix_percentile: 80.0
+    # Breadth = % of the investable universe above its own 200DMA.
+    # Risk-on requires the index AND healthy breadth; below the mixed floor the
+    # reading only ever contributes to the risk-off veto, never on its own.
+    breadth_risk_on: 60.0
+    breadth_mixed_floor: 40.0
+    confirm_days: 3            # consecutive closes before a regime flip applies
+    exposure:
+      risk_on: 1.00
+      mixed: 0.70
+      risk_off: 0.40
+    defensive:
+      cash_proxy: LIQUIDBEES
+      gold_proxy: GOLDBEES
+      max_gold_weight: 0.15    # gold slice of the defensive sleeve
+      # Accrual fallback (% p.a.) used only when the ETF has no price history.
+      cash_yield_pct: 0.05
+
+  # ── Layer 1: Fundamentals ────────────────────────────────────────────────
+  fundamentals:
+    filing_lag_days: 1         # usable from filing_date + 1 day
+    fallback_period_end_days: 60   # when no filing date is known
+    lookback_years: 3
+    refresh_months: 3          # quarterly eligible-list refresh
+    eligible_percentile: 70.0  # keep top 30% by score
+    sector_neutral: true
+    score_weights:
+      quality: 0.40
+      growth: 0.30
+      valuation: 0.30
+    non_financial:
+      min_roce: 15.0
+      max_debt_equity: 1.0
+      min_interest_coverage: 4.0
+      min_ocf_to_pat_3y: 0.8
+      max_promoter_pledge_pct: 10.0
+      min_revenue_cagr_3y: 10.0
+      min_eps_cagr_3y: 12.0
+      require_no_loss_year_3y: true
+      # DATA GAP: the yfinance statement endpoints carry no promoter-pledge or
+      # GNPA data for Indian names. These flags decide what "not disclosed"
+      # means. Default false = the filter is ARMED and enforced wherever data
+      # exists, and unknown-GNPA financials are admitted rather than the whole
+      # financial sector being auto-rejected. Set true for a strict gate.
+      pledge_required: false
+    financial:
+      min_roe: 14.0
+      max_gnpa_pct: 3.0
+      gnpa_required: false        # see note above
+      pb_vs_5y_median_max: 1.30
+    valuation:
+      peg_max: 2.0             # hard ceiling; PEG above is penalised, not excluded
+      pe_vs_5y_median_sale_multiple: 2.0
+
+  # ── Layer 2: Technicals ──────────────────────────────────────────────────
+  technical:
+    trend_ma_days: 200
+    fast_ma_days: 50
+    breakout_days: 55
+    breakout_vol_multiple: 1.2
+    rsi_period: 14
+    rsi_turn_up_level: 40.0     # pullback needs RSI to CROSS UP through this
+    pullback_ma_tolerance: 0.03 # "at the 50DMA" as a +/-3% band
+    atr_period: 22
+    chandelier_atr_multiple: 3.5
+    exit_ma_days: 200
+    exit_consecutive_closes: 3
+    momentum:
+      lookback_months: 12
+      skip_months: 1           # 12-1 month return
+      rel_strength_months: 6
+      min_rel_strength: 0.0     # relative strength vs Nifty 500 must be positive
+    tranches:
+      tranche1_pct: 0.50
+      tranche2_pct: 0.50
+      tranche2_delay_days: 10
+
+  # ── Layer 3: News reaction ───────────────────────────────────────────────
+  news:
+    finbert_threshold: 0.85    # Tier 1 confidence (agents/tools/news_tools.py)
+    sentiment_half_life_days: 7.0
+    materiality_bands:
+      # Spaced so one hedge word visibly moves materiality: an unhedged positive
+      # (0.55) scores 0.5 and a hedged one (0.35) scores 0.25.
+      low: 0.45
+      medium: 0.80
+    hard_negative:
+      confirm_drop_pct: 5.0        # drop >= 5% on >= 2x volume
+      confirm_vol_multiple: 2.0
+      or_close_below_ma: 50
+      review_days: 5
+    positive_catalyst:
+      min_close_range_pct: 0.30     # closes in the top 30% of its range
+      min_vol_multiple: 2.0
+      size_multiple: 1.25          # tranche 1 at 1.25x, still capped
+    overreaction:
+      stabilization_days: 3
+      min_score_percentile: 70.0    # top-30% stock
+      require_above_ma: 200
+
+  # ── Portfolio construction ───────────────────────────────────────────────
+  portfolio:
+    min_holdings: 20
+    max_holdings: 30
+    max_position_pct: 8.0
+    max_sector_pct: 25.0
+    min_position_pct: 2.0
+    max_new_buys_per_day: 3
+    # Entries are always restricted to the standing target book. Between
+    # monthly rebalances that means finishing the target the last rebalance
+    # set, not picking new discretionary ideas. Set true to also open names
+    # outside the target book mid-month — useful for studying turnover, costly
+    # in practice, so it is off by default.
+    allow_new_buys_outside_targets: false
+    rebalance_day_of_month: 1
+    min_hold_days: 60           # waived for stops / hard-negative vetoes
+    overweight_trigger: 1.5     # trim when weight > 1.5x target between rebalances
+    vol_target_weighting: inverse_atr
+    sip_target: underweight_eligible_then_defensive
+
+  # ── Costs, tax, slippage ────────────────────────────────────────────────
+  costs:
+    include_friction: true
+    midcap_slippage_pct: 0.15   # 0.1-0.2% band; mid/small caps take the high end
+    largecap_slippage_pct: 0.10
+    robustness_cost_multiple: 2.0
+  tax:
+    enabled: false              # optional toggle; verify rates before enabling
+    stcg_rate: 0.20
+    ltcg_rate: 0.125
+    ltcg_exemption: 125000.0
+    ltcg_min_days: 365
+
+  # ── Backtest ────────────────────────────────────────────────────────────
+  backtest:
+    start: "2016-09-12"         # first clean OHLC bar available in this repo
+    end: "2026-09-11"
+    oos_start: "2022-01-01"     # in-sample ends 2021-12-31
+    initial_capital: 1000000.0
+    monthly_sip: 10000.0
+    risk_free_rate: 0.06
+    ablations:
+      - fundamental_only
+      - technical_only
+      - fundamental_technical
+      - fundamental_technical_news
+      - full

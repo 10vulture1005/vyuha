@@ -2,6 +2,7 @@
 from datetime import datetime, date, timezone
 from decimal import Decimal
 from typing import Union, List, Optional
+import threading
 from pydantic import BaseModel
 from loguru import logger
 from sqlalchemy.orm import Session
@@ -37,6 +38,8 @@ class HoldCash(BaseModel):
     action: str = "HOLD_CASH"
     cash_balance: float
     rationale: str
+
+_ACCOUNT_LOCK = threading.RLock()
 
 def _latest_mtm_equity(session: Session) -> Optional[Decimal]:
     """Returns latest MTM total_value if a valuation snapshot exists."""
@@ -89,49 +92,70 @@ def _total_buy_friction(session: Session, symbol: str) -> Decimal:
     except Exception:
         return Decimal("0")
 
-
-def credit_monthly_sip_execution(amount: Optional[int] = None) -> Decimal:
+def credit_monthly_sip_execution(amount: float = None, as_of=None) -> Decimal:
     """Credits monthly SIP capital into the ledger. Called via monthly cron.
 
-    Args:
-        amount: SIP amount in INR. Defaults to settings.MONTHLY_SIP_AMOUNT
-            when omitted so zero-arg callers (e.g. scripts/credit_sip.py)
-            keep working.
-
-    Returns:
-        The new running ledger balance after the credit.
+    Idempotent per (year, month): a retry in the same month returns the
+    existing balance instead of crediting twice. Uses `get_current_cash` so an
+    empty ledger starts from INITIAL_CAPITAL rather than zero.
     """
     if amount is None:
         amount = settings.MONTHLY_SIP_AMOUNT
-    with get_session() as session:
-        latest = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).first()
-        current_balance = latest.running_balance if latest else Decimal("0")
+    if as_of is None:
+        as_of = datetime.now(timezone.utc)
+    with _ACCOUNT_LOCK, get_session() as session:
+        # Idempotency: skip if an SIP credit already exists this month.
+        existing = session.query(CapitalLedger).filter(
+            CapitalLedger.txn_type == LedgerTxnType.SIP_CREDIT.value
+        ).all()
+        already = any(
+            e.txn_date.year == as_of.year and e.txn_date.month == as_of.month
+            for e in existing
+        )
+        if already:
+            logger.info("Monthly SIP already credited this month; skipping.")
+            return get_current_cash(session)
+
+        current_balance = get_current_cash(session)
         new_balance = current_balance + Decimal(str(amount))
 
         session.add(CapitalLedger(
-            txn_date=datetime.now(timezone.utc),
+            txn_date=as_of,
             amount=Decimal(str(amount)),
             txn_type=LedgerTxnType.SIP_CREDIT.value,
             running_balance=new_balance
         ))
         session.flush()
         logger.info(f"Credited monthly SIP: ₹{amount}. New Ledger Balance: ₹{new_balance}")
+        session.commit()
         return new_balance
 
+
 def get_current_cash(session: Session) -> Decimal:
-    latest = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).first()
+    try:
+        latest = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).with_for_update().first()
+    except Exception:
+        latest = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).first()
     if latest:
         return latest.running_balance
     return Decimal(str(settings.INITIAL_CAPITAL))
 
 def execute_buy(session: Session, symbol: str, qty: int, price: Decimal, rationale: str, init_stop: Decimal):
     """Executes atomic BUY transaction across ledger, holdings, and trade log."""
+    if not isinstance(qty, int) or qty <= 0:
+        raise ValueError(f"Invalid buy quantity: {qty}")
+    if price is None or Decimal(str(price)) <= 0:
+        raise ValueError(f"Invalid buy price: {price}")
+    price = Decimal(str(price))
     cash = get_current_cash(session)
     gross_cost = price * Decimal(str(qty))
-    stt = gross_cost * Decimal(str(settings.STT_PCT)) / Decimal("100.0")
-    exch_charge = gross_cost * Decimal(str(settings.EXCHANGE_TXN_CHARGE_PCT)) / Decimal("100.0")
-    sebi_fee = gross_cost * Decimal(str(settings.SEBI_TURNOVER_FEE_PCT)) / Decimal("100.0")
-    total_friction = round(stt + exch_charge + sebi_fee, 2)
+    if settings.INCLUDE_FRICTION:
+        stt = gross_cost * Decimal(str(settings.STT_PCT)) / Decimal("100.0")
+        exch_charge = gross_cost * Decimal(str(settings.EXCHANGE_TXN_CHARGE_PCT)) / Decimal("100.0")
+        sebi_fee = gross_cost * Decimal(str(settings.SEBI_TURNOVER_FEE_PCT)) / Decimal("100.0")
+        total_friction = round(stt + exch_charge + sebi_fee, 2)
+    else:
+        total_friction = Decimal("0.00")
     total_cost = gross_cost + total_friction
     
     if total_cost > cash:
@@ -190,13 +214,26 @@ def execute_buy(session: Session, symbol: str, qty: int, price: Decimal, rationa
 
 def execute_sell(session: Session, symbol: str, qty: int, price: Decimal, reason: str):
     """Executes atomic SELL transaction, debiting DP and friction charges from net proceeds."""
+    if not isinstance(qty, int) or qty <= 0:
+        raise ValueError(f"Invalid sell quantity: {qty}")
+    if price is None or Decimal(str(price)) <= 0:
+        raise ValueError(f"Invalid sell price: {price}")
+    price = Decimal(str(price))
     cash = get_current_cash(session)
+    holding_check = session.query(PortfolioHolding).filter(PortfolioHolding.symbol == symbol, PortfolioHolding.status == HoldingStatus.OPEN.value).first()
+    if holding_check is None:
+        raise ValueError(f"No OPEN holding for {symbol}")
+    if qty > holding_check.qty:
+        raise ValueError(f"Insufficient shares: requested {qty} > held {holding_check.qty}")
     gross_proceeds = price * Decimal(str(qty))
     dp_charge = Decimal(str(settings.DP_CHARGE_PER_SELL))
     stt = gross_proceeds * Decimal(str(settings.STT_PCT)) / Decimal("100.0")
     exch_charge = gross_proceeds * Decimal(str(settings.EXCHANGE_TXN_CHARGE_PCT)) / Decimal("100.0")
     sebi_fee = gross_proceeds * Decimal(str(settings.SEBI_TURNOVER_FEE_PCT)) / Decimal("100.0")
     total_friction = round(stt + exch_charge + sebi_fee, 2)
+    if not settings.INCLUDE_FRICTION:
+        dp_charge = Decimal("0.00")
+        total_friction = Decimal("0.00")
     
     net_proceeds = gross_proceeds - dp_charge - total_friction
     new_balance = cash + net_proceeds
@@ -207,8 +244,11 @@ def execute_sell(session: Session, symbol: str, qty: int, price: Decimal, reason
     
     holding = session.query(PortfolioHolding).filter(PortfolioHolding.symbol == symbol, PortfolioHolding.status == HoldingStatus.OPEN.value).first()
     if holding:
-        holding.status = HoldingStatus.CLOSED.value
-        holding.qty = 0
+        if qty >= holding.qty:
+            holding.status = HoldingStatus.CLOSED.value
+            holding.qty = 0
+        else:
+            holding.qty -= qty
         
     # FIX: do NOT mark watchlist VETOED on a mechanical stop-out. VETOED is a
     # governance verdict (fraud/SEBI); exits should leave watchlist untouched
@@ -237,13 +277,26 @@ def execute_sell(session: Session, symbol: str, qty: int, price: Decimal, reason
 
 def execute_partial_sell(session: Session, symbol: str, sell_qty: int, price: Decimal, reason: str):
     """Executes a partial SELL transaction, debiting DP and friction charges from net proceeds."""
+    if not isinstance(sell_qty, int) or sell_qty <= 0:
+        raise ValueError(f"Invalid sell quantity: {sell_qty}")
+    if price is None or Decimal(str(price)) <= 0:
+        raise ValueError(f"Invalid sell price: {price}")
+    price = Decimal(str(price))
     cash = get_current_cash(session)
+    holding_check = session.query(PortfolioHolding).filter(PortfolioHolding.symbol == symbol, PortfolioHolding.status == HoldingStatus.OPEN.value).first()
+    if holding_check is None:
+        raise ValueError(f"No OPEN holding for {symbol}")
+    if sell_qty > holding_check.qty:
+        raise ValueError(f"Insufficient shares: requested {sell_qty} > held {holding_check.qty}")
     gross_proceeds = price * Decimal(str(sell_qty))
     dp_charge = Decimal(str(settings.DP_CHARGE_PER_SELL))
     stt = gross_proceeds * Decimal(str(settings.STT_PCT)) / Decimal("100.0")
     exch_charge = gross_proceeds * Decimal(str(settings.EXCHANGE_TXN_CHARGE_PCT)) / Decimal("100.0")
     sebi_fee = gross_proceeds * Decimal(str(settings.SEBI_TURNOVER_FEE_PCT)) / Decimal("100.0")
     total_friction = round(stt + exch_charge + sebi_fee, 2)
+    if not settings.INCLUDE_FRICTION:
+        dp_charge = Decimal("0.00")
+        total_friction = Decimal("0.00")
     
     net_proceeds = gross_proceeds - dp_charge - total_friction
     new_balance = cash + net_proceeds
@@ -295,7 +348,7 @@ def select_and_execute_buy_candidate(signal_date: date = None, circuit_breaker_a
     if signal_date is None:
         signal_date = date.today()
         
-    with get_session() as session:
+    with _ACCOUNT_LOCK, get_session() as session:
         cash = get_current_cash(session)
         
         # FIX: wire the monthly-drawdown breaker internally so both the daily
@@ -324,6 +377,10 @@ def select_and_execute_buy_candidate(signal_date: date = None, circuit_breaker_a
             # existing holding bypassed MAX_POSITIONS and accumulated every day
             # a fresh W_BOTTOM fired (SCHNEIDER 6+6+7, PREMIERENE 11+9+9+9).
             if sig.symbol in open_symbols:
+                continue
+            # Revalidate governance at execution boundary.
+            wl = session.query(Watchlist).filter(Watchlist.symbol == sig.symbol).first()
+            if wl is not None and wl.status != WatchlistStatus.ACTIVE.value:
                 continue
             if len(open_holdings) >= settings.MAX_POSITIONS:
                 continue

@@ -21,7 +21,7 @@ def test_sip_cash_rollover():
     
     with get_session() as session:
         last = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).first()
-        assert last.running_balance == Decimal("3000.00")
+        assert last.running_balance == Decimal("101000.00")
 
 def test_trailing_stop_ratcheting():
     """Verify trailing stop ratchets up on rising prices but NEVER decreases on pullbacks."""
@@ -38,7 +38,7 @@ def test_dp_charge_deduction_on_sell():
     """Verify flat ₹15 DP charge is debited exactly once per sell transaction."""
     with get_session() as session:
         # Buy 1 share @ 2000
-        execute_buy(session, "RELIANCE", 1, Decimal("2000.00"), "Test Buy")
+        execute_buy(session, "RELIANCE", 1, Decimal("2000.00"), "Test Buy", Decimal("1900.00"))
         cash_post_buy = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).first().running_balance
         
         # Sell 1 share @ 2500 -> Gross proceeds 2500, Net proceeds 2485 (2500 - 15)

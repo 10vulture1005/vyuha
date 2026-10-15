@@ -343,3 +343,198 @@ class TradingAgentsOutcome(Base):
     __table_args__ = (
         Index("idx_ta_out_ticker_date", "ticker", "trade_date"),
     )
+
+
+# ─── Investor Mode ──────────────────────────────────────────────────────────
+#
+# Investor Mode (STRATEGY_MODE=investor) keeps its own state rather than
+# sharing the swing tables. The swing engine is built around single-position
+# risk (PortfolioHolding.initial_risk, heat budgets, time stops) that has no
+# meaning in a 25-name monthly-rebalanced book, and mixing the two would let a
+# swing row silently corrupt an investor target or vice versa.
+
+
+class RebalanceLog(Base):
+    """One monthly rebalance: what the book was told to hold, and why.
+
+    ``target_weights`` is the JSON weight map produced on the rebalance date.
+    Recording it (rather than recomputing it later) means a later config
+    change cannot rewrite history: what the book was actually told on the
+    first of the month stays auditable.
+    """
+
+    __tablename__ = "investor_rebalance_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    rebalance_date: Mapped[date] = mapped_column(Date, nullable=False)
+    regime: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    exposure: Mapped[Optional[Decimal]] = mapped_column(Numeric(6, 4), nullable=True)
+    equity: Mapped[Optional[Decimal]] = mapped_column(Numeric(16, 2), nullable=True)
+    n_positions: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    target_weights: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    defensive_weights: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    eligible: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, nullable=False
+    )
+
+    __table_args__ = (
+        Index("idx_investor_rebal_date", "rebalance_date"),
+    )
+
+
+class InvestorTarget(Base):
+    """Target weight per symbol for a given date (the daily target book).
+
+    One row per symbol per rebalance. ``as_of`` is the CLOSE of the decision
+    day; orders derived from these targets fill at the NEXT open, which is why
+    the trade date and the effective date are both recorded.
+    """
+
+    __tablename__ = "investor_targets"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    as_of: Mapped[date] = mapped_column(Date, nullable=False)
+    symbol: Mapped[str] = mapped_column(
+        String(20),
+        ForeignKey("universe.symbol", ondelete="CASCADE"),
+        nullable=False,
+    )
+    target_weight: Mapped[Decimal] = mapped_column(Numeric(8, 6), nullable=False)
+    sector: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    fundamental_score: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(8, 4), nullable=True
+    )
+    is_defensive: Mapped[Optional[bool]] = mapped_column(
+        Boolean, default=False, nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, nullable=False
+    )
+
+    __table_args__ = (
+        Index("idx_investor_target_date", "as_of"),
+        Index("idx_investor_target_symbol", "symbol", "as_of"),
+    )
+
+
+class NewsEventRow(Base):
+    """Every classified headline, persisted daily.
+
+    This table is the reason the news layer can ever be backtested properly.
+    Until enough real classified history accumulates, Layer 3 runs on the
+    earnings-gap PROXY in backtests and on FinBERT/LLM in the live path; both
+    write here, with ``tier`` distinguishing them, so a real news backtest
+    becomes possible later instead of being impossible forever.
+
+    ``is_proxy`` is explicit rather than inferred: a synthetic event written by
+    a backtest run must never be mistaken for classified real news.
+    """
+
+    __tablename__ = "investor_news_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    trade_date: Mapped[date] = mapped_column(Date, nullable=False)
+    symbol: Mapped[Optional[str]] = mapped_column(
+        String(20),
+        ForeignKey("universe.symbol", ondelete="CASCADE"),
+        nullable=True,
+    )
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    url: Mapped[Optional[str]] = mapped_column(String(1000), nullable=True)
+    source: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    published_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime, nullable=True
+    )
+    # HARD_NEGATIVE | POSITIVE | OVERREACTION | MACRO | NEUTRAL
+    event_type: Mapped[str] = mapped_column(String(30), nullable=False)
+    subtype: Mapped[Optional[str]] = mapped_column(String(60), nullable=True)
+    materiality: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(6, 4), nullable=True
+    )
+    sentiment: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(8, 6), nullable=True
+    )
+    finbert_score: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(8, 6), nullable=True
+    )
+    # TIER1 (FinBERT) | TIER2 (LLM) | REGEX | PROXY
+    tier: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    is_macro: Mapped[Optional[bool]] = mapped_column(
+        Boolean, default=False, nullable=False
+    )
+    is_proxy: Mapped[Optional[bool]] = mapped_column(
+        Boolean, default=False, nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, nullable=False
+    )
+
+    __table_args__ = (
+        Index("idx_news_date_symbol", "trade_date", "symbol"),
+        Index("idx_news_type", "event_type", "trade_date"),
+        Index("idx_news_proxy", "is_proxy"),
+    )
+
+
+class InvestorFundamentalSnapshot(Base):
+    """Point-in-time fundamental record WITH its filing date.
+
+    The brief's hard rule is that a quarter's numbers may only be used from the
+    day AFTER its actual filing date. Storing ``filing_date`` alongside
+    ``usable_from`` makes that rule checkable in SQL rather than a convention
+    buried in Python: a query for "what did we know on date X" is a plain
+    ``usable_from <= X`` filter.
+    """
+
+    __tablename__ = "investor_fundamental_snapshots"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    symbol: Mapped[str] = mapped_column(
+        String(20),
+        ForeignKey("universe.symbol", ondelete="CASCADE"),
+        nullable=False,
+    )
+    period_end: Mapped[date] = mapped_column(Date, nullable=False)
+    filing_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    #: First date these numbers may be used = filing_date + lag (or
+    #: period_end + fallback when no filing date is known).
+    usable_from: Mapped[date] = mapped_column(Date, nullable=False)
+    frequency: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+
+    roce: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 4), nullable=True)
+    roe: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 4), nullable=True)
+    debt_to_equity: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(10, 4), nullable=True
+    )
+    interest_coverage: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(10, 4), nullable=True
+    )
+    ocf_to_pat: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(10, 4), nullable=True
+    )
+    promoter_pledge_pct: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(8, 4), nullable=True
+    )
+    revenue_cagr_3y: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(10, 4), nullable=True
+    )
+    eps_cagr_3y: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(10, 4), nullable=True
+    )
+    loss_years_3y: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    pe: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 4), nullable=True)
+    pb: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 4), nullable=True)
+    composite_score: Mapped[Optional[Decimal]] = mapped_column(
+        Numeric(8, 4), nullable=True
+    )
+    data_source: Mapped[Optional[str]] = mapped_column(String(60), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, nullable=False
+    )
+
+    __table_args__ = (
+        Index("idx_invfund_symbol_period", "symbol", "period_end"),
+        Index("idx_invfund_usable", "usable_from"),
+    )
