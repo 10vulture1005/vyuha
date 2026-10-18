@@ -116,7 +116,7 @@ runs:
         add_unset "$NEWS_NAME" "$NEWS_KEY" \
           "Sentiment falls back to Drishti/RSS; uncovered symbols are recorded \`SCREENING_FAILED\`, never clean."
         add_unset "$HF_NAME" "$HF_KEY" \
-          "Hosted FinBERT is called unauthenticated, which is rate-limited — Tier 2 escalation throttles."
+          "FinBERT weights download anonymously. The model is public so this works, but anonymous downloads are rate-limited — a cold weight cache is when it bites."
         # Both halves are required for a digest; report the pair once.
         if [ -z "${TELEGRAM_TOKEN:-}" ] || [ -z "${TELEGRAM_CHAT:-}" ]; then
           unset_list="${unset_list}| \`$TELEGRAM_NAME\` | The daily/weekly digest is built, then dropped at \`send_message\`. |\n"
