@@ -66,22 +66,17 @@ jobs:
       # in "OPENAI_API_KEY is required" — the CrewAI *native* provider is what
       # raised it, because the crew talks OpenRouter through an explicit
       # base_url. Worse, on some runs the crew swallowed the error and the job
-      # went green with empty agent answers. Fail here instead, with a message
-      # that names the missing secret.
-      - name: Verify required secrets
-        env:
-          PRIMARY_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          FALLBACK_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: |
-          set -uo pipefail
-          if [ -z "$PRIMARY_KEY" ]; then
-            echo "::error::OPENROUTER_API_KEY is not set. config/settings.py defaults LLM_PROVIDER=openrouter, so the crew cannot call any model without it."
-            echo "Add it under Settings -> Secrets and variables -> Actions -> New repository secret."
-            exit 1
-          fi
-          if [ -z "$FALLBACK_KEY" ]; then
-            echo "::warning::GROQ_API_KEY is not set — running primary-only, with no failover if OpenRouter rate-limits."
-          fi
+      # went green with empty agent answers. The optional keys are reported on
+      # the run page for the same reason: unset, they degrade silently.
+      - name: Verify secrets
+        uses: ./.github/actions/verify-secrets
+        with:
+          primary-key: ${{ secrets.OPENROUTER_API_KEY }}
+          fallback-key: ${{ secrets.GROQ_API_KEY }}
+          news-key: ${{ secrets.MARKETAUX_API_KEY }}
+          hf-key: ${{ secrets.HF_API_TOKEN }}
+          telegram-token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          telegram-chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
 
       - name: Run Forward Test Paper Cycle
         env:
@@ -176,19 +171,15 @@ jobs:
       - name: Install Screener HTTP parser dependencies
         run: pip install requests beautifulsoup4
 
-      - name: Verify required secrets
-        env:
-          PRIMARY_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          FALLBACK_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: |
-          set -uo pipefail
-          if [ -z "$PRIMARY_KEY" ]; then
-            echo "::error::OPENROUTER_API_KEY is not set — the weekly refresh cannot call any model."
-            exit 1
-          fi
-          if [ -z "$FALLBACK_KEY" ]; then
-            echo "::warning::GROQ_API_KEY is not set — running primary-only, with no failover."
-          fi
+      - name: Verify secrets
+        uses: ./.github/actions/verify-secrets
+        with:
+          primary-key: ${{ secrets.OPENROUTER_API_KEY }}
+          fallback-key: ${{ secrets.GROQ_API_KEY }}
+          news-key: ${{ secrets.MARKETAUX_API_KEY }}
+          hf-key: ${{ secrets.HF_API_TOKEN }}
+          telegram-token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          telegram-chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
 
       - name: Fetch fresh Screener.in statements
         run: |

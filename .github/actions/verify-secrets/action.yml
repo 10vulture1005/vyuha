@@ -1,0 +1,143 @@
+name: Verify secrets
+description: >-
+  Fail the job when the LLM key it cannot run without is missing, and report
+  every other unset optional secret in the run summary.
+
+# Why this exists
+# --------------
+# Unset secrets fail *silently* in this codebase: `config/settings.py` types
+# every key as Optional, and the consumers degrade rather than raise. The
+# 2026-10-16 forward test is the canonical example — OPENROUTER_API_KEY was
+# unset, every crew call died, and the run still went green with empty agent
+# answers. A missing Telegram pair is the same shape: the digest is built,
+# `send_message` logs "Skipping notification", and the job passes.
+#
+# So: the one key without which the pipeline is meaningless is fatal, and
+# everything else is surfaced as a table on the run page where someone
+# actually looks.
+
+inputs:
+  primary-key:
+    description: LLM key for LLM_PROVIDER. Empty means "abort the job".
+    required: false
+    default: ''
+  primary-name:
+    description: Display name for the primary key.
+    required: false
+    default: OPENROUTER_API_KEY
+  fallback-key:
+    description: LLM key for LLM_FALLBACK_PROVIDER.
+    required: false
+    default: ''
+  fallback-name:
+    description: Display name for the fallback key.
+    required: false
+    default: GROQ_API_KEY
+  news-key:
+    description: MarketAux key for the sentiment stage's primary news source.
+    required: false
+    default: ''
+  news-name:
+    description: Display name for the news key.
+    required: false
+    default: MARKETAUX_API_KEY
+  hf-key:
+    description: Hugging Face token for hosted FinBERT inference.
+    required: false
+    default: ''
+  hf-name:
+    description: Display name for the Hugging Face key.
+    required: false
+    default: HF_API_TOKEN
+  telegram-token:
+    description: Telegram bot token for the daily/weekly digest.
+    required: false
+    default: ''
+  telegram-chat-id:
+    description: Telegram chat id for the daily/weekly digest.
+    required: false
+    default: ''
+  telegram-name:
+    description: Display name for the Telegram pair.
+    required: false
+    default: TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID
+
+runs:
+  using: composite
+  steps:
+    - name: Check required and optional secrets
+      shell: bash
+      env:
+        PRIMARY_KEY: ${{ inputs.primary-key }}
+        PRIMARY_NAME: ${{ inputs.primary-name }}
+        FALLBACK_KEY: ${{ inputs.fallback-key }}
+        FALLBACK_NAME: ${{ inputs.fallback-name }}
+        NEWS_KEY: ${{ inputs.news-key }}
+        NEWS_NAME: ${{ inputs.news-name }}
+        HF_KEY: ${{ inputs.hf-key }}
+        HF_NAME: ${{ inputs.hf-name }}
+        TELEGRAM_TOKEN: ${{ inputs.telegram-token }}
+        TELEGRAM_CHAT: ${{ inputs.telegram-chat-id }}
+        TELEGRAM_NAME: ${{ inputs.telegram-name }}
+      run: |
+        # `set -e` is safe here: this step has no partially-applied state to
+        # protect, and every failure below is meant to stop the job.
+        set -euo pipefail
+
+        # `set -u` plus an omitted input would otherwise abort on an unbound
+        # variable before the check could report anything useful. An absent
+        # input has to read as "secret not set", which is the thing being tested.
+        PRIMARY_KEY="${PRIMARY_KEY:-}"
+        FALLBACK_KEY="${FALLBACK_KEY:-}"
+        NEWS_KEY="${NEWS_KEY:-}"
+        HF_KEY="${HF_KEY:-}"
+        TELEGRAM_TOKEN="${TELEGRAM_TOKEN:-}"
+        TELEGRAM_CHAT="${TELEGRAM_CHAT:-}"
+
+        if [ -z "$PRIMARY_KEY" ]; then
+          echo "::error::$PRIMARY_NAME is not set. config/settings.py defaults LLM_PROVIDER=openrouter, so the crew cannot call any model without it."
+          echo "Add it under Settings -> Secrets and variables -> Actions -> New repository secret, then re-run."
+          exit 1
+        fi
+
+        # Optional, but each one silently changes what the run does. Collected
+        # into the job summary rather than left to be discovered in a log.
+        unset_list=""
+
+        add_unset() {
+          # $1 name, $2 value, $3 what breaks without it
+          if [ -z "${2:-}" ]; then
+            unset_list="${unset_list}| \`$1\` | $3 |\n"
+          fi
+        }
+
+        add_unset "$FALLBACK_NAME" "$FALLBACK_KEY" \
+          "No LLM failover: a rate limit or outage on the primary takes the whole run down."
+        add_unset "$NEWS_NAME" "$NEWS_KEY" \
+          "Sentiment falls back to Drishti/RSS; uncovered symbols are recorded \`SCREENING_FAILED\`, never clean."
+        add_unset "$HF_NAME" "$HF_KEY" \
+          "Hosted FinBERT is called unauthenticated, which is rate-limited — Tier 2 escalation throttles."
+        # Both halves are required for a digest; report the pair once.
+        if [ -z "${TELEGRAM_TOKEN:-}" ] || [ -z "${TELEGRAM_CHAT:-}" ]; then
+          unset_list="${unset_list}| \`$TELEGRAM_NAME\` | The daily/weekly digest is built, then dropped at \`send_message\`. |\n"
+        fi
+
+        {
+          echo "### Secrets"
+          echo
+          echo "\`$PRIMARY_NAME\` is set."
+          echo
+          if [ -z "$unset_list" ]; then
+            echo "All optional secrets are set too."
+          else
+            echo "Not set — each one is a silent behaviour change, not a no-op:"
+            echo
+            echo "| Secret | Effect of leaving it unset |"
+            echo "| --- | --- |"
+            printf "$unset_list"
+          fi
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        if [ -n "$unset_list" ]; then
+          echo "::warning::Some optional secrets are unset — see this run's summary for what is degraded."
+        fi
