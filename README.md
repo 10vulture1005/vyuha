@@ -60,10 +60,22 @@ vyuha invest backtest --quick               # skip robustness
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `not started` | **Total Value:** `₹0.00` | **Cash:** `₹0.00`
+> **Last Updated:** `2026-10-18` | **Total Value:** `₹96,463.48` | **Cash:** `₹96,463.48`
 
-No forward-test runs recorded yet. Starting from zero.
+<div align="center">
 
+| Metric | Value | Graphic |
+|---|---|---|
+| **Net PnL** | 🔴 ₹-5,536.52 (-5.43%) | - |
+| **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
+| **Max Drawdown** | -3.54% | ███░░░░░░░░░░░░ |
+| **Portfolio Heat** | 0.00% / 6.00% | ░░░░░░░░░░░░░░░ |
+
+</div>
+
+### 💼 Current Open Positions (0 / 8)
+
+*Holding 100% Cash.*
 <!-- LIVE_STATS_END -->
 
 ## 🤖 Forward Testing with GitHub Actions
