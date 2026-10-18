@@ -1,0 +1,70 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A new push to the same branch makes the in-flight run redundant.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: '3.12'
+  PYTHONPATH: '.'
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml', 'uv.lock', 'requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          # The [ci] extra pins everything the suite imports (agents + api +
+          # dev + httpx). torch/transformers are excluded on purpose: no test
+          # loads FinBERT weights and the CPU wheel would dominate every run.
+          pip install -e ".[ci]"
+
+      # No LLM keys are wired in deliberately. The suite must pass with the
+      # providers unreachable — anything that needs a live model is a test bug,
+      # not something CI should be spending money on. tests/test_llm_failover.py
+      # covers the routing/failover paths with fakes.
+      - name: Run pytest
+        env:
+          DATABASE_URL: sqlite:///test.db
+          LIVE_TRADING_ENABLED: 'false'
+          LOG_LEVEL: WARNING
+        run: |
+          pytest -q --tb=short --junitxml=pytest-report.xml
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: pytest-report.xml
+          retention-days: 14
+          if-no-files-found: ignore

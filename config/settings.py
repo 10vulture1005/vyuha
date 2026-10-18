@@ -51,12 +51,191 @@ class Settings(BaseSettings):
     DEEPSEEK_API_KEY: Optional[SecretStr] = Field(
         default=None, description="DeepSeek API Key"
     )
+    MISTRAL_API_KEY: Optional[SecretStr] = Field(
+        default=None, description="Mistral API Key"
+    )
+    NVIDIA_API_KEY: Optional[SecretStr] = Field(
+        default=None, description="NVIDIA NIM API Key"
+    )
+    OPENAI_COMPATIBLE_API_KEY: Optional[SecretStr] = Field(
+        default=None, description="API key for a custom OpenAI-compatible endpoint"
+    )
+    OPENAI_COMPATIBLE_BASE_URL: Optional[str] = Field(
+        default=None, description="Base URL for a custom OpenAI-compatible endpoint"
+    )
     OPENROUTER_API_KEY: Optional[SecretStr] = Field(
         default=None, description="OpenRouter API Key"
+    )
+    SENTIMENT_TIER2_ENABLED: bool = Field(
+        default=True,
+        description=(
+            "Master switch for the Tier 2 LLM governance pass in "
+            "agents/tools/news_tools.py. Set false to run Tier 1 regex "
+            "screening only. Vetoes are still applied from Tier 1; Tier 2 "
+            "only ever *adds* vetoes, so disabling it widens the funnel "
+            "(more names reach the technical scan), it never relaxes a "
+            "hard filter. Records are still written as SCREENING_FAILED "
+            "rather than reported clean."
+        ),
+    )
+    SENTIMENT_TIER2_TIMEOUT: float = Field(
+        default=30.0,
+        gt=0,
+        description=(
+            "Per-provider HTTP timeout in seconds for the Tier 2 LLM call. "
+            "The OpenAI SDK defaults to 600s with 2 retries per provider; "
+            "across four candidate routes that is ~48 minutes for a single "
+            "symbol when the provider is unhealthy."
+        ),
+    )
+    SENTIMENT_FINBERT_ENABLED: bool = Field(
+        default=True,
+        description=(
+            "Use local FinBERT (ProsusAI/finbert) as a pre-LLM gate. FinBERT "
+            "scores headline polarity in one batched pass; only symbols it "
+            "reads as negative are escalated to the LLM. It is an OR-gate: "
+            "the Tier 1 regex still vetoes on its own, so enabling this can "
+            "only add escalations, never remove a veto. Requires torch + "
+            "transformers (~1.3GB). NOTE: the FinBERT WEIGHTS are licensed "
+            "CC BY-NC-SA 4.0 (non-commercial only); the GitHub training code "
+            "is Apache-2.0 but that does not cover the weights."
+        ),
+    )
+    SENTIMENT_FINBERT_THRESHOLD: float = Field(
+        default=0.50,
+        ge=0.0,
+        le=1.0,
+        description=(
+            "Negative-polarity probability at or above which a symbol is "
+            "escalated to the LLM. FinBERT returns three labels; this is "
+            "P(negative) across the batch."
+        ),
+    )
+    SENTIMENT_TIER2_BATCH_SIZE: int = Field(
+        default=20,
+        ge=1,
+        le=100,
+        description=(
+            "Symbols per chunked Tier 2 LLM request. One request returns a "
+            "JSON array of verdicts, so the daily LLM cost scales with "
+            "cache misses / batch_size rather than misses."
+        ),
     )
     DEFAULT_LLM_MODEL: str = Field(
         default="claude-3-5-sonnet-20241022",
         description="Default model for CrewAI reasoning",
+    )
+
+    # ─── News Provider ────────────────────────────────────────────────────────
+    DRISHTI_API_KEY: Optional[SecretStr] = Field(
+        default=None,
+        description="Drishti API key for batched news (one call covers many symbols).",
+    )
+    NEWS_PROVIDER: str = Field(
+        default="auto",
+        description=(
+            "News source for the sentiment stage. 'marketaux' scans an "
+            "alternating slice of the watchlist (free tier is 100 req/day at "
+            "3 articles each), 'drishti' uses the batched Drishti API, and "
+            "'auto' runs MarketAux then Drishti. Symbols no provider covers "
+            "are recorded SCREENING_FAILED, never as clean."
+        ),
+    )
+    DRISHTI_BATCH_SIZE: int = Field(
+        default=20,
+        ge=1,
+        le=20,
+        description=(
+            "Symbols per Drishti request. The API starts returning HTTP 400 "
+            "somewhere above 20. 20 is the measured sweet spot: a 105-symbol "
+            "watchlist costs ~11s in 6 requests."
+        ),
+    )
+    DRISHTI_PAGE_LIMIT: int = Field(
+        default=50,
+        ge=1,
+        le=50,
+        description=(
+            "Max page size per Drishti request. The API rejects any value "
+            "above 50 with HTTP 422."
+        ),
+    )
+    DRISHTI_MAX_PAGES: int = Field(
+        default=1,
+        ge=1,
+        le=10,
+        description=(
+            "Pages fetched per batch. One page x 50 already averages ~3.5 "
+            "headlines per covered symbol; a second page doubles the request "
+            "count and trips the per-minute 429 quota, which costs far more "
+            "than the extra headlines are worth."
+        ),
+    )
+    DRISHTI_MIN_INTERVAL: float = Field(
+        default=1.2,
+        ge=0.0,
+        description=(
+            "Seconds to wait between Drishti batches. The API enforces a "
+            "per-minute request quota; firing a 105-symbol watchlist as 7 "
+            "back-to-back batches trips HTTP 429 partway through, which then "
+            "forces the slow per-symbol RSS fallback for everything missed."
+        ),
+    )
+
+    # ─── MarketAux (current primary news provider) ─────────────────────────
+    MARKETAUX_API_KEY: Optional[SecretStr] = Field(
+        default=None,
+        description="MarketAux API token for news with per-entity sentiment.",
+    )
+    MARKET_MAX_REQUESTS_PER_DAY: int = Field(
+        default=50,
+        ge=1,
+        le=100,
+        description=(
+            "MarketAux requests spent per day. The free plan allows 100 "
+            "daily; half is reserved so a re-run on the same day has budget "
+            "left rather than hard-failing."
+        ),
+    )
+    MARKET_MAX_PAGES: int = Field(
+        default=8,
+        ge=1,
+        le=20,
+        description=(
+            "Pages fetched per 20-symbol group. Every response is capped at 3 "
+            "articles on the free plan, so paging is the only way to convert "
+            "the 100-requests/day allowance into coverage. At 6 groups x 8 "
+            "pages that is ~48 requests and ~144 articles; deep paging has "
+            "diminishing returns because the most recent articles cluster on "
+            "a handful of names."
+        ),
+    )
+    MARKET_SYMBOLS_PER_REQUEST: int = Field(
+        default=20,
+        ge=1,
+        le=100,
+        description=(
+            "Symbols per MarketAux request. One request covers many symbols, "
+            "but the free plan returns only 3 articles for it, so a wide "
+            "symbol slice per request is what makes the budget go further."
+        ),
+    )
+    MARKET_SLICE_SIZE: int = Field(
+        default=50,
+        ge=1,
+        description=(
+            "Watchlist symbols scanned per run. The watchlist is split into "
+            "alternating slices and each day's run covers the next slice, "
+            "persisted so a re-run resumes instead of double-spending quota."
+        ),
+    )
+    NEWS_USE_INDIANAPI: bool = Field(
+        default=False,
+        description=(
+            "DEPRECATED and unused. The IndianAPI.in and Google News RSS "
+            "per-symbol path has been removed; news now comes only from the "
+            "batched MarketAux/Drishti providers."
+        ),
     )
 
     # ─── LLM Provider Routing ─────────────────────────────────────────────────
@@ -217,6 +396,24 @@ class Settings(BaseSettings):
         default="LIQUIDBEES,GOLDBEES",
         description="Comma-separated defensive-sleeve instruments used when equity exposure is cut",
     )
+
+    @field_validator("NEWS_PROVIDER")
+    @classmethod
+    def validate_news_provider(cls, v: str) -> str:
+        """Same philosophy as STRATEGY_MODE: blank defaults, typo raises.
+
+        'auto' is the safe default because Drishti needs an API key that may
+        not be configured, in which case it silently degrades to RSS.
+        """
+        allowed = {"auto", "marketaux", "drishti"}
+        provider = (v or "").strip().lower()
+        if not provider:
+            return "auto"
+        if provider not in allowed:
+            raise ValueError(
+                f"NEWS_PROVIDER must be one of {sorted(allowed)}, got {v!r}"
+            )
+        return provider
 
     @field_validator("STRATEGY_MODE")
     @classmethod

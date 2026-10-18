@@ -133,7 +133,13 @@ jobs:
 
       - name: Run Forward Test Cycle
         env:
-          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          # Required: config/settings.py defaults LLM_PROVIDER=openrouter.
+          # Without it the crew cannot call any model.
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # Optional: used when the primary rate-limits or errors out.
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
+          INDIAN_API_KEY: ${{ secrets.INDIAN_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           LIVE_TRADING_ENABLED: 'false'

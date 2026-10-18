@@ -8,6 +8,11 @@ on:
     - cron: '0 11 * * 0'
   workflow_dispatch:  # Allow manual triggers for testing
 
+# Serialize runs that update the same database and statement CSV.
+concurrency:
+  group: forward-test-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -33,7 +38,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+          # Hash every dependency manifest, not just pyproject.toml — the old
+          # key never changed when a transitive dep moved, so the cache went
+          # stale silently.
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml', 'uv.lock', 'requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
@@ -41,7 +49,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
-          key: finbert-model-prosusai-v1
+          # Version the key by the model revision so a weight or library bump
+          # invalidates it instead of serving a stale archive forever.
+          key: finbert-${{ runner.os }}-ProsusAI-fintech-finbert-v1
+          restore-keys: |
+            finbert-${{ runner.os }}-
 
       - name: Install dependencies
         run: |
@@ -50,9 +62,33 @@ jobs:
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install transformers yfinance quantstats
 
+      # A missing LLM key used to surface as a wall of crewai tracebacks ending
+      # in "OPENAI_API_KEY is required" — the CrewAI *native* provider is what
+      # raised it, because the crew talks OpenRouter through an explicit
+      # base_url. Worse, on some runs the crew swallowed the error and the job
+      # went green with empty agent answers. Fail here instead, with a message
+      # that names the missing secret.
+      - name: Verify required secrets
+        env:
+          PRIMARY_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          FALLBACK_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          set -uo pipefail
+          if [ -z "$PRIMARY_KEY" ]; then
+            echo "::error::OPENROUTER_API_KEY is not set. config/settings.py defaults LLM_PROVIDER=openrouter, so the crew cannot call any model without it."
+            echo "Add it under Settings -> Secrets and variables -> Actions -> New repository secret."
+            exit 1
+          fi
+          if [ -z "$FALLBACK_KEY" ]; then
+            echo "::warning::GROQ_API_KEY is not set — running primary-only, with no failover if OpenRouter rate-limits."
+          fi
+
       - name: Run Forward Test Paper Cycle
         env:
           DATABASE_URL: sqlite:///vyuha.db
+          # Primary route (config/settings.py defaults LLM_PROVIDER=openrouter).
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # Fallback route (LLM_FALLBACK_PROVIDER=groq).
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
           INDIAN_API_KEY: ${{ secrets.INDIAN_API_KEY }}
@@ -67,13 +103,10 @@ jobs:
           python scripts/update_readme_stats.py
 
       - name: Commit updated database state
-        run: |
-          git config user.name "10vulture1005"
-          git config user.email "vaidiksaxena14@gmail.com"
-          git add -f vyuha.db README.md
-          git diff --cached --quiet || git commit -m "📊 Forward test: $(date -u +'%Y-%m-%d')"
-          git pull --rebase -X theirs origin main
-          git push
+        uses: ./.github/actions/commit-and-push
+        with:
+          paths: vyuha.db README.md
+          message: "📊 Forward test: $(date -u +'%Y-%m-%d')"
 
       - name: Upload logs as artifact
         if: always()
@@ -85,15 +118,27 @@ jobs:
 
   weekly-refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     # Run only after the forward test has committed its DB update
     needs: forward-test
-    # Only run on Sundays
-    if: github.event.schedule == '0 11 * * 0' || github.event_name == 'workflow_dispatch'
+    # Run on the weekly (Sunday) cron or on demand.
+    #
+    # This used to string-match the literal cron expression
+    # (`github.event.schedule == '0 11 * * 0'`), which silently disables the
+    # whole job if anyone edits the time-of-day in the cron above — no error,
+    # just a job that never runs again. Matching the *day-of-week field* is
+    # robust to time edits: the weekday cron ('0 11 * * 1-5') does not end in
+    # a 0/7, the Sunday one ('0 11 * * 0') does.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      endsWith(github.event.schedule, ' 0') ||
+      endsWith(github.event.schedule, ' 7')
 
     steps:
-      - name: Checkout repository
+      - name: Checkout latest state after forward test
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Setup Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v5
@@ -104,13 +149,17 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml', 'uv.lock', 'requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Cache FinBERT model weights
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
-          key: finbert-model-prosusai-v1
+          key: finbert-${{ runner.os }}-ProsusAI-fintech-finbert-v1
+          restore-keys: |
+            finbert-${{ runner.os }}-
 
       - name: Install dependencies
         run: |
@@ -119,9 +168,35 @@ jobs:
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install transformers yfinance quantstats
 
+      - name: Install Screener HTTP parser dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Fetch fresh Screener.in statements
+        run: |
+          mkdir -p logs
+          set -o pipefail
+          python scripts/fetch_screener_snapshots.py \
+            --symbols-file config/universe_nifty500.csv \
+            --refresh 2>&1 | tee logs/screener-ingestion.log
+
+      - name: Verify required secrets
+        env:
+          PRIMARY_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          FALLBACK_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          set -uo pipefail
+          if [ -z "$PRIMARY_KEY" ]; then
+            echo "::error::OPENROUTER_API_KEY is not set — the weekly refresh cannot call any model."
+            exit 1
+          fi
+          if [ -z "$FALLBACK_KEY" ]; then
+            echo "::warning::GROQ_API_KEY is not set — running primary-only, with no failover."
+          fi
+
       - name: Run Weekly Fundamental + Sentiment Refresh
         env:
           DATABASE_URL: sqlite:///vyuha.db
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
           INDIAN_API_KEY: ${{ secrets.INDIAN_API_KEY }}
@@ -134,10 +209,19 @@ jobs:
           python scripts/run_daily_pipeline.py --weekly
 
       - name: Commit updated state
-        run: |
-          git config user.name "10vulture1005"
-          git config user.email "vaidiksaxena14@gmail.com"
-          git add -f vyuha.db data/
-          git diff --cached --quiet || git commit -m "📋 Weekly refresh: $(date -u +'%Y-%m-%d')"
-          git pull --rebase -X theirs origin main
-          git push
+        uses: ./.github/actions/commit-and-push
+        with:
+          paths: vyuha.db data/raw/fundamentals_investor.csv
+          message: "📋 Weekly refresh: $(date -u +'%Y-%m-%d')"
+
+      - name: Upload Screener ingestion diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screener-ingestion-${{ github.run_number }}
+          path: |
+            logs/
+            data/cache/screener/
+            data/raw/fundamentals_investor.csv
+          retention-days: 30
+          if-no-files-found: warn

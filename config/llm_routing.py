@@ -58,6 +58,8 @@ PROVIDER_KEY_FIELDS: dict[str, str] = {
     "xai": "XAI_API_KEY",
     "deepseek": "DEEPSEEK_API_KEY",
     "nvidia": "NVIDIA_API_KEY",
+    "mistral": "MISTRAL_API_KEY",
+    "openai_compatible": "OPENAI_COMPATIBLE_API_KEY",
     "ollama": "",  # local runtime, no auth
 }
 
@@ -77,12 +79,21 @@ def api_key_for(provider: str) -> Optional[str]:
         return None
     # Settings uses SecretStr everywhere; unwrap if present.
     value = secret.get_secret_value() if hasattr(secret, "get_secret_value") else secret
-    return value or None
+    value = (value or "").strip()
+    # HTTP Authorization headers are ASCII. Reject copied terminal masking,
+    # ellipses, and whitespace rather than letting httpx fail cryptically.
+    if (not value or not value.isascii() or any(ch.isspace() for ch in value)
+            or "…" in value or "..." in value or set(value) <= {"*", "•", "x", "X"}):
+        return None
+    return value
 
 
 def base_url_for(provider: str) -> Optional[str]:
-    """Return the default endpoint for ``provider``, or None if non-OpenAI-compatible."""
-    return PROVIDER_BASE_URLS.get(provider.lower())
+    """Resolve provider endpoint, including user-configured compatible APIs."""
+    provider = provider.lower()
+    if provider == "openai_compatible":
+        return (settings.OPENAI_COMPATIBLE_BASE_URL or "").strip() or None
+    return PROVIDER_BASE_URLS.get(provider)
 
 
 @dataclass(frozen=True)

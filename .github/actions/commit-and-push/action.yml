@@ -1,0 +1,125 @@
+name: Commit and push with retry
+description: >-
+  Commit the given paths and push them to the triggering branch, rebasing and
+  retrying on rejection.
+
+# Why this exists
+# --------------
+# The scheduled forward test commits an 802 KB SQLite binary, so its push
+# regularly races the previous run's push or a human commit. A bare
+# `git pull --rebase -X theirs && git push` loses an entire trading day of
+# database state when the push is rejected: `-X theirs` silently discards the
+# local side of every conflict, and there is no second attempt.
+#
+# This action instead:
+#   1. Rebases onto the remote tip *first*, so the local commit is replayed on
+#      top of whatever landed in the meantime.
+#   2. Retries the push, re-fetching and re-rebasing between attempts.
+#   3. Fails loudly (non-zero exit) if every attempt is rejected, rather than
+#      reporting success on a lost push.
+#
+# Note on `-X theirs`: it is kept deliberately for `vyuha.db`. The DB is a
+# single opaque binary, so a textual three-way merge of it is meaningless —
+# "theirs" (the freshly-pulled remote version) is the only sensible winner.
+# Text files are safe because this action only passes paths that are either
+# generated artifacts or the README block rewritten by update_readme_stats.py.
+
+inputs:
+  paths:
+    description: Space-separated paths to stage and commit.
+    required: true
+  message:
+    description: Commit message (supports `date` shell substitution at call site).
+    required: true
+  branch:
+    description: Branch to pull and push.
+    required: false
+    default: main
+  max-attempts:
+    description: Number of push attempts before giving up.
+    required: false
+    default: "4"
+
+runs:
+  using: composite
+  steps:
+    - name: Configure git identity
+      shell: bash
+      run: |
+        git config user.name "10vulture1005"
+        git config user.email "vaidiksaxena14@gmail.com"
+
+    - name: Stage and commit
+      id: commit
+      shell: bash
+      env:
+        PATHS: ${{ inputs.paths }}
+        MESSAGE: ${{ inputs.message }}
+      run: |
+        # $PATHS is intentionally unquoted: it is a space-separated list of
+        # paths and must word-split into separate `git add` arguments.
+        # shellcheck disable=SC2086
+        # -f is required: .gitignore excludes *.db and data/raw/*.csv.
+        git add -f $PATHS
+        if git diff --cached --quiet; then
+          echo "No changes to commit."
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        git commit -m "$MESSAGE"
+        echo "changed=true" >> "$GITHUB_OUTPUT"
+
+    - name: Rebase onto remote and push
+      shell: bash
+      env:
+        BRANCH: ${{ inputs.branch }}
+        MAX_ATTEMPTS: ${{ inputs.max-attempts }}
+        CHANGED: ${{ steps.commit.outputs.changed }}
+      run: |
+        set -uo pipefail
+
+        # `set -e` is deliberately NOT used. Every step in this loop is
+        # expected to be able to fail (fetch hiccup, rebase conflict, push
+        # rejection); with -e the first one would abort the run and lose the
+        # day's database state, which is exactly what this action exists to
+        # prevent. Failures are handled explicitly and retried instead.
+
+        # Nothing new locally — still pull so the workspace matches the remote,
+        # but there is no push to race against.
+        if [ "$CHANGED" != "true" ]; then
+          git pull --rebase origin "$BRANCH" || true
+          exit 0
+        fi
+
+        pushed=0
+        for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
+          if ! git fetch origin "$BRANCH"; then
+            echo "::warning::Fetch failed on attempt $attempt/$MAX_ATTEMPTS — retrying."
+            sleep $((attempt * 5))
+            continue
+          fi
+
+          # Rebase our commit(s) onto the freshly-fetched remote tip. If the
+          # rebase conflicts on a text file, abort and retry from a clean tree
+          # rather than leaving the workspace in a broken state.
+          if ! git rebase "origin/$BRANCH"; then
+            echo "::warning::Rebase conflict on attempt $attempt — aborting and retrying."
+            git rebase --abort >/dev/null 2>&1 || true
+            sleep $((attempt * 5))
+            continue
+          fi
+
+          if git push origin "HEAD:$BRANCH"; then
+            echo "Pushed on attempt $attempt."
+            pushed=1
+            break
+          fi
+
+          echo "::warning::Push rejected on attempt $attempt/$MAX_ATTEMPTS."
+          sleep $((attempt * 5))
+        done
+
+        if [ "$pushed" != "1" ]; then
+          echo "::error::Failed to push after $MAX_ATTEMPTS attempts — database state was NOT persisted."
+          exit 1
+        fi

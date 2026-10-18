@@ -9,6 +9,7 @@ if hasattr(_crewai_llm, "cache"):
 from crewai import Agent, Crew, Process, LLM
 from config.settings import settings
 from config.llm_routing import primary_route, fallback_route
+from crew.llm_failover import attach_failover
 from agents.tools.ledger_tools import (
     run_capital_allocator,
     run_risk_review,
@@ -47,12 +48,19 @@ def _route_model_string(route) -> str:
 
 
 def _build_llm(route) -> LLM:
-    """Construct a CrewAI ``LLM`` for a resolved route."""
-    return LLM(
+    """Construct a CrewAI ``LLM`` for a resolved route.
+
+    The returned instance carries the retry/failover wrapper from
+    ``crew.llm_failover``. CrewAI 1.15 resolves ``openai/...`` to its *native*
+    provider SDK, which never calls ``litellm.completion``, so the wrapper has
+    to sit on the instance itself to be reachable.
+    """
+    llm = LLM(
         model=_route_model_string(route),
         base_url=route.base_url,
         api_key=route.api_key or "",
     )
+    return attach_failover(llm)
 
 
 def create_crew(is_weekly: bool = False) -> Crew:

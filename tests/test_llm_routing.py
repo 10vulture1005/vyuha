@@ -24,10 +24,14 @@ def test_primary_route_defaults_to_openrouter():
 def test_primary_route_reads_api_key(monkeypatch):
     from config import llm_routing
     from config.settings import settings
+    from pydantic import SecretStr
 
-    secret = type(settings.OPENROUTER_API_KEY)
+    # SecretStr imported explicitly rather than derived from the current value:
+    # in CI (no .env) settings.OPENROUTER_API_KEY is None, so type(...) would
+    # have been NoneType and this test would die with a TypeError instead of
+    # asserting what it means to assert.
     monkeypatch.setattr(
-        settings, "OPENROUTER_API_KEY", secret("sk-or-v1-test"), raising=False
+        settings, "OPENROUTER_API_KEY", SecretStr("sk-or-v1-test"), raising=False
     )
     assert llm_routing.api_key_for("openrouter") == "sk-or-v1-test"
 
