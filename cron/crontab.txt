@@ -10,8 +10,8 @@ CRON_TZ=Asia/Kolkata
 # 2. Daily Quantitative Pipeline: Mon-Fri at 18:00 IST (Executes VyuhaFlow: Sentiment + Tech + Risk + Allocator)
 0  18 * * 1-5 root docker exec vyuha-app python scripts/run_daily_pipeline.py >> /var/log/vyuha/pipeline.log 2>&1
 
-# 3. Weekly Deep Fundamental Refresh: Sunday at 10:00 IST (Scrapes screener.in and recalculates Z-scores)
-0  10 * * 0   root docker exec vyuha-app python scripts/refresh_fundamentals.py >> /var/log/vyuha/fundamentals.log 2>&1
+# 3. Quarterly statements: seven days after Mar/Jun/Sep/Dec quarter close.
+0  10 7 1,4,7,10 *   root docker exec vyuha-app python scripts/refresh_fundamentals.py >> /var/log/vyuha/fundamentals.log 2>&1
 
 # 4. Monthly SIP Capital Credit: 1st of every month at 09:00 IST (Credits ₹1,000 to capital_ledger)
 0  9  1 * *   root docker exec vyuha-app python scripts/credit_sip.py >> /var/log/vyuha/sip.log 2>&1

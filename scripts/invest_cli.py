@@ -209,15 +209,23 @@ def cmd_status(args) -> int:
 def cmd_news(args) -> int:
     _require_investor_mode()
     from investor import news as news_mod
-    from agents.tools.news_tools import fetch_recent_headlines
+    from agents.tools.news_tools import fetch_marketaux_batch, fetch_drishti_batch
+
+    # Batched providers; the per-symbol Google News RSS path has been removed.
+    by_symbol = {}
+    try:
+        by_symbol.update(fetch_marketaux_batch(args.symbol, lookback_days=args.days))
+        by_symbol.update(fetch_drishti_batch(args.symbol, lookback_days=args.days))
+    except Exception as exc:
+        print(f"  fetch failed ({exc})", file=sys.stderr)
 
     events = []
     for sym in args.symbol:
-        try:
-            for h in fetch_recent_headlines(sym, sym, lookback_days=args.days):
-                events.append(news_mod.classify_headline(sym, h))
-        except Exception as exc:
-            print(f"  {sym}: fetch failed ({exc})", file=sys.stderr)
+        headlines = by_symbol.get(sym) or []
+        if not headlines:
+            print(f"  {sym}: no headlines from any provider", file=sys.stderr)
+            continue
+        events.extend(news_mod.classify_headline(sym, h) for h in headlines)
 
     if not events:
         print("No headlines retrieved.")

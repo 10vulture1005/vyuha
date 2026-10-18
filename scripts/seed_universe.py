@@ -66,8 +66,7 @@ def ingest_to_db(records: list[dict[str, str]]) -> int:
         for rec in records:
             universe_row = Universe(
                 symbol=rec["symbol"],
-                name=rec["name"],
-                isin=rec["isin"],
+                company_name=rec["name"],
                 sector=rec["sector"],
                 exchange=rec["exchange"],
             )

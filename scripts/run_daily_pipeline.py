@@ -2,6 +2,15 @@
 import sys
 import argparse
 from datetime import date
+
+from core.observability import setup_logging
+
+# Configure Loguru (stdout + rotating logs/vyuha_*.log) before any other module
+# logs anything. Must run before crew.flow_runner is imported so the very first
+# pipeline line already lands on disk. Without this the forward-test workflow
+# uploads an empty logs/ artifact and a failed run leaves no diagnostics.
+setup_logging()
+
 from loguru import logger
 from crew.flow_runner import run_daily_flow
 from notifications.digest_builder import send_daily_digest_execution

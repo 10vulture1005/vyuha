@@ -259,7 +259,7 @@ class InvestorModeEngine:
         Rows are written with `is_proxy=False`; only the backtest writes
         proxy rows, so the two can never be confused.
         """
-        from agents.tools.news_tools import fetch_recent_headlines
+        from agents.tools.news_tools import fetch_marketaux_batch, fetch_drishti_batch
 
         watch = list(self.engine.positions.keys())
         watch += [s for s in self.eligible_watchlist() if s not in watch]
@@ -268,11 +268,20 @@ class InvestorModeEngine:
 
         out: Dict[str, List[news_mod.NewsEvent]] = {}
         rows: List[NewsEventRow] = []
+        # Batched providers only — the per-symbol Google News RSS path has
+        # been removed. One call covers the whole watch list rather than one
+        # scrape per symbol.
+        by_symbol: Dict[str, list] = {}
+        try:
+            by_symbol.update(fetch_marketaux_batch(watch, lookback_days=2))
+            by_symbol.update(fetch_drishti_batch(watch, lookback_days=2))
+        except Exception as exc:
+            logger.warning(f"Batched news fetch failed: {exc}")
+
         for sym in watch:
-            try:
-                headlines = fetch_recent_headlines(sym, sym, lookback_days=2)
-            except Exception as exc:
-                logger.debug(f"Headline fetch failed for {sym}: {exc}")
+            headlines = by_symbol.get(sym) or []
+            if not headlines:
+                logger.debug(f"No provider headlines for {sym}; not persisted.")
                 continue
             events = [
                 news_mod.classify_headline(sym, h, use_finbert=True, use_llm=True)
@@ -524,7 +533,7 @@ class InvestorModeEngine:
         new_stop = Decimal(str(price)) - Decimal("3.5") * (Decimal(str(price)) * Decimal("0.03"))
 
         if holding is not None and holding.status == "OPEN":
-            total_cost = holding.avg_buy_price * holding.qty + gross
+            total_cost = Decimal(str(holding.avg_buy_price)) * Decimal(int(holding.qty)) + gross
             holding.qty += qty
             holding.initial_qty += qty
             holding.avg_buy_price = (total_cost / holding.qty).quantize(Decimal("0.0001"))

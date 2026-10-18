@@ -48,7 +48,9 @@ _STYLE = [
 
 
 def _style_kwargs():
-    return {"style": _STYLE}
+    from prompt_toolkit.styles import Style
+
+    return {"style": Style(_STYLE)}
 
 
 # ─── Output helpers ──────────────────────────────────────────────────────────
@@ -107,18 +109,23 @@ def prompt_press_any_key(message: str = "Press Enter to continue…") -> None:
 
 
 def prompt_yes_no(question: str, default: bool = True) -> bool:
-    questionary, _ = _q()
     try:
+        questionary, _ = _q()
         ans = questionary.confirm(
-            question,
-            default=default,
-            **_style_kwargs(),
+            question, default=default, **_style_kwargs(),
         ).ask()
-    except Exception:
+        if ans is not None:
+            return bool(ans)
+    except Exception as exc:
+        print_warning(f"Interactive prompt unavailable ({type(exc).__name__}); using text input.")
+    try:
+        suffix = "Y/n" if default else "y/N"
+        answer = input(f"{question} [{suffix}]: ").strip().lower()
+    except (EOFError, KeyboardInterrupt):
         return default
-    if ans is None:
+    if not answer:
         return default
-    return bool(ans)
+    return answer in {"y", "yes"}
 
 
 # ─── Interactive single-ticker prompts ───────────────────────────────────────
@@ -131,34 +138,43 @@ def prompt_ticker(question: str = "Ticker symbol (e.g. RELIANCE, TATASTEEL.BO):"
     just accepts whatever the user types. Empty input / Ctrl-C returns
     None so the caller can bail.
     """
-    questionary, _ = _q()
-    raw = questionary.text(
-        question,
-        validate=lambda x: (
-            len(x.strip()) > 0 or "Please enter a ticker (e.g. RELIANCE)."
-        ),
-        **_style_kwargs(),
-    ).ask()
+    try:
+        questionary, _ = _q()
+        raw = questionary.text(
+            question,
+            validate=lambda x: len(x.strip()) > 0 or "Please enter a ticker (e.g. RELIANCE).",
+            **_style_kwargs(),
+        ).ask()
+    except Exception as exc:
+        print_warning(f"Ticker prompt unavailable ({type(exc).__name__}); using text input.")
+        try:
+            raw = input(f"{question} ").strip()
+        except (EOFError, KeyboardInterrupt):
+            return None
     if raw is None:
         return None
-    return raw.strip().upper()
+    return raw.strip().upper() or None
 
 
 def prompt_date(question: str = "Analysis date (YYYY-MM-DD, blank = today):") -> Optional[str]:
     """Prompt for an ISO date. Blank means today (returned as '')."""
-    questionary, _ = _q()
-    raw = questionary.text(
-        question,
-        default="",
-        validate=lambda x: (
-            x.strip() == "" or _is_iso_date(x.strip()) or
-            "Please use YYYY-MM-DD or leave blank for today."
-        ),
-        **_style_kwargs(),
-    ).ask()
+    try:
+        questionary, _ = _q()
+        raw = questionary.text(
+            question, default="",
+            validate=lambda x: x.strip() == "" or _is_iso_date(x.strip()) or "Please use YYYY-MM-DD or leave blank for today.",
+            **_style_kwargs(),
+        ).ask()
+    except Exception as exc:
+        print_warning(f"Date prompt unavailable ({type(exc).__name__}); using text input.")
+        try:
+            raw = input(question + " ").strip()
+        except (EOFError, KeyboardInterrupt):
+            return None
     if raw is None:
         return None
-    return raw.strip()
+    raw = raw.strip()
+    return raw if not raw or _is_iso_date(raw) else None
 
 
 def _is_iso_date(s: str) -> bool:
@@ -234,25 +250,46 @@ def prompt_main_menu() -> Optional[str]:
       cli        launch upstream rich interactive UI
       exit       leave the program
     """
-    questionary, Choice = _q()
-    choices = [
-        Choice("🔍  Run pipeline for one ticker", value="single"),
-        Choice("📊  Cross-check my watchlist (portfolio)", value="portfolio"),
-        Choice("📈  Backfill realised outcomes (resolve)", value="resolve"),
-        Choice("⚙   Change provider / API key (setup)", value="setup"),
-        Choice("🎨  Launch upstream rich CLI (cli)", value="cli"),
-        Choice("🚪  Exit", value="exit"),
-    ]
     try:
+        questionary, Choice = _q()
+        choices = [
+            Choice("🔍  Run pipeline for one ticker", value="single"),
+            Choice("📊  Cross-check my watchlist (portfolio)", value="portfolio"),
+            Choice("📈  Backfill realised outcomes (resolve)", value="resolve"),
+            Choice("⚙   Change provider / API key (setup)", value="setup"),
+            Choice("🎨  Launch upstream rich CLI (cli)", value="cli"),
+            Choice("🚪  Exit", value="exit"),
+        ]
         choice = questionary.select(
             "What would you like to do?",
             choices=choices,
             qmark="▸",
             **_style_kwargs(),
         ).ask()
-    except Exception:
-        return None
-    return choice
+        if choice is not None:
+            return choice
+        raise RuntimeError("selector returned no choice")
+    except Exception as exc:
+        # Questionary can fail in terminals lacking cursor/key support. Do not
+        # turn that failure into a misleading "Goodbye"; offer a plain prompt.
+        print_warning(f"Interactive selector unavailable ({type(exc).__name__}); using text menu.")
+        labels = [
+            "Run pipeline for one ticker", "Cross-check watchlist",
+            "Backfill realised outcomes", "Change provider / API key",
+            "Launch upstream rich CLI", "Exit",
+        ]
+        for i, label in enumerate(labels, start=1):
+            print(f"  {i}. {label}")
+        actions = {"1": "single", "2": "portfolio", "3": "resolve",
+                   "4": "setup", "5": "cli", "6": "exit"}
+        while True:
+            try:
+                answer = input("Choose 1-6: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                return None
+            if answer in actions:
+                return actions[answer]
+            print_warning("Please enter a number from 1 to 6.")
 
 
 def run_main_loop() -> int:

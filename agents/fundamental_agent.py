@@ -10,7 +10,7 @@ from db.session import get_session
 from db.models import FundamentalSnapshot, Watchlist, WatchlistStatus
 from universe.computed_point_in_time import PointInTimeUniverse
 from agents.tools.fundamental_tools import (
-    scrape_symbol_fundamentals,
+    snapshot_from_records,
     passes_hard_filters,
     compute_relative_conviction_scores
 )
@@ -25,13 +25,19 @@ class FundamentalAgent:
         symbols = universe.get_midcap_universe(datetime.now(timezone.utc).date(), top_n=top_n)
         logger.info(f"Loaded {len(symbols)} symbols from Point-in-Time universe.")
 
+        # Read the verified statement store once per scan; never use legacy ratios.
+        import pandas as pd
+        from config.settings import BASE_DIR
+        path = BASE_DIR / 'data/raw/fundamentals_investor.csv'
+        frame = pd.read_csv(path) if path.exists() else pd.DataFrame()
+        records = frame.to_dict('records')
         valid_snapshots = []
         failed_count = 0
 
         with get_session() as session:
             for sym in symbols:
                 try:
-                    snap = scrape_symbol_fundamentals(sym)
+                    snap = snapshot_from_records(sym, records)
                     if passes_hard_filters(snap):
                         valid_snapshots.append(snap)
                     else:

@@ -1,22 +1,20 @@
-# VYUHA Docker build exclusions
-.env
-.env.*
 .git
 .venv
-logs/
-vyuha.db
+__pycache__
+*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.env
+.env.*
+!.env.example
 *.db
-*.pyc
-__pycache__/
-.pytest_cache/
-tests/
-docs/
-scratch/
+*.sqlite
+*.sqlite3
+logs/
 data/raw/
 data/cache/
+docs/investor_backtest/
+docs/synthetic_stress/
 *.ipynb
-stats.html
-RaynerTeo_BollingerBand_01.ipynb
-TradingBotOanda.ipynb
-future ideas.md
-" 
+scratch/

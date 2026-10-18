@@ -18,8 +18,11 @@ from agents.tools.fundamental_tools import (
 from agents.tools.news_tools import (
     HeadlineSchema,
     ClassificationResult,
-    fetch_recent_headlines,
+    fetch_marketaux_batch,
+    fetch_drishti_batch,
+    due_marketaux_slice,
     classify_red_flags,
+    classify_symbols_batch,
 )
 
 from agents.tools.ta_tools import (
@@ -46,7 +49,9 @@ __all__ = [
     "compute_relative_conviction_scores",
     "HeadlineSchema",
     "ClassificationResult",
-    "fetch_recent_headlines",
+    "fetch_marketaux_batch",
+    "fetch_drishti_batch",
+    "due_marketaux_slice",
     "classify_red_flags",
     "load_ohlc_df",
     "detect_w_bottom",

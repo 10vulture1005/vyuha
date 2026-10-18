@@ -36,7 +36,7 @@ from typing import Optional
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 try:
-    from dotenv import find_dotenv, set_key
+    from dotenv import dotenv_values, find_dotenv, set_key
 except ImportError:
     find_dotenv = None  # type: ignore[assignment]
     set_key = None  # type: ignore[assignment]
@@ -110,6 +110,14 @@ PROVIDERS: list[dict] = [
         "quick": "mistral-small-latest",
         "needs_key": True,
         "help": "https://console.mistral.ai/api-keys/",
+    },
+    {
+        "key": "nvidia",
+        "name": "NVIDIA NIM",
+        "deep": "meta/llama-3.1-70b-instruct",
+        "quick": "meta/llama-3.1-8b-instruct",
+        "needs_key": True,
+        "help": "https://build.nvidia.com/",
     },
     {
         "key": "ollama",
@@ -191,7 +199,9 @@ def _set_env_var(env_path: Path, key: str, value: str) -> None:
             new_lines.append(f"{key}={value}")
         env_path.write_text("\n".join(new_lines) + "\n")
     else:
-        set_key(str(env_path), key, value)
+        result = set_key(str(env_path), key, value)
+        if not result[0] or dotenv_values(env_path).get(key) != value:
+            raise RuntimeError(f"Could not verify {key} was saved to {env_path}.")
 
 
 def _reload_settings() -> None:
@@ -266,9 +276,38 @@ def _prompt_model(prompt_text: str, default: str) -> str:
     return raw.strip()
 
 
+def _is_usable_api_key(value: str) -> bool:
+    """Reject blank, masked, placeholder, or non-ASCII API credentials."""
+    value = (value or "").strip()
+    if len(value) < 8 or not value.isascii() or any(ch.isspace() for ch in value):
+        return False
+    if any(marker in value.lower() for marker in ("your-key", "placeholder", "...", "…")):
+        return False
+    return not set(value) <= {"*", "•", "x", "X"}
+
+
+def _validate_provider_api_key(env_var: str, value: str) -> None:
+    if not _is_usable_api_key(value):
+        raise ValueError(f"Invalid {env_var}: expected an unmasked ASCII API key.")
+    if env_var == "OPENROUTER_API_KEY" and value.strip().startswith("sk-live-"):
+        raise ValueError(
+            "This is an sk-live- credential, not the expected OpenRouter key format "
+            "(sk-or-v1-). Create a key at https://openrouter.ai/settings/keys. "
+            "If your key belongs to another service, select that provider or its "
+            "OpenAI-compatible endpoint instead. Do not change the key's prefix."
+        )
+
+
 def _prompt_api_key(env_var: str) -> str:
     """Prompt for an API key (hidden input)."""
     import questionary
+
+    def validate(value: str):
+        try:
+            _validate_provider_api_key(env_var, value)
+        except ValueError as exc:
+            return str(exc)
+        return True
 
     key = questionary.password(
         f"Paste your {env_var}:",
@@ -276,7 +315,7 @@ def _prompt_api_key(env_var: str) -> str:
             ("text", "fg:cyan"),
             ("highlighted", "noinherit"),
         ]),
-        validate=lambda x: len(x.strip()) > 0 or f"{env_var} cannot be empty",
+        validate=validate,
     ).ask()
     if key is None or not key.strip():
         print("\nSetup cancelled.", file=sys.stderr)
@@ -319,6 +358,9 @@ def non_interactive_setup(
     deep_model = deep_model or provider_entry["deep"]
     quick_model = quick_model or provider_entry["quick"]
 
+    if env_var and api_key:
+        _validate_provider_api_key(env_var, api_key)
+
     _set_env_var(env_path, "TRADINGAGENTS_ENABLED", "true")
     _set_env_var(env_path, "TRADINGAGENTS_LLM_PROVIDER", provider)
     _set_env_var(env_path, "TRADINGAGENTS_DEEP_THINK_LLM", deep_model)
@@ -359,6 +401,8 @@ def run_setup() -> dict:
         api_key = _prompt_api_key(env_var)
 
     env_path = _find_env_path()
+    if env_var and api_key:
+        _validate_provider_api_key(env_var, api_key)
     _set_env_var(env_path, "TRADINGAGENTS_ENABLED", "true")
     _set_env_var(env_path, "TRADINGAGENTS_LLM_PROVIDER", provider["key"])
     _set_env_var(env_path, "TRADINGAGENTS_DEEP_THINK_LLM", deep)
@@ -379,6 +423,7 @@ def run_setup() -> dict:
     elif env_var is None:
         print(f"  API key:        not required for {provider['name']}")
     print()
+    print("  Settings saved locally; provider authentication has not been tested.")
     print("  Run `python scripts/run_vyuha_agent.py single RELIANCE --full` to try it.")
     print()
 
@@ -401,12 +446,22 @@ def needs_api_key(provider: str) -> bool:
     if env_var is None:
         return False
     existing = os.environ.get(env_var) or ""
-    if existing and not existing.startswith(("sk-", "test-", "your-", "sk-ant-")) and "placeholder" not in existing:
+    # Settings loads .env for the application, but this wizard's preflight also
+    # needs to see values persisted by a previous CLI process. Read only the
+    # requested variable; never print or log its value.
+    if not existing:
+        try:
+            from dotenv import dotenv_values
+            env_path = _find_env_path()
+            existing = str(dotenv_values(env_path).get(env_var) or "")
+        except Exception:
+            existing = ""
+    if existing and _is_usable_api_key(existing) and not existing.startswith(("test-", "your-")):
         return False
     # Treat obvious placeholder values from .env.example as missing.
     if existing in ("", "sk-your-key-here", "sk-ant-your-key-here"):
         return True
-    return not existing or "your-" in existing or "placeholder" in existing
+    return not _is_usable_api_key(existing) or "your-" in existing or "placeholder" in existing
 
 
 def maybe_run_setup(force: bool = False) -> Optional[dict]:

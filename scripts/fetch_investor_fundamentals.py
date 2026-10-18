@@ -77,8 +77,6 @@ CASH_MAP = {
     "totalcashfromoperatingactivities": "ocf",
     "freeCashFlow": "fcf",
 }
-#: Extra pledge data is only available in the repo's older hand-curated file.
-LEGACY_PLEDGE = BASE_DIR / "data" / "raw" / "fundamentals.csv"
 
 
 def _pick(df: pd.DataFrame, mapping: Dict[str, str]) -> Dict[str, pd.Series]:
@@ -124,24 +122,6 @@ def _to_records(
     return rows
 
 
-def _load_pledge() -> Dict[str, float]:
-    """Symbol -> most recent promoter pledge %, from the legacy curated file."""
-    if not LEGACY_PLEDGE.exists():
-        return {}
-    try:
-        df = pd.read_csv(LEGACY_PLEDGE)
-    except Exception:
-        return {}
-    if "promoter_pledge_pct" not in df.columns:
-        return {}
-    out = {}
-    for sym, grp in df.groupby("symbol"):
-        vals = pd.to_numeric(grp["promoter_pledge_pct"], errors="coerce").dropna()
-        if len(vals):
-            out[str(sym).strip().upper()] = float(vals.iloc[-1])
-    return out
-
-
 def fetch_symbol(symbol: str, pledge_map: Dict[str, float]) -> List[Dict]:
     """Fetches every statement period available for one symbol."""
     import yfinance as yf
@@ -157,18 +137,16 @@ def fetch_symbol(symbol: str, pledge_map: Dict[str, float]) -> List[Dict]:
         except Exception:
             continue
         for rec in _to_records(income, balance, cash):
-            key = rec["period_end"]
+            key = (rec["period_end"], freq)
             if key in seen:
-                continue  # annual wins over quarterly for the same date
+                continue  # deduplicate within frequency, not across annual/quarterly
             seen.add(key)
             rec["symbol"] = symbol
             rec["frequency"] = freq
             rows.append(rec)
 
-    pledge = pledge_map.get(symbol.upper())
     for rec in rows:
-        if pledge is not None:
-            rec["promoter_pledge_pct"] = pledge
+        rec['data_source'] = 'yfinance'
     return rows
 
 
@@ -186,7 +164,7 @@ def main() -> int:
     print(f"Fetching fundamentals for {len(symbols)} symbols...")
 
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    pledge_map = _load_pledge()
+    pledge_map = {}  # Legacy pledge values are unverified and not point-in-time.
 
     all_rows: List[Dict] = []
     failed: List[str] = []
@@ -207,6 +185,10 @@ def main() -> int:
                 continue
             time.sleep(args.sleep)
 
+        # Old JSON caches may contain the former legacy pledge backfill.
+        for row in rows:
+            row.pop('promoter_pledge_pct', None)
+            row['data_source'] = 'yfinance'
         all_rows.extend(rows)
         if i % 10 == 0 or not rows:
             print(f"  [{i}/{len(symbols)}] {sym}: {len(rows)} periods")
@@ -217,7 +199,7 @@ def main() -> int:
 
     df = pd.DataFrame(all_rows)
     cols = [
-        "symbol", "period_end", "filing_date", "frequency",
+        "symbol", "period_end", "filing_date", "frequency", "data_source",
         "revenue", "pat", "eps_diluted", "eps_basic",
         "ebit", "interest_expense",
         "equity", "debt", "total_assets", "current_assets", "current_liabilities",
@@ -227,7 +209,18 @@ def main() -> int:
         if c not in df.columns:
             df[c] = np.nan
     df = df[cols].sort_values(["symbol", "period_end"])
-    df.to_csv(args.out, index=False)
+    from data.screener_fundamentals import merge_fundamentals
+    output = Path(args.out)
+    if output.exists():
+        prior = pd.read_csv(output)
+        # Only retain explicitly sourced records. Untagged legacy rows are not certified.
+        if 'data_source' in prior:
+            prior = prior[prior.data_source.isin(['yfinance', 'screener', 'yfinance+screener'])]
+            df = merge_fundamentals(prior, df)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temp = output.with_suffix('.tmp')
+    df.to_csv(temp, index=False)
+    temp.replace(output)
 
     syms = df["symbol"].nunique()
     print(

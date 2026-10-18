@@ -112,16 +112,31 @@ class TradingAgentsGraph:
         if self.callbacks:
             llm_kwargs["callbacks"] = self.callbacks
 
+        # Backup provider for provider-level failures. All four keys are
+        # optional; when they're absent the client is built unwrapped and the
+        # graph runs on the primary alone.
+        fallback_kwargs = {
+            key: self.config.get(key)
+            for key in (
+                "fallback_llm_provider",
+                "fallback_llm_model",
+                "fallback_base_url",
+                "fallback_api_key",
+            )
+        }
+
         deep_client = create_llm_client(
             provider=self.config["llm_provider"],
             model=self.config["deep_think_llm"],
             base_url=self.config.get("backend_url"),
+            **fallback_kwargs,
             **llm_kwargs,
         )
         quick_client = create_llm_client(
             provider=self.config["llm_provider"],
             model=self.config["quick_think_llm"],
             base_url=self.config.get("backend_url"),
+            **fallback_kwargs,
             **llm_kwargs,
         )
 

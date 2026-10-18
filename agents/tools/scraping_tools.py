@@ -2,7 +2,7 @@
 """Resilient web scraping engine with automatic fetcher escalation.
 
 Wraps scrapling with a Fetcher -> StealthyFetcher (Camoufox) escalation
-strategy. On 403/429 or bot-challenge from the fast TLS-fingerprinted
+strategy. On 403 or bot-challenge from the fast TLS-fingerprinted
 HTTP scrape, the engine transparently escalates to a headless browser.
 
 Adaptive selectors (auto_save=True, adaptive=True) let scrapling
@@ -39,8 +39,8 @@ def _rate_limit():
 def _get_scrapling():
     """Lazily import scrapling components to avoid hard dependency in test contexts."""
     from scrapling.fetchers import Fetcher, StealthyFetcher
-    from scrapling import Adaptor
-    return Fetcher, StealthyFetcher, Adaptor
+    from scrapling import Selector
+    return Fetcher, StealthyFetcher, Selector
 
 
 class ResilientScraper:
@@ -51,32 +51,41 @@ class ResilientScraper:
         self.cache_path = str(CACHE_DIR)
 
     def fetch_page(self, url: str) -> Optional[Any]:
-        """Attempts fast TLS-fingerprinted HTTP scrape; escalates to Camoufox on 403/429 or bot challenge.
+        """Attempts fast TLS-fingerprinted HTTP scrape; escalates to Camoufox only on 403.
 
         Returns an Adaptor object on success, or None on failure.
         """
-        Fetcher, StealthyFetcher, Adaptor = _get_scrapling()
+        Fetcher, StealthyFetcher, Selector = _get_scrapling()
 
         _rate_limit()
         logger.debug(f"Attempting fast scrape via Fetcher for: {url}")
         try:
             fetcher = Fetcher(auto_match=True)
-            response = fetcher.get(url, timeout=15)
-            if response.status_code == 200:
-                return Adaptor(
+            from data.screener_client import retry_after
+            for attempt in range(5):
+                response = fetcher.get(url, timeout=15)
+                status = getattr(response, 'status_code', getattr(response, 'status', None))
+                if status != 429:
+                    break
+                delay = max(5 * 2 ** attempt, retry_after(
+                    getattr(response, 'headers', {}).get('Retry-After')))
+                time.sleep(delay)
+                _rate_limit()
+            if status not in (200, 403):
+                logger.warning(f'HTTP {status} for {url}; not escalating')
+                return None
+            if status == 200:
+                return Selector(
                     response.text,
                     url=url,
-                    auto_save=self.use_adaptive,
                     adaptive=self.use_adaptive,
-                    storage_dir=self.cache_path,
                 )
             logger.warning(
-                f"Fetcher returned status {response.status_code} for {url}. Escalating..."
+                f"Fetcher returned status {status} for {url}. Escalating..."
             )
         except Exception as e:
-            logger.warning(
-                f"Fetcher exception for {url}: {e}. Escalating to StealthyFetcher..."
-            )
+            logger.warning(f'Fetcher exception for {url}: {e}; not escalating')
+            return None
 
         # Escalation to StealthyFetcher (Camoufox browser automation)
         try:
@@ -85,12 +94,10 @@ class ResilientScraper:
             stealth = StealthyFetcher(headless=True, block_images=True)
             response = stealth.fetch(url, timeout=30)
             if response.status == 200:
-                return Adaptor(
+                return Selector(
                     response.html,
                     url=url,
-                    auto_save=self.use_adaptive,
                     adaptive=self.use_adaptive,
-                    storage_dir=self.cache_path,
                 )
             logger.error(
                 f"StealthyFetcher failed with status {response.status} for {url}"

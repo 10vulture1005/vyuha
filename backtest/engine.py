@@ -236,7 +236,7 @@ class EventDrivenBacktester:
                     
                     # Slippage Realism (Phase F)
                     spread_proxy = Decimal(str((bar["High"] - bar["Low"]) / bar["Close"])) if bar["Close"] > 0 else Decimal("0.01")
-                    slippage_pct = spread_proxy * Decimal("0.10")  # 10% of daily spread
+                    slippage_pct = spread_proxy * Decimal("0.10") if settings.INCLUDE_FRICTION else Decimal("0")  # 10% of daily spread
                     fill_price_sell = current_close * (Decimal("1") - slippage_pct)
                     
                     # ATR Scaling (Phase E)
@@ -409,7 +409,7 @@ class EventDrivenBacktester:
                           # Slippage Realism (Phase F) for Buy
                           bar = df_slice.iloc[-1]
                           spread_proxy = Decimal(str((bar["High"] - bar["Low"]) / bar["Close"])) if bar["Close"] > 0 else Decimal("0.01")
-                          slippage_pct = spread_proxy * Decimal("0.10")
+                          slippage_pct = spread_proxy * Decimal("0.10") if settings.INCLUDE_FRICTION else Decimal("0")
                           fill_price_buy = Decimal(str(sig_res.entry_price)) * (Decimal("1") + slippage_pct)
                         
                           daily_signals.append({

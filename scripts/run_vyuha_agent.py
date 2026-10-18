@@ -97,6 +97,27 @@ def cmd_setup(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_providers(args: argparse.Namespace) -> int:
+    """Show configured LLM routes without ever printing credentials."""
+    from config.llm_routing import primary_route, fallback_route
+
+    primary = primary_route()
+    fallback = fallback_route()
+    print("LLM provider configuration (keys are never displayed):")
+    for label, route in (("primary", primary), ("fallback", fallback)):
+        if route is None:
+            print(f"  {label:<8} disabled")
+            continue
+        status = "ready" if route.is_usable and route.base_url else "missing credentials/endpoint"
+        configured = bool(route.api_key) or route.provider == "ollama"
+        print(f"  {label:<8} {route.provider}/{route.model} — {status}; key {'set' if configured else 'not set'}")
+        if route.base_url is None:
+            print("           endpoint not configured")
+    print("\nConfigure with `vyuha setup` or environment variables. For custom endpoints:")
+    print("  LLM_PROVIDER=openai_compatible OPENAI_COMPATIBLE_BASE_URL=https://…")
+    return 0 if primary.is_usable and primary.base_url else 2
+
+
 def cmd_single(args: argparse.Namespace) -> int:
     from agents.vyuha_agent import LLMPipelineAgent
 
@@ -316,6 +337,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_setup = sub.add_parser("setup", help="Pick LLM provider + paste API key.")
     p_setup.set_defaults(func=cmd_setup)
 
+    p_providers = sub.add_parser("providers", help="Check configured LLM provider authentication without exposing keys.")
+    p_providers.set_defaults(func=cmd_providers)
+
     p_single = sub.add_parser("single", help="Run the pipeline for one ticker.")
     p_single.add_argument("ticker", help="NSE/BSE ticker (bare or .NS/.BO-suffixed)")
     p_single.add_argument("--date", default="", help="ISO date (default: today)")
@@ -433,6 +457,10 @@ def main() -> int:
         from scripts.cli_ui import run_main_loop
         return run_main_loop()
 
+    if args.command == "setup":
+        return cmd_setup(args)
+    if args.command == "providers":
+        return cmd_providers(args)
     if args.command == "single":
         return cmd_single(args)
     if args.command == "portfolio":

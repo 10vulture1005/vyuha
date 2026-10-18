@@ -302,6 +302,15 @@ class OpenAIClient(BaseLLMClient):
             # placeholder. The env-var name is the single source in api_key_env.
             api_key_env = get_api_key_env(self.provider)
             api_key = os.environ.get(api_key_env) if api_key_env else None
+            if not api_key:
+                # Pydantic Settings reads .env, but this vendored client used
+                # os.environ only. That made CLI setup appear successful while
+                # a fresh process sent requests without Authorization.
+                try:
+                    from config.llm_routing import api_key_for
+                    api_key = api_key_for(self.provider)
+                except Exception:
+                    api_key = None
             if api_key:
                 llm_kwargs["api_key"] = api_key
             elif spec.key_optional:

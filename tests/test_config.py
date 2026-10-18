@@ -16,7 +16,7 @@ def test_settings_default_loading():
 
     s = Settings(DATABASE_URL="sqlite:///test.db")
     assert s.MONTHLY_SIP_AMOUNT == 1000
-    assert s.MAX_POSITIONS == 5
+    assert s.MAX_POSITIONS == 8
     assert s.LIVE_TRADING_ENABLED is False
     assert s.DP_CHARGE_PER_SELL == 15.0
     assert s.DEFAULT_LLM_MODEL == "claude-3-5-sonnet-20241022"

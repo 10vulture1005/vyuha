@@ -57,11 +57,14 @@ def session(engine) -> Session:
 
 
 def _seed_universe(session: Session, symbol: str = "TEST_REL") -> Universe:
-    """Helper: insert a universe row for FK tests."""
+    """Helper: insert a universe row for FK tests.
+
+    Note: the model exposes ``company_name`` (not ``name``) and has never had
+    an ``isin`` column — ``symbol`` is the unique key.
+    """
     u = Universe(
         symbol=symbol,
-        name="Test Company",
-        isin=f"INE{symbol}001",
+        company_name="Test Company",
         sector="Energy",
         exchange="NSE",
     )
@@ -96,21 +99,20 @@ def test_all_tables_created(engine):
 
 def test_universe_insert_and_read(session):
     """Insert and retrieve a universe record."""
-    u = _seed_universe(session, "RELIANCE")
+    _seed_universe(session, "RELIANCE")
     result = session.query(Universe).filter_by(symbol="RELIANCE").first()
     assert result is not None
-    assert result.name == "Test Company"
+    assert result.company_name == "Test Company"
     assert result.exchange == "NSE"
 
 
-def test_universe_isin_unique_constraint(session):
-    """Duplicate ISINs must be rejected."""
+def test_universe_symbol_unique_constraint(session):
+    """Duplicate symbols must be rejected (``symbol`` is the unique key)."""
     _seed_universe(session, "SYM_A")
     with pytest.raises(IntegrityError):
         u2 = Universe(
-            symbol="SYM_B",
-            name="Other Company",
-            isin="INESYM_A001",  # same ISIN
+            symbol="SYM_A",  # duplicate symbol
+            company_name="Other Company",
             sector="Tech",
             exchange="NSE",
         )
@@ -142,8 +144,8 @@ def test_fundamental_snapshot_fk_valid(session):
         symbol="FUND_FK",
         snapshot_date=date.today(),
         roe=Decimal("18.5000"),
-        debt_to_equity=Decimal("0.3500"),
-        eps_growth_3y=Decimal("14.2000"),
+        debt_equity=Decimal("0.3500"),
+        eps_cagr_3y=Decimal("14.2000"),
         conviction_score=Decimal("78.00"),
     )
     session.add(fs)
@@ -190,7 +192,8 @@ def test_technical_signal_insert(session):
     session.flush()
 
     result = session.query(TechnicalSignal).filter_by(symbol="TECH_SIG").first()
-    assert result.pattern_type == "w_bottom"
+    # PatternType values are upper-case (PatternType.W_BOTTOM.value == "W_BOTTOM").
+    assert result.pattern_type == PatternType.W_BOTTOM.value
     assert result.signal_strength == Decimal("72.50")
 
 
@@ -200,12 +203,23 @@ def test_technical_signal_insert(session):
 def test_portfolio_holding_insert(session):
     """Insert a portfolio holding."""
     _seed_universe(session, "HOLD_TEST")
+    # Mirrors how core/capital_allocator.py opens a position: initial_qty
+    # seeds the partial-exit accounting and initial_risk is the per-share
+    # risk at entry (entry - structural stop). Both are NOT NULL, and the
+    # trailing-stop ratchet in core/paper_engine.py divides by initial_risk,
+    # so a zero here would be a latent division bug rather than a test detail.
+    entry = Decimal("1500.2500")
+    stop = Decimal("1380.0000")
     h = PortfolioHolding(
         symbol="HOLD_TEST",
         qty=2,
-        avg_buy_price=Decimal("1500.2500"),
+        initial_qty=2,
+        avg_buy_price=entry,
         first_buy_date=date.today(),
-        trailing_stop_price=Decimal("1380.0000"),
+        trailing_stop_price=stop,
+        initial_risk=entry - stop,
+        entry_pattern="w_bottom",
+        tiers_hit=[],
         status=HoldingStatus.OPEN.value,
     )
     session.add(h)
@@ -213,7 +227,8 @@ def test_portfolio_holding_insert(session):
 
     result = session.query(PortfolioHolding).filter_by(symbol="HOLD_TEST").first()
     assert result.qty == 2
-    assert result.status == "open"
+    assert result.status == HoldingStatus.OPEN.value
+    assert result.initial_risk == entry - stop
 
 
 # ─── Trade Log ─────────────────────────────────────────────────────────────────

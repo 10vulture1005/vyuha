@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm AS base
+FROM python:3.12-slim-bookworm AS base
 
 # Prevent Python from writing pyc files and buffer stdout/stderr
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -28,16 +28,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Upgrade pip and install project dependencies
-COPY pyproject.toml ./
+# 2. Copy source (filtered by root .dockerignore), then install runtime extras
+COPY . .
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir .
+    pip install --no-cache-dir '.[agents,api,postgres]'
 
 # 3. Download Scrapling browser binaries (Chromium + Camoufox)
 RUN scrapling install
 
-# 4. Copy application source code and entrypoint
-COPY . .
+# 4. Prepare the entrypoint
 RUN chmod +x docker/entrypoint.sh
 
 # Expose FastAPI web service port

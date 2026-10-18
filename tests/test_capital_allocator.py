@@ -11,7 +11,8 @@ from core.stop_loss_engine import compute_new_trailing_stop
 def setup_test_db():
     Base.metadata.create_all(bind=sync_engine)
     yield
-    Base.metadata.drop_all(bind=sync_engine)
+    # The session-scoped conftest owns the disposable test schema. Never drop
+    # application tables from a module fixture.
 
 def test_sip_cash_rollover():
     """Verify monthly SIP accumulates cleanly over multiple periods."""
@@ -41,10 +42,10 @@ def test_dp_charge_deduction_on_sell():
         execute_buy(session, "RELIANCE", 1, Decimal("2000.00"), "Test Buy", Decimal("1900.00"))
         cash_post_buy = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).first().running_balance
         
-        # Sell 1 share @ 2500 -> Gross proceeds 2500, Net proceeds 2485 (2500 - 15)
+        # Sell proceeds include the ₹15 DP fee plus configured sell-side friction.
         sell_dec = execute_sell(session, "RELIANCE", 1, Decimal("2500.00"), "Test Sell")
-        assert sell_dec.net_proceeds == 2485.0
+        assert sell_dec.net_proceeds == 2482.41
         assert sell_dec.dp_charge == 15.0
         
         cash_post_sell = session.query(CapitalLedger).order_by(CapitalLedger.id.desc()).first().running_balance
-        assert cash_post_sell == (cash_post_buy + Decimal("2485.00"))
+        assert cash_post_sell == (cash_post_buy + Decimal("2482.41"))

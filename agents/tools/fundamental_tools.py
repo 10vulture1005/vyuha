@@ -11,17 +11,48 @@ class FundamentalSnapshotSchema(BaseModel):
     raw_json: Dict[str, Any]
 
 def scrape_symbol_fundamentals(symbol: str) -> FundamentalSnapshotSchema:
-    # Use fallback stylized generator since live scraping is complex
-    from data.fundamentals_provider import FundamentalsProvider
+    """Fetch real statements or raise; synthetic providers are never consulted."""
+    from data.screener_client import ScreenerClient
+    from data.screener_fundamentals import normalize
+    return snapshot_from_records(symbol, normalize(ScreenerClient().fetch(symbol)))
+
+
+def snapshot_from_records(symbol, records, as_of=None) -> FundamentalSnapshotSchema:
     from datetime import date
-    prov = FundamentalsProvider()
-    metrics = prov.get_latest_fundamentals(symbol, date.today())
+    import math
+    import pandas as pd
+    from investor.data import resolve_usable_from
+
+    when = pd.Timestamp(as_of or date.today())
+    annual = sorted([
+        r for r in records if r['symbol'] == symbol and r['frequency'] == 'yearly'
+        and r.get('data_source') in ('yfinance', 'screener', 'yfinance+screener')
+        and resolve_usable_from(r['period_end'], r.get('filing_date')) <= when
+    ], key=lambda r: r['period_end'])
+    if not annual:
+        raise ValueError(f'{symbol}: no verified usable statements')
+    last = annual[-1]
+    target = pd.Timestamp(last['period_end']) - pd.DateOffset(years=3)
+    first = next((r for r in annual if pd.Timestamp(r['period_end']) == target), None)
+    if first is None:
+        raise ValueError(f'{symbol}: missing three-year EPS history')
+    def value(row, field):
+        result = float(row.get(field, float('nan')))
+        if not math.isfinite(result):
+            raise ValueError(f'{symbol}: missing {field}')
+        return result
+    # Use the same EPS definition at both endpoints.
+    eps_field = 'eps_diluted' if pd.notna(last.get('eps_diluted')) and pd.notna(first.get('eps_diluted')) else 'eps_basic'
+    equity, debt = value(last, 'equity'), value(last, 'debt')
+    start, end = value(first, eps_field), value(last, eps_field)
+    if equity <= 0 or start <= 0 or end <= 0 or debt < 0:
+        raise ValueError(f'{symbol}: invalid ratio denominator or EPS')
     return FundamentalSnapshotSchema(
         symbol=symbol,
-        roe=metrics.get("roce_ttm", 0.0),
-        debt_to_equity=metrics.get("de_ratio", 0.0),
-        eps_growth_3y=metrics.get("eps_growth_yoy", 0.0),
-        raw_json=metrics
+        roe=100 * value(last, 'pat') / equity,
+        debt_to_equity=debt / equity,
+        eps_growth_3y=100 * ((end / start) ** (1 / 3) - 1),
+        raw_json={'data_source': last['data_source'], 'period_end': last['period_end']},
     )
 
 def passes_hard_filters(snapshot: FundamentalSnapshotSchema) -> bool:

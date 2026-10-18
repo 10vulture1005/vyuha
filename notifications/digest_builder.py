@@ -77,3 +77,93 @@ def send_daily_digest_execution(decision: Dict[str, Any]) -> bool:
     except Exception as e:
         logger.error(f"Failed to generate or send daily digest: {e}")
         return False
+
+
+def build_investor_digest(run: Dict[str, Any]) -> str:
+    """Investor Mode digest: regime, exposure, target weights and the order list.
+
+    Separate from `build_daily_digest` because the two modes share almost no
+    vocabulary — a swing digest reporting "Bought 6x SCHNEIDER" next to an
+    investor book of 25 target weights and a monthly rebalance is confusing
+    rather than concise.
+    """
+    if hasattr(run, "as_dict"):
+        run = run.as_dict()
+
+    regime = run.get("regime", "?")
+    exposure = run.get("exposure", 0.0)
+    equity = run.get("equity", 0.0)
+    cash = run.get("cash", 0.0)
+    targets = run.get("targets") or {}
+    orders = run.get("orders") or []
+    filled = run.get("filled") or []
+    news = run.get("news") or []
+    as_of = run.get("as_of", "")
+
+    icon = {"RISK_ON": "🟢", "MIXED": "🟡", "RISK_OFF": "🔴"}.get(regime, "⚪")
+
+    head = f"{icon} *VYUHA INVESTOR MODE*"
+    line_date = f"📅 _{escape_markdown_v2(str(as_of)[:10])}_"
+
+    exposure_line = (
+        f"🌡️ *Regime:* `{escape_markdown_v2(str(regime))}` "
+        f"\\(equity target {exposure:.0%}\\)"
+    )
+    book_line = (
+        f"💼 *Book:* ₹{equity:,.0f} total · ₹{cash:,.0f} cash · "
+        f"{len(run.get('holdings') or {})} holdings"
+    )
+
+    blocks = [head, line_date, exposure_line, book_line]
+
+    if run.get("is_rebalance"):
+        blocks.append("🔄 *Monthly rebalance day*")
+
+    top = sorted(targets.items(), key=lambda kv: -kv[1])[:8]
+    if top:
+        tg = "\n".join(
+            f"• `{escape_markdown_v2(s)}` {w:.1%}" for s, w in top
+        )
+        blocks.append(f"🎯 *Top targets* \\({len(targets)} total\\):\n{tg}")
+
+    if filled:
+        fl = "\n".join(
+            f"• `{escape_markdown_v2(str(f['symbol']))}` "
+            f"{escape_markdown_v2(str(f['side']))} {f['qty']} @ ₹{f['price']:,.1f}"
+            for f in filled[:12]
+        )
+        blocks.append(f"✅ *Paper fills today:*\n{fl}")
+
+    if orders:
+        ol = "\n".join(
+            f"• `{escape_markdown_v2(str(o['symbol']))}` "
+            f"*{escape_markdown_v2(str(o['side']))}* {o['qty']} "
+            f"@ ~₹{o['limit_hint']:,.1f}\n  _{escape_markdown_v2(str(o['layer']))}: "
+            f"{escape_markdown_v2(str(o['reason'])[:90])}_"
+            for o in orders[:10]
+        )
+        blocks.append(f"📋 *Orders for next open* \\({len(orders)}\\):\n{ol}")
+    else:
+        blocks.append("📋 *Orders:* none")
+
+    hard = [n for n in news if n.get("event_type") == "HARD_NEGATIVE"]
+    if hard:
+        hl = "\n".join(
+            f"• `{escape_markdown_v2(str(n.get('symbol')))}` "
+            f"{escape_markdown_v2(str(n.get('subtype') or ''))}"
+            for n in hard[:5]
+        )
+        blocks.append(f"🚨 *Hard negatives* \\({len(hard)}\\):\n{hl}")
+
+    blocks.append("🤖 _System Mode: Paper / Advisory — no live orders_")
+    return "\n\n".join(blocks)
+
+
+def send_investor_digest(message: str) -> bool:
+    """Sends a pre-built Investor Mode digest."""
+    try:
+        from notifications.telegram_bot import send_message
+        return send_message(message, parse_mode="MarkdownV2")
+    except Exception as e:
+        logger.error(f"Failed to send investor digest: {e}")
+        return False
