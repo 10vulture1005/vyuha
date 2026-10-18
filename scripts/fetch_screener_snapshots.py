@@ -22,6 +22,11 @@ def main(argv=None):
     parser.add_argument('--since', type=lambda s: pd.Timestamp(s).date().isoformat())
     parser.add_argument('--out', type=Path, default=OUT)
     parser.add_argument('--refresh', action='store_true', help='fetch new HTML instead of replaying cache')
+    parser.add_argument('--allow-partial', action='store_true',
+                        help='exit 0 when only some symbols fail. CI uses this: Screener.in '
+                             'serves a bot challenge to GitHub runner IPs, so a strict exit '
+                             'code there means the weekly refresh never completes. Still exits '
+                             'non-zero if nothing at all was fetched.')
     args = parser.parse_args(argv)
     existing = pd.read_csv(args.out) if args.out.exists() else pd.DataFrame()
     if not existing.empty and ('data_source' not in existing or existing.data_source.isna().any()):
@@ -53,7 +58,21 @@ def main(argv=None):
         merged.to_csv(temp, index=False)
         temp.replace(args.out)
         print(f'Wrote {len(merged)} records to {args.out}')
-    return 1 if failed or not rows else 0
+    if not rows:
+        # Nothing came back — a total block, a bad universe file, or a parse
+        # regression. Never paper over this, even with --allow-partial: the
+        # weekly refresh would then run on data nobody refreshed.
+        print(f'No rows fetched for any of {len(symbols)} symbols', file=sys.stderr)
+        return 1
+    if failed and args.allow_partial:
+        shown = ', '.join(failed[:10]) + ('...' if len(failed) > 10 else '')
+        print(
+            f'WARNING: {len(failed)}/{len(symbols)} symbols failed '
+            f'(blocked or unlisted on Screener.in): {shown}',
+            file=sys.stderr,
+        )
+        return 0
+    return 1 if failed else 0
 
 
 if __name__ == '__main__':

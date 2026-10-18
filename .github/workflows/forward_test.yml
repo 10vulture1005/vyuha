@@ -194,9 +194,14 @@ jobs:
         run: |
           mkdir -p logs
           set -o pipefail
+          # --allow-partial: Screener.in serves a bot challenge to GitHub runner
+          # IPs, so most symbols come back "missing or mismatched canonical URL".
+          # A strict exit code would mean this step fails every single Sunday and
+          # the weekly refresh below never runs. The script still exits non-zero
+          # when *nothing* was fetched.
           python scripts/fetch_screener_snapshots.py \
             --symbols-file config/universe_nifty500.csv \
-            --refresh 2>&1 | tee logs/screener-ingestion.log
+            --refresh --allow-partial 2>&1 | tee logs/screener-ingestion.log
 
       - name: Run Weekly Fundamental + Sentiment Refresh
         env:
