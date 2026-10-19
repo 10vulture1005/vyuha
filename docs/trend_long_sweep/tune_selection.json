@@ -1,0 +1,5 @@
+{
+  "risk_pct": 0.0125,
+  "chandelier_atr": 3.5,
+  "defer_soft_exits": false
+}
