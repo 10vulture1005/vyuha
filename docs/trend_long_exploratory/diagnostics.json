@@ -1,0 +1,233 @@
+{
+  "label": "backtest on a selected, survivor-biased 209-name archive",
+  "implementation": "User-supplied standalone script, unchanged; NOT approved execution/Phase 2 implementation",
+  "script_sha256": "3fe1cd2162f83e29db7efdd4f68d7fffacdd889843bf9240cf467c8619bef2f0",
+  "python": "3.12.14",
+  "pandas": "2.3.3",
+  "numpy": "2.2.6",
+  "start": "2016-10-17",
+  "end": "2026-10-16",
+  "sessions": 2463,
+  "archive_equities": 209,
+  "parameters": {
+    "top_n": 300,
+    "min_price": 50.0,
+    "min_tv": 50000000.0,
+    "hist_bars": 252,
+    "w_slope": 0.5,
+    "w_mom": 0.3,
+    "w_prox": 0.2,
+    "top_pct": 0.15,
+    "min_prox": 0.75,
+    "max_ext": 1.25,
+    "breakout_n": 55,
+    "vol_ratio_min": 1.2,
+    "resume_lookback": 7,
+    "near_ema": 1.08,
+    "fill_window_days": 5,
+    "max_new_per_day": 2,
+    "exposure": {
+      "4": 1.0,
+      "3": 0.8,
+      "2": 0.5,
+      "1": 0.25,
+      "0": 0.1
+    },
+    "confirm_days": 3,
+    "breadth_min": 0.5,
+    "vix_pct_max": 0.8,
+    "risk_pct": 0.0075,
+    "max_name": 0.12,
+    "sector_cap": 0.25,
+    "heat_cap": 0.08,
+    "min_position_inr": 12000,
+    "inr_per_name": 12000,
+    "n_min": 8,
+    "n_max": 20,
+    "atr_n": 22,
+    "chandelier_atr": 3.5,
+    "breakeven_r": 1.5,
+    "be_buffer": 0.004,
+    "dead_days": 40,
+    "dead_r": 0.5,
+    "dead_rank": 0.7,
+    "decay_rank": 0.5,
+    "slip": 0.0015,
+    "cash_yield": 0.06,
+    "stt": 0.001,
+    "stamp_buy": 0.00015,
+    "exch": 3.45e-05,
+    "sebi": 1e-06,
+    "gst": 0.18,
+    "brokerage_pct": 0.0,
+    "brokerage_cap": 0.0,
+    "dp_sell": 15.34,
+    "stcg": 0.20800000000000002,
+    "ltcg": 0.13,
+    "ltcg_exempt": 125000.0,
+    "lt_days": 365
+  },
+  "index_dates": {
+    "INDEX_NIFTY500": {
+      "first": "2016-10-17",
+      "last": "2026-10-16"
+    },
+    "INDEX_NIFTY50": {
+      "first": "2016-10-17",
+      "last": "2026-10-16"
+    },
+    "INDEX_INDIAVIX": {
+      "first": "2016-09-12",
+      "last": "2026-09-11"
+    }
+  },
+  "vix_stale_sessions": 23,
+  "sectors_unknown": 30,
+  "runs": {
+    "account_sip": {
+      "full": {
+        "invested": 220000.0,
+        "final": 373545.5264613542,
+        "total_return_pct": 69.79342111879738,
+        "xirr_pct": 7.1907089997595435,
+        "twr_cagr_pct": 7.117496741829021,
+        "max_dd_pct": -18.34514522416546,
+        "sharpe": 0.17315381862087695,
+        "years": 9.995893223819301,
+        "drawdown_peak": "2021-10-18",
+        "drawdown_trough": "2023-02-28",
+        "sortino": 0.23079832848533943,
+        "calmar_twr": 0.3879771271831294
+      },
+      "oos_continuation": {
+        "invested": 291108.99942011177,
+        "final": 373545.5264613542,
+        "total_return_pct": 28.318096385015835,
+        "xirr_pct": 5.9008947541803085,
+        "twr_cagr_pct": 5.929857815333839,
+        "max_dd_pct": -16.074716219898455,
+        "sharpe": 0.06733455725802524,
+        "years": 4.783025325119781,
+        "drawdown_peak": "2024-10-15",
+        "drawdown_trough": "2025-12-10",
+        "sortino": 0.08814034467795293,
+        "calmar_twr": 0.36889346811568774
+      },
+      "total_costs": 31836.432959426198,
+      "script_tax": 27116.23905700987,
+      "script_post_tax_xirr_pct": 6.174016520917569,
+      "days_with_holdings_pct": 82.86642306130734,
+      "mean_cash_weight_pct": 54.37157144484548,
+      "average_holdings": 5.9094600081201785,
+      "trades": 543,
+      "win_rate_pct": 38.12154696132597,
+      "average_holding_days": 39.70165745856354,
+      "entries_below_12000": 2,
+      "exits_by_reason": {
+        "STOP": 418,
+        "REGIME": 69,
+        "STOP_GAP": 39,
+        "DEAD_MONEY": 11,
+        "END": 5,
+        "DATA_END": 1
+      },
+      "entries_after_last_vix_bar": 5,
+      "one_way_turnover_x_per_year": 4.658435672598369,
+      "benchmarks": {
+        "INDEX_NIFTY500": {
+          "final": 516168.4857028712,
+          "xirr_pct": 11.5494148956098,
+          "max_dd_pct": -38.302350954757195
+        },
+        "INDEX_NIFTY50": {
+          "final": 463853.54581132054,
+          "xirr_pct": 10.108706713391335,
+          "max_dd_pct": -38.439852452742095
+        },
+        "script_cash_252": {
+          "final": 338308.4519045186,
+          "xirr_pct": 5.853748317392615,
+          "max_dd_pct": 0.0
+        },
+        "cash_ACT365_supplement": {
+          "final": 341992.52882351214,
+          "xirr_pct": 5.999999999999995,
+          "max_dd_pct": 0.0
+        }
+      }
+    },
+    "lump": {
+      "full": {
+        "invested": 1000000.0,
+        "final": 2710859.3897525836,
+        "total_return_pct": 171.08593897525836,
+        "xirr_pct": 10.483859386098516,
+        "twr_cagr_pct": 10.491404272824312,
+        "max_dd_pct": -21.79499065224316,
+        "sharpe": 0.4227937019215056,
+        "years": 9.995893223819301,
+        "drawdown_peak": "2024-10-15",
+        "drawdown_trough": "2026-03-30",
+        "sortino": 0.56741431886229,
+        "calmar_twr": 0.48136768857684853
+      },
+      "oos_continuation": {
+        "invested": 2214029.6439122357,
+        "final": 2710859.3897525836,
+        "total_return_pct": 22.44006746731897,
+        "xirr_pct": 4.320541741656736,
+        "twr_cagr_pct": 4.323564087666365,
+        "max_dd_pct": -21.79499065224323,
+        "sharpe": -0.04821312293319593,
+        "years": 4.783025325119781,
+        "drawdown_peak": "2024-10-15",
+        "drawdown_trough": "2026-03-30",
+        "sortino": -0.06220540179958756,
+        "calmar_twr": 0.19837421160909588
+      },
+      "total_costs": 227636.66601164706,
+      "script_tax": 383594.8046439067,
+      "script_post_tax_xirr_pct": 8.811432610967074,
+      "days_with_holdings_pct": 89.15956151035323,
+      "mean_cash_weight_pct": 42.63535053362452,
+      "average_holdings": 8.182298010556233,
+      "trades": 708,
+      "win_rate_pct": 40.96045197740113,
+      "average_holding_days": 42.152542372881356,
+      "entries_below_12000": 0,
+      "exits_by_reason": {
+        "STOP": 530,
+        "REGIME": 94,
+        "STOP_GAP": 52,
+        "DEAD_MONEY": 25,
+        "END": 5,
+        "RANK_DECAY": 1,
+        "DATA_END": 1
+      },
+      "entries_after_last_vix_bar": 3,
+      "one_way_turnover_x_per_year": 5.207030357276639,
+      "benchmarks": {
+        "INDEX_NIFTY500": {
+          "final": 3015787.153131074,
+          "xirr_pct": 11.667537207699718,
+          "max_dd_pct": -38.302350954757195
+        },
+        "INDEX_NIFTY50": {
+          "final": 2716556.6557286107,
+          "xirr_pct": 10.507050893663516,
+          "max_dd_pct": -38.439852452742095
+        },
+        "script_cash_252": {
+          "final": 1766990.7939551286,
+          "xirr_pct": 5.8562870792730255,
+          "max_dd_pct": 0.0
+        },
+        "cash_ACT365_supplement": {
+          "final": 1791133.6118021894,
+          "xirr_pct": 5.999999999999995,
+          "max_dd_pct": 0.0
+        }
+      }
+    }
+  }
+}
