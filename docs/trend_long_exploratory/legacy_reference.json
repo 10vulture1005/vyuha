@@ -1,0 +1,36 @@
+[
+  {
+    "label": "legacy_full_lump",
+    "requested_start": "2016-09-12",
+    "actual_start": "2016-10-17",
+    "end": "2026-10-16",
+    "start_date_frozen_universe": 28,
+    "input_archive_equities": 209,
+    "initial_capital": 1000000.0,
+    "monthly_sip": 0,
+    "final_marked_value": 1007545.6197051452,
+    "xirr_pct": 0.07518059594840976,
+    "avg_holdings": 0.24522939504669103,
+    "mean_cash_weight_pct": 98.7674371847549,
+    "costs_legacy_model": 1268.3030493905321,
+    "terminal_holdings_not_liquidated": 0,
+    "note": "Unchanged legacy behavior; different costs, stops, universe freeze and no liquid-yield accrual"
+  },
+  {
+    "label": "legacy_oos_lump",
+    "requested_start": "2022-01-01",
+    "actual_start": "2022-01-03",
+    "end": "2026-10-16",
+    "start_date_frozen_universe": 119,
+    "input_archive_equities": 209,
+    "initial_capital": 1000000.0,
+    "monthly_sip": 0,
+    "final_marked_value": 1110596.5510590766,
+    "xirr_pct": 2.2158074113865722,
+    "avg_holdings": 3.473237043330501,
+    "mean_cash_weight_pct": 88.35802277660137,
+    "costs_legacy_model": 6742.245338497006,
+    "terminal_holdings_not_liquidated": 8,
+    "note": "Unchanged legacy behavior; different costs, stops, universe freeze and no liquid-yield accrual"
+  }
+]

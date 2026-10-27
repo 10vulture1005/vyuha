@@ -1,0 +1,36 @@
+/home/vulture/codes/vyuha/trend_long_backtest.py:129: FutureWarning: The default fill_method='pad' in DataFrame.pct_change is deprecated and will be removed in a future version. Either fill in any non-leading NA values prior to calling pct_change or specify 'fill_method=None' to not fill NA values.
+  sig126 = Cf.pct_change().rolling(126, min_periods=100).std() * math.sqrt(252)
+========================================================================
+TREND_LONG BACKTEST   2016-10-17 -> 2026-10-16   (10.0y)   universe on disk: 209 names
+capital Rs 1,000,000 lump sum
+------------------------------------------------------------------------
+Money invested            : Rs 1,000,000
+Final value (net costs)   : Rs 2,710,859
+TOTAL RETURN              : +171.1%
+XIRR (money-weighted)     : 10.48%
+TWR CAGR (flow-adjusted)  : 10.49%
+Plain CAGR (lump sum)     : 10.49%
+Max drawdown (TWR)        : -21.8%      Sharpe (rf 6%): 0.42
+Estimated tax             : Rs 383,595   -> post-tax XIRR 8.81%  (tax charged at end; slightly flattering)
+Costs paid                : Rs 227,637   (22.8% of money invested)
+Days with any holding     : 89%   avg holdings 8.2   mean cash weight 43%
+Trades 708   win rate 41%   avg hold 42d   exits: STOP 530, REGIME 94, STOP_GAP 52, DEAD_MONEY 25, END 5, RANK_DECAY 1, DATA_END 1
+------------------------------------------------------------------------
+Calendar-year TWR returns (%): 2016:+1  2017:+9  2018:+7  2019:-8  2020:+29  2021:+57  2022:-9  2023:+37  2024:+12  2025:-11  2026:-1
+OUT-OF-SAMPLE from 2022-01-01: TWR CAGR 4.32%  XIRR 4.32%  MaxDD -21.8%
+------------------------------------------------------------------------
+Benchmark Nifty500 same flows : final Rs 3,015,787  XIRR 11.67%  MaxDD -38.3%
+Benchmark cash @6%           : final Rs 1,766,991  XIRR 5.86%
+NOTE: check whether INDEX_NIFTY500.csv is price- or total-return; if price-return the comparison
+      flatters the strategy (stocks here are dividend-adjusted). The archive is selected and
+      survivor-biased, so absolute results are optimistic. Not investment advice.
+------------------------------------------------------------------------
+PLACEBO: 30 runs, random month-stable rank, same triggers/sizing/exits/regime
+placebo XIRR %: median 8.12  p10 5.45  p90 10.57   real 10.48
+real strategy beats 87% of placebo runs (need >= 90% to claim the ranker has edge)
+
+Wrote docs/trend_long_exploratory/lump_placebo30/equity.csv, trades.csv, summary.json
+
+real	0m8.185s
+user	0m9.315s
+sys	0m0.172s

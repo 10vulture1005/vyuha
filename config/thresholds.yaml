@@ -192,3 +192,59 @@ investor:
       - fundamental_technical
       - fundamental_technical_news
       - full
+
+# ─── trend_long: backtest-only infrastructure (Phase 1) ────────────────────
+# Kept independent of investor/backtest_v2: their delivery buy-STT omission
+# must not leak into this profile or be silently fixed for legacy studies.
+trend_long:
+  costs:
+    stt_buy_rate: 0.001
+    stt_sell_rate: 0.001
+    stamp_buy_rate: 0.00015
+    # Broker/venue assumptions, not a historical fee schedule. BSE charges
+    # vary by security group; override the rate for the actual traded scrip.
+    exchange_rates: {NSE: 0.0000297, BSE: 0.0000375}
+    sebi_rate: 0.000001
+    gst_rate: 0.18
+    brokerage_rate: 0.0
+    brokerage_cap_inr: 0.0      # zero = uncapped; rate zero = free delivery
+    dp_sell_day_inr: 15.34     # assumed broker bill per scrip/sell day
+    dp_includes_gst: true
+    multiplier: 1.0
+  execution:
+    exchange: NSE
+    buy_slippage: 0.0015
+    sell_slippage: 0.0015
+  sleeve:
+    annual_yield: 0.06
+    day_count: 365.0           # ACT/365, calendar gaps earn yield too
+  tax:
+    scenario: FY2026-27
+    # Official source checks are recorded in docs/trend_long_phase1.md.
+    # Do not certify current law from a Budget proposal/older FAQ alone.
+    law_verified: false
+    stcg_rate: 0.20
+    ltcg_rate: 0.125
+    ltcg_exemption_inr: 125000.0
+    cess_rate: 0.04
+    surcharge_rate: 0.0         # personal income unknown; no automatic slab model
+    long_term_after_months: 12 # strictly MORE than 12 calendar months
+    fiscal_year_start_month: 4
+    loss_carry_years: 8
+    stt_deductible: false      # economic fees != deductible capital-gains costs
+    liquid_income_rate: 0.30   # assumption: basic exemption already used; configurable
+    defer_soft_exits: false    # strategy ablation only; no tax-driven orders yet
+    defer_window_days: [335, 366]
+  reporting:
+    xirr_day_count: 365.0
+    xirr_lower_rate: -0.9999
+    xirr_upper_rate: 100.0
+    xirr_tolerance: 0.00000001
+    xirr_max_iterations: 300
+  backtest:
+    start: "2016-09-12"
+    end: "2026-09-11"
+    oos_start: "2022-01-01"
+    capital_scenarios:
+      lump: {initial_capital: 1000000.0, monthly_sip: 0.0}
+      account_sip: {initial_capital: 100000.0, monthly_sip: 1000.0}

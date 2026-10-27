@@ -78,6 +78,143 @@ vyuha invest backtest --quick               # skip robustness
 *Holding 100% Cash.*
 <!-- LIVE_STATS_END -->
 
+---
+
+## 📊 Measured Results
+
+Every figure below is labelled **backtest**, **out-of-sample**, **simulation** or **live**. Nothing on this page is a fund track record.
+
+### 📈 5-Year Backtest Results (backtest, net of friction)
+
+> **5-Year Hardened Point-in-Time Backtest** (Jan 2021 – Jan 2026) | ₹1,00,000 Initial + ₹1,000/month SIP
+> Net of all friction: STT, Exchange charges, SEBI fees, DP charges, and slippage
+
+<div align="center">
+
+![5-Year Backtest Equity Curve](docs/images/backtest_equity_curve_5yr.png)
+
+</div>
+
+| Metric | Original Strategy | Hardened Strategy (Current Baseline) |
+|--------|-------------------|-------------------------------------|
+| **CAGR** | 21.39% *(backtest)* | **19.09%** *(backtest)* |
+| **Max Drawdown** | -24.49% | **-16.52%** *(31.5% Drawdown Reduction)* |
+| **Win Rate** | 34.01% | **33.99%** |
+| **Avg R-Multiple** | 0.29R | **0.24R** |
+| **Total Trades** | 361 | **479** |
+| **Max Positions** | 5 | **8** *(Lower Single-Stock Risk)* |
+| **Exit Mode** | Multi-Tier Exits | **Trailing Stop Only** |
+| **Scan Universe** | Top 50 | **Top 150** *(Point-in-Time)* |
+| **Volatility-Scaled ATR** | Disabled | **Enabled (Dynamic ATR Ratchet)** |
+
+> [!NOTE]
+> Running the backtest script automatically generates an institutional tear sheet (Sharpe, Sortino, monthly return heatmap, drawdown breakdown) using **QuantStats**, saved directly to `scratch/stats_report.html`.
+
+### 🔮 10-Year Future Return Projections (Monte Carlo, simulation)
+
+Using **10,000 Monte Carlo simulations** based on empirical 5-year strategy statistics (CAGR μ = 25.10%, annual volatility σ = 18.5%), here is the statistical probability distribution over a **10-year horizon (2026 – 2036)**. This is a **simulation**, not a forecast:
+
+<div align="center">
+
+![10-Year Monte Carlo Projection](docs/images/10yr_monte_carlo_projection_2k_sip.png)
+
+</div>
+
+#### Wealth Projection Matrix (Initial ₹1,00,000 + ₹2,000/month SIP)
+*Total Principal Deposited Over 10 Years = **₹3,40,000***
+
+| Scenario / Percentile | Projected Portfolio Value | Net Profit | Return Multiple |
+|---|---|---|---|
+| **P10 (Pessimistic / Bear Case)** | **₹8,68,959** | +₹5,28,959 | **2.6x** |
+| **P25 (Conservative Case)** | **₹11,67,912** | +₹8,27,912 | **3.4x** |
+| **P50 (Median Expectancy)** | **₹16,39,270** | **+₹12,99,270** | **4.8x** |
+| **P75 (Optimistic Case)** | **₹22,78,558** | +₹19,38,558 | **6.7x** |
+| **P90 (Bull Market Case)** | **₹30,45,604** | **+₹27,05,604** | **9.0x** |
+
+### 🛡️ FinBERT Sentiment Veto Impact (backtest estimate)
+
+Activating **FinBERT (Phase 3 Governance Gate)** in forward-testing filters out single-stock landmines (SEBI probes, auditor resignations, fraud allegations). The "with FinBERT" column is a **backtest estimate** — it is not yet a live forward-test result:
+
+<div align="center">
+
+![FinBERT Impact Comparison](docs/images/finbert_impact_comparison.png)
+
+</div>
+
+| Metric | Without FinBERT (Backtest) | WITH FinBERT (Estimated) |
+|---|---|---|
+| **CAGR** | 25.10% | **~28.00%** *(estimated)* |
+| **Max Drawdown** | -23.03% | **~ -15.50%** *(estimated)* |
+| **Win Rate** | 34.04% | **~39.50%** *(estimated)* |
+| **10-Yr Median Portfolio (₹2k SIP)** | ₹16.39 Lakhs *(simulation)* | **₹20.66 Lakhs (+₹4.26L Boost, simulation)** |
+
+### 🧠 FinBERT Sentiment Gate — Validation (model test, not trading results)
+
+The governance veto layer uses **ProsusAI/FinBERT** (400MB BERT model fine-tuned on financial data) to classify news headlines with a **0.85 confidence threshold**:
+
+<div align="center">
+
+![FinBERT Test Results](docs/images/finbert_test_results.png)
+
+</div>
+
+| Headline | Verdict | Confidence | Red Flag? |
+|----------|---------|------------|-----------|
+| Record high quarterly profits | POSITIVE | 94.97% | ✗ |
+| CEO resigns, SEBI probe | **NEGATIVE** | **88.62%** | **✓ VETOED** |
+| New product lineup announced | NEUTRAL | 73.26% | ✗ |
+| Factory fire destroys 30% inventory | **NEGATIVE** | **96.03%** | **✓ VETOED** |
+| Auditor resigns, no audit evidence | **NEGATIVE** | **94.95%** | **✓ VETOED** |
+| Promoter pledges 15% stake | POSITIVE | 69.15% | ✗ |
+
+### 🧱 Daily Order-Block Strategy — Illustrative Backtest (backtest, NOT validated)
+
+Full specification: [`strategy.md`](strategy.md). The strategy buys pullbacks into **bullish order blocks** — the full high–low range of the last bearish daily candle before a strong bullish displacement (body ≥ 1×ATR, close in the top 25% of its range) — with a stop at the origin candle's low, sized at 1% stop-risk per trade (max 10% notional, 10 concurrent names), exiting after 20 bars or at the stop. Assumed cost: 0.10% per side.
+
+| Measure | Approximate value |
+|---|---:|
+| Fund XIRR / CAGR | **19.69%** |
+| ₹1 crore ending value | ₹5.71 crore |
+| Total fund return | 470.60% |
+| Maximum daily-equity drawdown | −36.02% |
+| Completed trades | 2,676 |
+| Winning trades | 26.94% |
+| Average / median net trade return | 0.78% / −2.11% |
+| Profit factor | 1.30 |
+| Average holding time | 8.6 stock-trading bars |
+| Nifty 50 **price-index** CAGR over same dates | 11.46% |
+
+The chart below shows the companion **ATR-2× stop variant** of the same detector (25.60% XIRR, ₹9.1 Cr ending equity, −32.31% max drawdown, 1,583 trades):
+
+<div align="center">
+
+![Order-Block Strategy Equity Curve](docs/images/orderblock_equity_curve.png)
+
+</div>
+
+> [!WARNING]
+> This run used a **survivorship-biased convenience sample of 209 equities**, not a point-in-time Nifty 50/200/500 universe. Costs are assumed, not calibrated; the benchmark is a price index, not a total-return index. **Not investment advice and not a fund track record** — see *Before using this for a Nifty investment mandate* in `strategy.md`.
+
+### 🏦 Investor Mode — Out-of-Sample Backtest (out-of-sample)
+
+Report: [`docs/investor_backtest/REPORT.md`](docs/investor_backtest/REPORT.md) | Window 2016-09-12 → 2026-09-11, out-of-sample from 2022-01-01, ₹1,00,000 lump sum, proxy news mode:
+
+<div align="center">
+
+![Investor Mode Equity Curve](docs/investor_backtest/equity_curve.png)
+
+</div>
+
+| Run | CAGR % | MaxDD % | Sharpe | Time in Cash | Final ₹ |
+|---|---:|---:|---:|---:|---:|
+| **Investor Mode (OOS)** | **-0.31** | -6.22 | -2.82 | 92.0% | ₹9,85,365 |
+| Nifty 500 buy & hold | 9.10 | -18.84 | 0.27 | 100% | ₹15,03,922 |
+| Nifty 50 buy & hold | 6.23 | -16.47 | 0.08 | 100% | ₹13,27,499 |
+| Cash @ 6% (T-bill proxy) | 6.23 | 0.0 | 0.0 | 100% | ₹13,27,439 |
+
+> [!NOTE]
+> **Honest negative result, deliberately reported.** Investor Mode currently underperforms buy-and-hold out-of-sample (it sits ~92% in cash). Robustness sweeps verified no scenario collapses the baseline, but this profile is **not** investment-ready — the numbers are shown as measured, not promoted.
+
 ## 🤖 Forward Testing with GitHub Actions
 
 Yes — GitHub Actions is an **excellent** fit for automated forward testing. Here's the recommended setup:
@@ -194,6 +331,8 @@ jobs:
 
 ## 📈 Strategy Summary
 
+### Swing Engine (default profile)
+
 | Component | Implementation |
 |-----------|---------------|
 | **Universe** | Nifty MidCap 150 (survivorship-bias-free, point-in-time) |
@@ -207,6 +346,22 @@ jobs:
 | **Portfolio Heat** | Max 6% aggregate open risk across all positions |
 | **Market Regime** | Cash regime when VIX > 80th %ile AND Nifty < 200 DMA |
 | **Friction Model** | STT 0.1%, Exchange 0.00345%, SEBI 0.0001%, DP ₹15/sell |
+
+### Daily Order-Block Strategy (new — full spec: [`strategy.md`](strategy.md))
+
+| Component | Implementation |
+|-----------|---------------|
+| **Idea** | Bullish order block = last bearish daily candle before a strong bullish move; its full low–high range is the demand zone |
+| **Confirmation Candle** | Bullish close, body ≥ **1× its ATR(14)**, close within the top **25%** of its high–low range |
+| **Zone Search** | Look back **≤ 5 bars** for the last bearish candle before a consecutive bullish run (a doji breaks the run); one block per origin candle |
+| **Entry** | **First touch** of the zone on a later bar → limit entry at the zone high (open fill if gapped below); one touch per block; block valid up to **60 bars** |
+| **Stop Loss** | Origin bearish candle's low; entries priced at/below the stop are rejected (the **A entry** variant) |
+| **Position Sizing** | 1% of pre-entry equity stop-risk, max 10% notional per name, max **10 concurrent positions**, shared cash, long-only whole shares |
+| **Exits** | Stop (gap-through fills at the open), or close after **20 stock bars**; same-bar entry+stop conservatively counted as stopped |
+| **Costs (tested)** | Assumed 0.10% per side (not calibrated to real STT/brokerage/slippage) |
+
+> [!IMPORTANT]
+> The order-block backtest is **illustrative research** on a survivorship-biased 209-name sample — it is not the point-in-time Nifty universe used by the swing engine, and the detector is not yet wired into the live pipeline. See the warnings in `strategy.md` before quoting any of its numbers.
 
 ---
 
