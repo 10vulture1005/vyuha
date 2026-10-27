@@ -167,26 +167,6 @@ The governance veto layer uses **ProsusAI/FinBERT** (400MB BERT model fine-tuned
 | Auditor resigns, no audit evidence | **NEGATIVE** | **94.95%** | **✓ VETOED** |
 | Promoter pledges 15% stake | POSITIVE | 69.15% | ✗ |
 
-### 🏦 Investor Mode — Out-of-Sample Backtest (out-of-sample)
-
-Report: [`docs/investor_backtest/REPORT.md`](docs/investor_backtest/REPORT.md) | Window 2016-09-12 → 2026-09-11, out-of-sample from 2022-01-01, ₹1,00,000 lump sum, proxy news mode:
-
-<div align="center">
-
-![Investor Mode Equity Curve](docs/investor_backtest/equity_curve.png)
-
-</div>
-
-| Run | CAGR % | MaxDD % | Sharpe | Time in Cash | Final ₹ |
-|---|---:|---:|---:|---:|---:|
-| **Investor Mode (OOS)** | **-0.31** | -6.22 | -2.82 | 92.0% | ₹9,85,365 |
-| Nifty 500 buy & hold | 9.10 | -18.84 | 0.27 | 100% | ₹15,03,922 |
-| Nifty 50 buy & hold | 6.23 | -16.47 | 0.08 | 100% | ₹13,27,499 |
-| Cash @ 6% (T-bill proxy) | 6.23 | 0.0 | 0.0 | 100% | ₹13,27,439 |
-
-> [!NOTE]
-> **Honest negative result, deliberately reported.** Investor Mode currently underperforms buy-and-hold out-of-sample (it sits ~92% in cash). Robustness sweeps verified no scenario collapses the baseline, but this profile is **not** investment-ready — the numbers are shown as measured, not promoted.
-
 ## 🤖 Forward Testing with GitHub Actions
 
 Yes — GitHub Actions is an **excellent** fit for automated forward testing. Here's the recommended setup:
