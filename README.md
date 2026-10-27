@@ -167,34 +167,6 @@ The governance veto layer uses **ProsusAI/FinBERT** (400MB BERT model fine-tuned
 | Auditor resigns, no audit evidence | **NEGATIVE** | **94.95%** | **✓ VETOED** |
 | Promoter pledges 15% stake | POSITIVE | 69.15% | ✗ |
 
-### 🧱 Daily Order-Block Strategy — Illustrative Backtest (backtest, NOT validated)
-
-Full specification: [`strategy.md`](strategy.md). The strategy buys pullbacks into **bullish order blocks** — the full high–low range of the last bearish daily candle before a strong bullish displacement (body ≥ 1×ATR, close in the top 25% of its range) — with a stop at the origin candle's low, sized at 1% stop-risk per trade (max 10% notional, 10 concurrent names), exiting after 20 bars or at the stop. Assumed cost: 0.10% per side.
-
-| Measure | Approximate value |
-|---|---:|
-| Fund XIRR / CAGR | **19.69%** |
-| ₹1 crore ending value | ₹5.71 crore |
-| Total fund return | 470.60% |
-| Maximum daily-equity drawdown | −36.02% |
-| Completed trades | 2,676 |
-| Winning trades | 26.94% |
-| Average / median net trade return | 0.78% / −2.11% |
-| Profit factor | 1.30 |
-| Average holding time | 8.6 stock-trading bars |
-| Nifty 50 **price-index** CAGR over same dates | 11.46% |
-
-The chart below shows the companion **ATR-2× stop variant** of the same detector (25.60% XIRR, ₹9.1 Cr ending equity, −32.31% max drawdown, 1,583 trades):
-
-<div align="center">
-
-![Order-Block Strategy Equity Curve](docs/images/orderblock_equity_curve.png)
-
-</div>
-
-> [!WARNING]
-> This run used a **survivorship-biased convenience sample of 209 equities**, not a point-in-time Nifty 50/200/500 universe. Costs are assumed, not calibrated; the benchmark is a price index, not a total-return index. **Not investment advice and not a fund track record** — see *Before using this for a Nifty investment mandate* in `strategy.md`.
-
 ### 🏦 Investor Mode — Out-of-Sample Backtest (out-of-sample)
 
 Report: [`docs/investor_backtest/REPORT.md`](docs/investor_backtest/REPORT.md) | Window 2016-09-12 → 2026-09-11, out-of-sample from 2022-01-01, ₹1,00,000 lump sum, proxy news mode:
@@ -346,22 +318,6 @@ jobs:
 | **Portfolio Heat** | Max 6% aggregate open risk across all positions |
 | **Market Regime** | Cash regime when VIX > 80th %ile AND Nifty < 200 DMA |
 | **Friction Model** | STT 0.1%, Exchange 0.00345%, SEBI 0.0001%, DP ₹15/sell |
-
-### Daily Order-Block Strategy (new — full spec: [`strategy.md`](strategy.md))
-
-| Component | Implementation |
-|-----------|---------------|
-| **Idea** | Bullish order block = last bearish daily candle before a strong bullish move; its full low–high range is the demand zone |
-| **Confirmation Candle** | Bullish close, body ≥ **1× its ATR(14)**, close within the top **25%** of its high–low range |
-| **Zone Search** | Look back **≤ 5 bars** for the last bearish candle before a consecutive bullish run (a doji breaks the run); one block per origin candle |
-| **Entry** | **First touch** of the zone on a later bar → limit entry at the zone high (open fill if gapped below); one touch per block; block valid up to **60 bars** |
-| **Stop Loss** | Origin bearish candle's low; entries priced at/below the stop are rejected (the **A entry** variant) |
-| **Position Sizing** | 1% of pre-entry equity stop-risk, max 10% notional per name, max **10 concurrent positions**, shared cash, long-only whole shares |
-| **Exits** | Stop (gap-through fills at the open), or close after **20 stock bars**; same-bar entry+stop conservatively counted as stopped |
-| **Costs (tested)** | Assumed 0.10% per side (not calibrated to real STT/brokerage/slippage) |
-
-> [!IMPORTANT]
-> The order-block backtest is **illustrative research** on a survivorship-biased 209-name sample — it is not the point-in-time Nifty universe used by the swing engine, and the detector is not yet wired into the live pipeline. See the warnings in `strategy.md` before quoting any of its numbers.
 
 ---
 
