@@ -60,7 +60,7 @@ vyuha invest backtest --quick               # skip robustness
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-11-04` | **Total Value:** `₹97,463.48` | **Cash:** `₹97,463.48`
+> **Last Updated:** `2026-11-05` | **Total Value:** `₹97,463.48` | **Cash:** `₹97,463.48`
 
 <div align="center">
 
