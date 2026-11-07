@@ -84,16 +84,10 @@ vyuha invest backtest --quick               # skip robustness
 | Symbol | Entry (₹) | Stop (₹) | Strength | Vol ratio |
 |---|---|---|---|---|
 | **NEULANDLAB** | ₹19,725.00 | ₹18,194.13 | 8.20 | 3.37x |
-| **NEULANDLAB** | ₹19,725.00 | ₹18,194.13 | 8.20 | 3.37x |
-| **MOTHERSON** | ₹160.47 | ₹150.60 | 8.19 | 5.26x |
-| **FEDERALBNK** | ₹331.90 | ₹313.56 | 8.19 | 3.91x |
 | **MOTHERSON** | ₹160.47 | ₹150.60 | 8.19 | 5.26x |
 | **FEDERALBNK** | ₹331.90 | ₹313.56 | 8.19 | 3.91x |
 | **THELEELA** | ₹649.60 | ₹588.82 | 8.06 | 3.23x |
-| **THELEELA** | ₹649.60 | ₹588.82 | 8.06 | 3.23x |
 | **ENRIN** | ₹2,819.90 | ₹2,596.09 | 7.12 | 0.81x |
-| **ENRIN** | ₹2,819.90 | ₹2,596.09 | 7.12 | 0.81x |
-| **TARIL** | ₹310.00 | ₹280.11 | 7.02 | 0.42x |
 | **TARIL** | ₹310.00 | ₹280.11 | 7.02 | 0.42x |
 
 *First-touch limit (Mode A), stop = entry − 2.0× lagged ATR. VIX extreme blocks entries per engine rules.*

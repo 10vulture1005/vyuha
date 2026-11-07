@@ -111,6 +111,9 @@ def main():
         from datetime import date as _d
         db = sqlite3.connect(BASE / "vyuha.db")
         today = _d.today().isoformat()
+        # Dedupe: re-running on the same day replaces today's rows,
+        # so README never shows duplicates after multiple runs.
+        db.execute("DELETE FROM technical_signals WHERE pattern_type='ORDER_BLOCK' AND signal_date=?", (today,))
         for r in sorted(results, key=lambda x: x["strength"], reverse=True):
             risk = r["entry"] - r["stop"]
             db.execute(
