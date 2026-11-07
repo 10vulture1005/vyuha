@@ -55,6 +55,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--universe", choices=["watchlist", "midcap150"], default="watchlist")
     ap.add_argument("--offline", action="store_true")
+    ap.add_argument("--write", action="store_true", help="Persist fresh signals to technical_signals (ORDER_BLOCK)")
     ap.add_argument("--equity", type=float, default=100000.0)
     args = ap.parse_args()
 
@@ -106,6 +107,18 @@ def main():
     print(f"\n=== ACTIONABLE (fresh Order-Block first-touch, last 3 bars): {len(results)} ===")
     for r in sorted(results, key=lambda x: x["strength"], reverse=True):
         print(r)
+    if args.write and results:
+        from datetime import date as _d
+        db = sqlite3.connect(BASE / "vyuha.db")
+        today = _d.today().isoformat()
+        for r in sorted(results, key=lambda x: x["strength"], reverse=True):
+            risk = r["entry"] - r["stop"]
+            db.execute(
+                "INSERT INTO technical_signals (symbol, signal_date, pattern_type, atr_14, entry_price, structural_stop_price, signal_strength, vol_ratio) VALUES (?,?,?,?,?,?,?,?)",
+                (r["symbol"], today, "ORDER_BLOCK", risk / 2.0 if risk else None, r["entry"], r["stop"], r["strength"], r["vol_ratio"]),
+            )
+        db.commit()
+        print(f"Wrote {len(results)} ORDER_BLOCK signals dated {today} to technical_signals.")
     return results
 
 if __name__ == "__main__":

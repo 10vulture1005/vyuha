@@ -85,10 +85,34 @@ def generate_markdown() -> str:
                 
         return md.strip()
 
+def generate_orderblock_md() -> str:
+    """Render fresh ORDER_BLOCK candidates from the latest TechnicalSignal date."""
+    from db.models import TechnicalSignal
+    with get_session() as session:
+        latest = session.query(TechnicalSignal.signal_date).filter(
+            TechnicalSignal.pattern_type == "ORDER_BLOCK").order_by(
+            TechnicalSignal.signal_date.desc()).first()
+        if not latest:
+            return ""
+        sigs = (session.query(TechnicalSignal)
+                .filter(TechnicalSignal.pattern_type == "ORDER_BLOCK",
+                        TechnicalSignal.signal_date == latest[0])
+                .order_by(TechnicalSignal.signal_strength.desc()).all())
+        if not sigs:
+            return ""
+        md = f"### 🧱 Order-Block Candidates ({latest[0]})\n\n"
+        md += "| Symbol | Entry (₹) | Stop (₹) | Strength | Vol ratio |\n|---|---|---|---|---|\n"
+        for s in sigs:
+            md += (f"| **{s.symbol}** | ₹{float(s.entry_price):,.2f} | ₹{float(s.structural_stop_price):,.2f} "
+                   f"| {float(s.signal_strength):.2f} | {float(s.vol_ratio):.2f}x |\n")
+        md += "\n*First-touch limit (Mode A), stop = entry − 2.0× lagged ATR. VIX extreme blocks entries per engine rules.*"
+        return md.strip()
+
 def main():
     logger.info("Generating live stats for README.md...")
     try:
         new_stats_md = generate_markdown()
+        ob_md = generate_orderblock_md()
     except Exception as e:
         logger.error(f"Failed to generate stats: {e}")
         return
@@ -99,16 +123,29 @@ def main():
         return
 
     content = readme_path.read_text(encoding="utf-8")
-    
+
     # Replace content between tags
     pattern = r"(<!-- LIVE_STATS_START -->\n).*?(\n<!-- LIVE_STATS_END -->)"
-    
+
     if re.search(pattern, content, re.DOTALL):
         new_content = re.sub(pattern, rf"\1{new_stats_md}\2", content, flags=re.DOTALL)
-        readme_path.write_text(new_content, encoding="utf-8")
+        content = new_content
         logger.info("Successfully injected live stats into README.md")
     else:
         logger.warning("Could not find LIVE_STATS tags in README.md")
+
+    # Order-Block candidates section (create markers on first run if absent).
+    ob_pattern = r"(<!-- ORDER_BLOCK_START -->\n).*?(\n<!-- ORDER_BLOCK_END -->)"
+    if ob_md:
+        if re.search(ob_pattern, content, re.DOTALL):
+            content = re.sub(ob_pattern, rf"\1{ob_md}\2", content, flags=re.DOTALL)
+        else:
+            content = content.replace(
+                "<!-- LIVE_STATS_END -->",
+                "<!-- LIVE_STATS_END -->\n\n<!-- ORDER_BLOCK_START -->\n" + ob_md + "\n<!-- ORDER_BLOCK_END -->",
+            )
+        readme_path.write_text(content, encoding="utf-8")
+        logger.info("Successfully injected Order-Block candidates into README.md")
 
 if __name__ == "__main__":
     main()
