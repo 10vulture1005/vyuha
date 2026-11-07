@@ -259,8 +259,22 @@ def test_placebo_seeds_are_reproducible_and_differ():
     assert not a.equals(c)
 
 
-def test_slice_window_is_an_independent_replay():
-    cal, stocks, idx = tl.load_archive("data/raw/ohlc", None, None)
+def test_slice_window_is_an_independent_replay(tmp_path):
+    # Synthetic archive (data/raw/ohlc/*.csv is gitignored): the test must
+    # not depend on a local archive that CI fresh checkouts do not have.
+    # 300 sessions from 2021 so slice_window(start=2022-01-01) is a strict
+    # suffix of the full panel.
+    d, n = tmp_path, 300
+    cal = pd.bdate_range("2021-01-04", periods=n)
+    up = 100.0 * (1.002 ** np.arange(n))  # gentle deterministic uptrend
+    series = {"INDEX_NIFTY500": up, "INDEX_NIFTY50": up, "INDEX_INDIAVIX": up * 0.2,
+              "AAA": up, "BBB": up * 1.001}
+    for name, closes in series.items():
+        pd.DataFrame({"Date": cal.strftime("%Y-%m-%d"), "Open": closes,
+                      "High": closes * 1.01, "Low": closes * 0.99,
+                      "Close": closes, "Volume": np.full(n, 2e6)}).to_csv(
+            d / f"{name}.csv", index=False)
+    cal, stocks, idx = tl.load_archive(str(d), None, None)
     P = tl.build(cal, stocks, idx, tl.CFG, None)
     W = tl.slice_window(P, start="2022-01-01")
     assert W["cal"][0] >= pd.Timestamp("2022-01-01") and W["T"] < P["T"]

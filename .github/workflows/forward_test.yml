@@ -129,6 +129,7 @@ jobs:
         with:
           paths: vyuha.db README.md
           message: "📊 Forward test: $(date -u +'%Y-%m-%d')"
+          branch: ${{ github.ref_name }}
 
       - name: Upload logs as artifact
         if: always()
@@ -240,6 +241,7 @@ jobs:
         with:
           paths: vyuha.db data/raw/fundamentals_investor.csv
           message: "📋 Weekly refresh: $(date -u +'%Y-%m-%d')"
+          branch: ${{ github.ref_name }}
 
       - name: Upload Screener ingestion diagnostics
         if: always()
