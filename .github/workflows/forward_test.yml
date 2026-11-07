@@ -109,6 +109,21 @@ jobs:
           python scripts/run_daily_pipeline.py
           python scripts/update_readme_stats.py
 
+      # Order-Block entry scan (nse-orderblock detector, vendored at
+      # agents/tools/orderblock_tools.py). Prints the fresh first-touch
+      # candidate list; non-fatal — a yfinance outage must not kill the
+      # daily pipeline above. Output lands in logs/ for the artifact.
+      - name: Run Order-Block Entry Scan
+        if: always()
+        continue-on-error: true
+        env:
+          PYTHONPATH: '.'
+          DATABASE_URL: sqlite:///vyuha.db
+          LIVE_TRADING_ENABLED: 'false'
+        run: |
+          mkdir -p logs
+          python scripts/scan_orderblock.py 2>&1 | tee logs/orderblock-scan.log
+
       - name: Commit updated database state
         uses: ./.github/actions/commit-and-push
         with:

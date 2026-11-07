@@ -16,6 +16,7 @@ class PatternType(str, Enum):
     BB_SQUEEZE = "BB_SQUEEZE"
     BREAKOUT = "BREAKOUT"
     MEAN_REVERSION = "MEAN_REVERSION"
+    ORDER_BLOCK = "ORDER_BLOCK"
 
 class TechnicalSignalResult(BaseModel):
     pattern_type: PatternType
