@@ -4,9 +4,8 @@ from decimal import Decimal
 
 from db.session import get_session
 from db.models import Watchlist, WatchlistStatus, TechnicalSignal
-from agents.tools.ta_tools import (
-    load_ohlc_df, detect_w_bottom, detect_bb_squeeze,
-)
+from agents.tools.ta_tools import load_ohlc_df
+from agents.tools.orderblock_tools import detect_orderblock
 from agents.tools.regime_tools import determine_market_regime, is_vix_extreme
 
 class TechnicalAgent:
@@ -71,20 +70,16 @@ class TechnicalAgent:
                 if df.empty:
                     continue
                     
-                # FIX: evaluate BOTH patterns and keep the strongest instead of
-                # `w_bottom or bb_squeeze` short-circuit. The lax W detector
-                # previously starved BB_SQUEEZE (100% of live signals were W).
+                # Order-Block first-touch entry (nse-orderblock),
+                # replacing W-Bottom / BB-Squeeze. Causal: blocks are
+                # only touchable the bar after confirmation; the detector
+                # returns the latest entry_candidate (first touch, Mode A)
+                # with stop = entry - 2.0 x lagged ATR(14).
                 candidates = []
                 try:
-                    w = detect_w_bottom(df)
-                    if w:
-                        candidates.append(w)
-                except Exception:
-                    pass
-                try:
-                    b = detect_bb_squeeze(df)
-                    if b:
-                        candidates.append(b)
+                    ob = detect_orderblock(df)
+                    if ob:
+                        candidates.append(ob)
                 except Exception:
                     pass
                 if not candidates:

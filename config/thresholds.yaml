@@ -15,6 +15,22 @@ technical:
   bb_lookback: 20
   bb_squeeze_percentile: 10
 
+# Order-Block entry (nse-orderblock DetectorConfig defaults, Mode A)
+# Replaces W-Bottom / BB-Squeeze as the Phase-4 pattern.
+# Stop = entry - 2.0 x lagged ATR(14) (Experiment E winner), 20-bar hold.
+order_block:
+  atr_period: 14
+  disp_atr: 1.0
+  top_fraction: 0.25
+  use_rvol: false
+  rvol_period: 20
+  min_rvol: 1.5
+  lookback: 5
+  zone_mode: full
+  entry_mode: A
+  expiry: 60
+  stop_atr_mult: 2.0
+
 allocator:
   max_months_to_afford: 3
   min_liquidity_vol_20d: 100000

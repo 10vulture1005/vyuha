@@ -290,9 +290,9 @@ jobs:
 | **Universe** | Nifty MidCap 150 (survivorship-bias-free, point-in-time) |
 | **Fundamental Filter** | ROE > 15%, D/E < 1.0, EPS CAGR 3Y > 10% |
 | **Sentiment Gate** | FinBERT NLP (Tier 1) + Grok xAI (Tier 2) governance veto |
-| **Entry Signals** | W-Bottom reversal + Bollinger Band Squeeze breakout |
+| **Entry Signals** | Bullish Order Block first-touch (nse-orderblock, Mode A: displacement body ≥ 1.0×ATR, limit at zone top) |
 | **Position Sizing** | Risk-based: 1% equity risk per trade, max 25% concentration |
-| **Stop Loss** | ATR(14) trailing stop, ratchets up only, never down |
+| **Stop Loss** | 2.0× lagged ATR(14) below entry (Experiment E winner); 20-bar time exit |
 | **Time Stop** | 12-day stagnation exit if PnL between -0.5R and +0.5R |
 | **Profit Taking** | Multi-tier: 33% at 3R, 50% at 5R, 100% at 10R |
 | **Portfolio Heat** | Max 6% aggregate open risk across all positions |

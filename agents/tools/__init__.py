@@ -30,6 +30,7 @@ from agents.tools.ta_tools import (
     detect_w_bottom,
     detect_bb_squeeze,
 )
+from agents.tools.orderblock_tools import detect_orderblock
 
 try:
     from agents.tools.ledger_tools import (
@@ -56,6 +57,7 @@ __all__ = [
     "load_ohlc_df",
     "detect_w_bottom",
     "detect_bb_squeeze",
+    "detect_orderblock",
     "run_capital_allocator",
     "run_risk_review",
     "run_technical_scan",
