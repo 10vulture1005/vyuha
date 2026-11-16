@@ -60,7 +60,7 @@ vyuha invest backtest --quick               # skip robustness
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-11-08` | **Total Value:** `₹96,463.48` | **Cash:** `₹96,463.48`
+> **Last Updated:** `2026-11-16` | **Total Value:** `₹96,463.48` | **Cash:** `₹96,463.48`
 
 <div align="center">
 
@@ -79,16 +79,15 @@ vyuha invest backtest --quick               # skip robustness
 <!-- LIVE_STATS_END -->
 
 <!-- ORDER_BLOCK_START -->
-### 🧱 Order-Block Candidates (2026-11-08)
+### 🧱 Order-Block Candidates (2026-11-16)
 
 | Symbol | Entry (₹) | Stop (₹) | Strength | Vol ratio |
 |---|---|---|---|---|
-| **NEULANDLAB** | ₹19,725.00 | ₹18,194.13 | 8.20 | 3.37x |
-| **MOTHERSON** | ₹160.47 | ₹150.60 | 8.19 | 5.26x |
-| **FEDERALBNK** | ₹331.90 | ₹313.56 | 8.19 | 3.91x |
-| **THELEELA** | ₹649.60 | ₹588.82 | 8.06 | 3.23x |
-| **ENRIN** | ₹2,819.90 | ₹2,596.09 | 7.12 | 0.81x |
-| **TARIL** | ₹310.00 | ₹280.11 | 7.02 | 0.42x |
+| **MOTHERSON** | ₹166.88 | ₹155.19 | 7.59 | 2.11x |
+| **SPLPETRO** | ₹697.30 | ₹645.20 | 7.49 | 1.77x |
+| **GODFRYPHLP** | ₹1,800.06 | ₹1,678.17 | 7.28 | 1.51x |
+| **BAJFINANCE** | ₹1,090.00 | ₹1,027.13 | 7.18 | 1.21x |
+| **HFCL** | ₹209.16 | ₹182.08 | 7.08 | 0.79x |
 
 *First-touch limit (Mode A), stop = entry − 2.0× lagged ATR. VIX extreme blocks entries per engine rules.*
 <!-- ORDER_BLOCK_END -->
