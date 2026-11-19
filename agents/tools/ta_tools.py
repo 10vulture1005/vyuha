@@ -19,6 +19,10 @@ class PatternType(str, Enum):
     ORDER_BLOCK = "ORDER_BLOCK"
 
 class TechnicalSignalResult(BaseModel):
+    # Detectors are handed a bare DataFrame, so the ticker is attached by the
+    # caller (TechnicalAgent) once a signal is accepted. Keeping it optional
+    # preserves the pure-function contract of the detectors.
+    symbol: Optional[str] = None
     pattern_type: PatternType
     atr_14: float
     entry_price: float

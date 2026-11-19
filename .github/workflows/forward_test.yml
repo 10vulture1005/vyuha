@@ -78,7 +78,7 @@ jobs:
           telegram-token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           telegram-chat-id: ${{ secrets.TELEGRAM_CHAT_ID }}
 
-      - name: Run Forward Test Paper Cycle
+      - name: Run Swing Pipeline (all stages)
         env:
           DATABASE_URL: sqlite:///vyuha.db
           # Primary route (config/settings.py defaults LLM_PROVIDER=openrouter).
@@ -106,7 +106,24 @@ jobs:
           LOG_LEVEL: INFO
         run: |
           python -c "from db.models import Base; from db.session import sync_engine; Base.metadata.create_all(sync_engine)"
-          python scripts/run_daily_pipeline.py
+
+          # Full step-by-step swing pipeline, one process per stage:
+          #   preflight → ohlc → watchlist → sentiment → technical
+          #   → risk → alloc → valuation → digest
+          # run_pipeline.sh stops at the first failing stage and exits non-zero,
+          # so a half-written book is never committed as if it were the day's
+          # state. This replaced the single crew kickoff: the same stages now run
+          # with per-stage timings and a readable failure point.
+          # --send-telegram: the digest stage only prints by default (safe local
+          # runs); CI keeps broadcasting it. Send errors are logged, not fatal.
+          ./scripts/run_pipeline.sh swing --send-telegram
+
+          # Phase 7 (LLM cross-check) sits outside the default stage list because
+          # it is optional. It still feeds `vyuha resolve`, so run it here — and
+          # non-fatally, since a model outage must not discard the trades the
+          # stages above already executed.
+          ./scripts/run_pipeline.sh swing crosscheck || true
+
           python scripts/update_readme_stats.py
 
       # Order-Block entry scan (nse-orderblock detector, vendored at
@@ -233,12 +250,23 @@ jobs:
           EXIT_MODE: 'full'
         run: |
           python -c "from db.models import Base; from db.session import sync_engine; Base.metadata.create_all(sync_engine)"
-          python scripts/run_daily_pipeline.py --weekly
+
+          # Weekly = ingest fresh statements, then re-run the fundamental filter
+          # that only the daily chain normally touches. `fundamentals-fetch`
+          # replays the Screener cache unless --refresh is passed, so the ingest
+          # step above is what actually moves the numbers.
+          ./scripts/run_pipeline.sh swing fundamentals-fetch
+          # Full chain on the refreshed watchlist. Symbols that fail the hard
+          # filters keep their old last_updated, which is why this weekly job —
+          # not the daily one — is what revives them into the technical scan.
+          ./scripts/run_pipeline.sh swing --send-telegram
+
+          python scripts/update_readme_stats.py
 
       - name: Commit updated state
         uses: ./.github/actions/commit-and-push
         with:
-          paths: vyuha.db data/raw/fundamentals_investor.csv
+          paths: vyuha.db data/raw/fundamentals_investor.csv README.md
           message: "📋 Weekly refresh: $(date -u +'%Y-%m-%d')"
 
       - name: Upload Screener ingestion diagnostics

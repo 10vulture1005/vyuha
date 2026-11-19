@@ -86,9 +86,19 @@ class TechnicalAgent:
                     continue
                 sig_res = max(candidates, key=lambda s: float(s.signal_strength))
                 if sig_res:
+                    sig_res.symbol = sym
+                    sig_date = datetime.now(timezone.utc).date()
+                    # Same-day reruns must not stack duplicate rows. The weekly
+                    # job re-runs this chain after the daily one (both fire on
+                    # Sundays), and workflow_dispatch can repeat a run; without
+                    # this the allocator and digest see the same symbol twice.
+                    session.query(TechnicalSignal).filter(
+                        TechnicalSignal.symbol == sym,
+                        TechnicalSignal.signal_date == sig_date,
+                    ).delete(synchronize_session=False)
                     sig = TechnicalSignal(
                         symbol=sym,
-                        signal_date=datetime.now(timezone.utc).date(),
+                        signal_date=sig_date,
                         pattern_type=sig_res.pattern_type.value,
                         atr_14=Decimal(str(sig_res.atr_14)),
                         entry_price=Decimal(str(sig_res.entry_price)),

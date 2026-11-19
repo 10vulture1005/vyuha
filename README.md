@@ -43,7 +43,13 @@ vyuha portfolio
 # Backfill realised outcomes:
 vyuha resolve
 
-# Embedded in the vyuha daily pipeline:
+# Run the pipeline (this is what CI runs — one process per stage):
+./scripts/run_pipeline.sh swing             # daily, prints the digest
+./scripts/run_pipeline.sh swing --send-telegram
+./scripts/run_pipeline.sh swing --list      # stages, nothing runs
+./scripts/run_pipeline.sh swing technical   # a single stage
+
+# Crew-orchestrated variant (same phases, single process):
 python scripts/run_daily_pipeline.py        # daily
 python scripts/run_daily_pipeline.py --weekly
 
@@ -60,22 +66,24 @@ vyuha invest backtest --quick               # skip robustness
 ## 🔴 Live Forward Test Performance
 
 <!-- LIVE_STATS_START -->
-> **Last Updated:** `2026-11-18` | **Total Value:** `₹97,463.48` | **Cash:** `₹97,463.48`
+> **Last Updated:** `2026-11-19` | **Total Value:** `₹97,809.77` | **Cash:** `₹83,095.62`
 
 <div align="center">
 
 | Metric | Value | Graphic |
 |---|---|---|
-| **Net PnL** | 🔴 ₹-5,536.52 (-5.38%) | - |
+| **Net PnL** | 🔴 ₹-5,190.23 (-5.04%) | - |
 | **Win Rate** | 0.0% | ░░░░░░░░░░░░░░░ |
-| **Max Drawdown** | -2.54% | ██░░░░░░░░░░░░░ |
-| **Portfolio Heat** | 0.00% / 6.00% | ░░░░░░░░░░░░░░░ |
+| **Max Drawdown** | -2.19% | ██░░░░░░░░░░░░░ |
+| **Portfolio Heat** | 0.97% / 6.00% | ██░░░░░░░░░░░░░ |
 
 </div>
 
-### 💼 Current Open Positions (0 / 8)
+### 💼 Current Open Positions (1 / 8)
 
-*Holding 100% Cash.*
+| Symbol | Qty | Avg Buy | Trailing Stop | Risk/Share | Pattern |
+|---|---|---|---|---|---|
+| **USHAMART** | 31 | ₹463.00 | ₹438.74 | ₹30.48 | `ORDER_BLOCK` |
 <!-- LIVE_STATS_END -->
 
 ---
@@ -167,93 +175,103 @@ The governance veto layer uses **ProsusAI/FinBERT** (400MB BERT model fine-tuned
 | Auditor resigns, no audit evidence | **NEGATIVE** | **94.95%** | **✓ VETOED** |
 | Promoter pledges 15% stake | POSITIVE | 69.15% | ✗ |
 
-## 🤖 Forward Testing with GitHub Actions
+## 🤖 Automated Forward Test (GitHub Actions)
 
-Yes — GitHub Actions is an **excellent** fit for automated forward testing. Here's the recommended setup:
+Two workflows ship in `.github/workflows/`:
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `forward_test.yml` | cron `0 11 * * 1-5` + Sundays, `workflow_dispatch` | Runs the swing pipeline in paper mode, refreshes the README, commits `vyuha.db` |
+| `tests.yml` | every PR and push to `main` | `pytest`, with no LLM keys wired — the suite must pass with providers unreachable |
 
 ```mermaid
 flowchart TD
-    A["⏰ Cron Trigger<br/>IST 16:30 (UTC 11:00)<br/>Mon-Fri"] --> B["GitHub Actions Runner"]
-    B --> C["Setup Python + Dependencies"]
-    C --> D["Download FinBERT Model<br/>(Cached via actions/cache)"]
-    D --> E["Run Forward Test Pipeline"]
-    E --> F{"New Signals?"}
-    F -- Yes --> G["Execute Paper Trades<br/>(Persist to SQLite)"]
-    F -- No --> H["Log HOLD_CASH decision"]
-    G --> I["Commit updated vyuha.db<br/>to repo"]
-    H --> I
-    I --> J["Send Telegram Digest"]
-    J --> K["Upload equity curve<br/>as build artifact"]
+    A["⏰ Cron 16:30 IST<br/>(11:00 UTC)"] --> B["Setup Python 3.12<br/>+ cached deps / FinBERT"]
+    B --> C["Verify secrets"]
+    C --> D["./scripts/run_pipeline.sh swing"]
+    D --> E{"Every stage passed?"}
+    E -- No --> F["Job fails at that stage<br/>(nothing committed)"]
+    E -- Yes --> G["Order-Block scan<br/>→ README candidates"]
+    G --> H["update_readme_stats.py<br/>→ README metrics"]
+    H --> I["Commit vyuha.db + README.md"]
+    I --> J["Upload logs artifact"]
 
     style A fill:#1a1a2e,stroke:#00ffcc,color:#fff
-    style E fill:#0d4b2e,stroke:#00ffcc,color:#fff
-    style G fill:#4b3d0d,stroke:#ffcc00,color:#fff
+    style D fill:#0d4b2e,stroke:#00ffcc,color:#fff
+    style I fill:#4b3d0d,stroke:#ffcc00,color:#fff
 ```
 
-### Example `.github/workflows/forward_test.yml`
+### What the daily job runs
+
+The workflow drives the same step-by-step runner you use locally, one process per stage:
+
+```
+preflight → ohlc → watchlist → sentiment → technical → risk → alloc → valuation → digest
+```
 
 ```yaml
-name: VYUHA Forward Test (Daily Paper Trading)
-
-on:
-  schedule:
-    # Run at 16:30 IST (11:00 UTC) Mon-Fri after market close
-    - cron: '0 11 * * 1-5'
-  workflow_dispatch:  # Allow manual triggers
-
-jobs:
-  forward-test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
-
-      - name: Cache FinBERT model weights
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/huggingface
-          key: finbert-model-v1
-
-      - name: Install dependencies
+      - name: Run Swing Pipeline (all stages)
         run: |
-          pip install -e ".[agents]"
-          pip install torch --index-url https://download.pytorch.org/whl/cpu
-          pip install transformers yfinance
+          python -c "from db.models import Base; from db.session import sync_engine; Base.metadata.create_all(sync_engine)"
+          ./scripts/run_pipeline.sh swing --send-telegram
+          ./scripts/run_pipeline.sh swing crosscheck || true
+          python scripts/update_readme_stats.py
+```
 
-      - name: Run Forward Test Cycle
-        env:
-          # Required: config/settings.py defaults LLM_PROVIDER=openrouter.
-          # Without it the crew cannot call any model.
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          # Optional: used when the primary rate-limits or errors out.
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
-          INDIAN_API_KEY: ${{ secrets.INDIAN_API_KEY }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          LIVE_TRADING_ENABLED: 'false'
-        run: |
-          python scripts/run_forward_test.py --mode once
+Three details worth keeping:
 
-      - name: Commit updated database
-        run: |
-          git config user.name "vyuha-bot"
-          git config user.email "vyuha-bot@users.noreply.github.com"
-          git add vyuha.db
-          git diff --cached --quiet || git commit -m "📊 Forward test: $(date -u +'%Y-%m-%d')"
-          git push
+- **It stops at the first failing stage.** `run_pipeline.sh` exits non-zero, so the job fails and nothing is committed — a half-written book never becomes the day's state.
+- **Phase 7 is non-fatal.** The LLM cross-check sits outside the default stage list because it is optional, but it feeds `vyuha resolve`, so it runs separately behind `|| true`.
+- **`--send-telegram`** overrides the script's local default of printing the digest instead of sending it.
+
+### What lands back in the README
+
+Two generated blocks are rewritten in place on every run. Edit around the markers, never inside them:
+
+| Block | Written by | Contents |
+|---|---|---|
+| `<!-- LIVE_STATS_START --> … <!-- LIVE_STATS_END -->` | `scripts/update_readme_stats.py` | Net PnL, win rate, max drawdown, portfolio heat, open positions |
+| `<!-- ORDER_BLOCK_START --> … <!-- ORDER_BLOCK_END -->` | `scripts/scan_orderblock.py` | Today's first-touch Order-Block candidates |
+
+The run also commits `vyuha.db`, which is what carries positions and the ledger from one day to the next.
+
+### Weekly job
+
+`weekly-refresh` runs after the daily job on Sundays, or on manual dispatch. It ingests fresh statements and re-runs the chain so the fundamental filter actually sees them:
+
+```yaml
+          python scripts/fetch_screener_snapshots.py \
+            --symbols-file config/universe_nifty500.csv \
+            --refresh --allow-partial
+          ./scripts/run_pipeline.sh swing fundamentals-fetch
+          ./scripts/run_pipeline.sh swing --send-telegram
+          python scripts/update_readme_stats.py
+```
+
+`--allow-partial` matters: Screener.in serves a bot challenge to GitHub runner IPs, so most symbols come back as "missing or mismatched canonical URL". Without it the step would fail every Sunday and the refresh would never run.
+
+> [!IMPORTANT]
+> A symbol only gets its `last_updated` renewed when it **passes** the hard fundamental filters. Symbols that fail keep their old timestamp while staying `ACTIVE`, so the technical gate (stale after 7 days) skips them until a later weekly run revives them.
+
+### Required secrets
+
+| Secret | Used by | Required |
+|---|---|---|
+| `OPENROUTER_API_KEY` | Primary LLM route (preflight reports whether it is usable) | Yes |
+| `GROQ_API_KEY` | Fallback LLM route | Optional |
+| `MARKETAUX_API_KEY` | News feed for the sentiment veto | Optional — without it most symbols are recorded `SCREENING_FAILED`, not clean |
+| `DRISHTI_API_KEY` | Alternate news feed | Optional |
+| `HF_API_TOKEN` | FinBERT weights download | Optional (public model, rate-limited) |
+| `INDIAN_API_KEY` | Indian market data | Optional |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Daily digest | Optional — send errors are logged, never fatal |
+
+### Reproducing CI locally
+
+```bash
+uv sync --frozen
+./scripts/run_pipeline.sh swing --list           # stages, nothing runs
+./scripts/run_pipeline.sh swing --dry-telegram   # full run, prints the digest, no push
+./scripts/run_pipeline.sh swing technical        # a single stage
 ```
 
 ### Why GitHub Actions Works Well
@@ -262,22 +280,13 @@ jobs:
 |---------|---------|
 | **Free 2,000 min/month** | More than enough for 1 daily run (~5-10 min each) |
 | **Cron scheduling** | Native `schedule` trigger maps perfectly to post-market runs |
-| **Secrets management** | Secure storage for API keys (XAI, Telegram) |
+| **Secrets management** | Secure storage for API keys and Telegram |
 | **Model caching** | `actions/cache` keeps FinBERT weights warm (~400MB) |
 | **Artifact persistence** | Commit `vyuha.db` back to repo for state continuity |
 | **Manual dispatch** | `workflow_dispatch` for ad-hoc runs during testing |
 
 > [!IMPORTANT]
 > The **FinBERT model cache** step is critical — without it, the 400MB model downloads fresh every run, eating into your GitHub Actions minutes. With caching, subsequent runs load instantly.
-
-> [!TIP]
-> For the **weekly fundamental refresh** (Phase 2), create a separate workflow that runs on Sundays:
-> ```yaml
-> on:
->   schedule:
->     - cron: '0 8 * * 0'  # Sunday 1:30 PM IST
-> ```
-> And invoke with `python scripts/run_daily_pipeline.py --weekly`
 
 ---
 

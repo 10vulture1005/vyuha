@@ -275,7 +275,7 @@ def stage_technical(_args) -> int:
               "stale (>7d, rerun --stage watchlist), or no pattern formed.")
         return 0
     for s in signals:
-        print(f"    {s.symbol:<14} {s.pattern_type.value:<12} strength={s.signal_strength} "
+        print(f"    {getattr(s, 'symbol', '?'):<14} {s.pattern_type.value:<12} strength={s.signal_strength} "
               f"entry={s.entry_price} stop={s.structural_stop_price} atr={s.atr_14}")
     _ok(f"{len(signals)} signal(s)")
     return 0

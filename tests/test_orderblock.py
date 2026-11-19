@@ -72,3 +72,18 @@ def test_orderblock_causality_detection_day_not_touchable():
     res = detect_orderblock(df)
     # Without a touch there is no entry candidate.
     assert res is None
+
+
+def test_signal_result_carries_symbol_for_reporting():
+    """Detectors see a bare DataFrame, so the ticker is stamped by the caller.
+
+    The stage printer and the ledger tool both report on the returned object;
+    before `symbol` existed on the model the whole pipeline died on an
+    AttributeError *after* the signals had already been committed.
+    """
+    res = detect_orderblock(_synthetic_ob())
+    assert res is not None
+    assert res.symbol is None
+
+    res.symbol = "USHAMART"
+    assert res.symbol == "USHAMART"
