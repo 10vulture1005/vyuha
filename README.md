@@ -86,6 +86,20 @@ vyuha invest backtest --quick               # skip robustness
 | **USHAMART** | 31 | ₹463.00 | ₹438.74 | ₹30.48 | `ORDER_BLOCK` |
 <!-- LIVE_STATS_END -->
 
+<!-- ORDER_BLOCK_START -->
+### 🧱 Order-Block Candidates (2026-11-19)
+
+| Symbol | Entry (₹) | Stop (₹) | Strength | Vol ratio |
+|---|---|---|---|---|
+| **BALRAMCHIN** | ₹635.02 | ₹584.90 | 8.27 | 7.47x |
+| **GRANULES** | ₹808.00 | ₹742.40 | 8.09 | 4.70x |
+| **USHAMART** | ₹463.00 | ₹432.52 | 7.57 | 1.70x |
+| **SPLPETRO** | ₹697.30 | ₹645.20 | 7.49 | 1.77x |
+| **BAJFINANCE** | ₹1,090.00 | ₹1,027.13 | 7.18 | 1.21x |
+
+*First-touch limit (Mode A), stop = entry − 2.0× lagged ATR, from a 41-symbol watchlist scan on the 2026-11-19 session. Regime GREEN, VIX 16.11 (not extreme). `USHAMART` is already held (31 sh) — the allocator blocks pyramiding. VIX extreme blocks entries per engine rules.*
+<!-- ORDER_BLOCK_END -->
+
 ---
 
 ## 📊 Measured Results
@@ -226,12 +240,14 @@ Three details worth keeping:
 
 ### What lands back in the README
 
-Two generated blocks are rewritten in place on every run. Edit around the markers, never inside them:
+Two blocks carry live data. Edit around the markers, never inside them:
 
 | Block | Written by | Contents |
 |---|---|---|
-| `<!-- LIVE_STATS_START --> … <!-- LIVE_STATS_END -->` | `scripts/update_readme_stats.py` | Net PnL, win rate, max drawdown, portfolio heat, open positions |
-| `<!-- ORDER_BLOCK_START --> … <!-- ORDER_BLOCK_END -->` | `scripts/scan_orderblock.py` | Today's first-touch Order-Block candidates |
+| `<!-- LIVE_STATS_START --> … <!-- LIVE_STATS_END -->` | `scripts/update_readme_stats.py` — automatic, every run | Net PnL, win rate, max drawdown, portfolio heat, open positions |
+| `<!-- ORDER_BLOCK_START --> … <!-- ORDER_BLOCK_END -->` | `scripts/scan_orderblock.py` output, pasted by hand | Today's first-touch Order-Block candidates |
+
+Only the live-stats block is rewritten automatically. The daily workflow runs the Order-Block scan and uploads its output to the logs artifact, but it does not touch the block — run `python scripts/scan_orderblock.py` and update the table manually.
 
 The run also commits `vyuha.db`, which is what carries positions and the ledger from one day to the next.
 
